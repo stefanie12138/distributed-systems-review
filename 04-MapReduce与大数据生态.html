@@ -795,10 +795,7 @@ reduce(Text key, Iterable&lt;FloatWritable&gt; values):
 </tr>
 </tbody>
 </table>
-<div class="diagram">
-  <img src="images/分布式计算-MR计算模型v5.0_p21_img0.png" alt="MapReduce vs Spark 计算模型对比" loading="lazy">
-  <p class="caption">图6：MapReduce vs Spark 计算模型对比</p>
-</div>
+<!-- 原PDF提取图片内容实际为"虚拟化架构 vs 容器架构"，与标题不符，已移除。下方SVG为正确的MapReduce vs Spark对比图 -->
 <div class="diagram">
   <svg class="diagram-svg" viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg">
     <rect width="800" height="380" fill="#ffffff" rx="8" />
@@ -935,11 +932,15 @@ result.saveAsTextFile(&quot;hdfs://output/path&quot;)
 <p><strong>哈希函数要求</strong>：
 - 均匀分布：尽量使数据均匀分布在各节点上。
 - 确定性：相同的 key 总是映射到同一个节点。</p>
-<p><strong>优点</strong>：
-- 实现简单，算法复杂度 $O(1)$。
-- 数据分布均匀（假设好的哈希函数）。</p>
-<p><strong>缺点</strong>：
-- 增加或删除节点时，大部分数据需要重新分布（重新取模）。当 $N$ 变化时，$\bmod N$ 的结果对大部分 key 都会改变，导致大量数据迁移。</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>实现简单，算法复杂度 $O(1)$。</li>
+<li>数据分布均匀（假设好的哈希函数）。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>增加或删除节点时，大部分数据需要重新分布（重新取模）。当 $N$ 变化时，$\bmod N$ 的结果对大部分 key 都会改变，导致大量数据迁移。</li>
+</ul>
 <h4>1.6.2 一致性哈希算法</h4>
 <p><strong>基本概念</strong>：
 - 将哈希函数的输出值范围映射到一个<strong>环形空间</strong>（Hash Ring），通常为 $[0, 2^{m}-1]$（如 $[0, 2^{32}-1]$）。
@@ -951,13 +952,17 @@ result.saveAsTextFile(&quot;hdfs://output/path&quot;)
 2. 计算各数据记录的哈希值，确定在环上的位置。
 3. 每个数据记录顺时针遇到的第一个服务器节点即为存储节点。
 4. 每台服务器存储从当前节点逆时针到上一节点之间的所有数据记录。</p>
-<p><strong>优点</strong>：
-- 增加或删除节点时，只影响环上相邻节点的数据分布，数据迁移量大幅减少。
-- 当增加节点时，只有顺时针方向下一个节点需要将部分数据迁移到新节点。
-- 当删除节点时，只有被删除节点上的数据需要迁移到顺时针方向下一个节点。</p>
-<p><strong>缺点</strong>：
-- 数据分布可能不均匀（节点在环上的位置不均匀导致部分节点存储更多数据）。
-- 解决方法：引入<strong>虚拟节点（Virtual Nodes）</strong>，每个物理节点映射多个虚拟节点到环上。</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>增加或删除节点时，只影响环上相邻节点的数据分布，数据迁移量大幅减少。</li>
+<li>当增加节点时，只有顺时针方向下一个节点需要将部分数据迁移到新节点。</li>
+<li>当删除节点时，只有被删除节点上的数据需要迁移到顺时针方向下一个节点。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>数据分布可能不均匀（节点在环上的位置不均匀导致部分节点存储更多数据）。</li>
+<li>解决方法：引入<strong>虚拟节点（Virtual Nodes）</strong>，每个物理节点映射多个虚拟节点到环上。</li>
+</ul>
 <div class="diagram">
   <svg class="diagram-svg" viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
     <rect width="800" height="420" fill="#ffffff" rx="8" />
