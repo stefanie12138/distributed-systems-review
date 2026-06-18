@@ -674,8 +674,8 @@ req.Wait()  # 确保发送完成
   <rect x="108" y="62" width="64" height="16" rx="3" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
   <text x="140" y="73" text-anchor="middle" font-family="monospace" font-size="10" fill="#dc2626">发送 send()</text>
   <!-- Blocked period -->
-  <rect x="172" y="68" width="70" height="14" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="0.5" stroke-dasharray="2"/>
-  <text x="207" y="78" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">阻塞等待</text>
+  <rect x="172" y="62" width="70" height="16" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="0.5" stroke-dasharray="2"/>
+  <text x="207" y="73" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">阻塞等待</text>
   <!-- Return -->
   <rect x="242" y="62" width="52" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
   <text x="268" y="73" text-anchor="middle" font-family="monospace" font-size="10" fill="#16a34a">返回</text>
@@ -689,8 +689,8 @@ req.Wait()  # 确保发送完成
   <polygon points="150,121 150,111 152,111 152,121" fill="#dc2626"/>
   <rect x="120" y="105" width="60" height="16" rx="3" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
   <text x="150" y="116" text-anchor="middle" font-family="monospace" font-size="10" fill="#dc2626">接收 recv()</text>
-  <rect x="180" y="111" width="80" height="14" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="0.5" stroke-dasharray="2"/>
-  <text x="220" y="121" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">阻塞等待数据</text>
+  <rect x="180" y="105" width="80" height="16" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="0.5" stroke-dasharray="2"/>
+  <text x="220" y="116" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">阻塞等待数据</text>
   <rect x="260" y="105" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
   <text x="280" y="116" text-anchor="middle" font-family="monospace" font-size="10" fill="#16a34a">收到</text>
   <line x1="300" y1="121" x2="330" y2="121" stroke="#cbd5e1" stroke-width="2"/>
@@ -716,15 +716,15 @@ req.Wait()  # 确保发送完成
   <polygon points="530,78 530,68 532,68 532,78" fill="#16a34a"/>
   <rect x="495" y="62" width="82" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
   <text x="536" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">异步发送 Isend()</text>
-  <rect x="560" y="62" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
-  <text x="580" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
+  <rect x="580" y="62" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="600" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
   <!-- Compute period -->
-  <rect x="600" y="65" width="70" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
-  <text x="635" y="79" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#1d4ed8">本地计算</text>
-  <line x1="670" y1="78" x2="700" y2="78" stroke="#cbd5e1" stroke-width="1"/>
-  <polygon points="700,78 700,68 702,68 702,78" fill="#2563eb"/>
-  <text x="725" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb">等待 Wait()</text>
-  <text x="725" y="92" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">确认完成</text>
+  <rect x="625" y="65" width="70" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="660" y="79" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#1d4ed8">本地计算</text>
+  <line x1="695" y1="78" x2="720" y2="78" stroke="#cbd5e1" stroke-width="1"/>
+  <polygon points="720,78 720,68 722,68 722,78" fill="#2563eb"/>
+  <text x="738" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb">等待 Wait()</text>
+  <text x="738" y="92" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">确认完成</text>
 
   <!-- Timeline for Process 1 (Non-Blocking) -->
   <text x="408" y="125" font-family="monospace" font-size="12" fill="#64748b">P1 (接收方)</text>
@@ -732,16 +732,16 @@ req.Wait()  # 确保发送完成
   <polygon points="535,121 535,111 537,111 537,121" fill="#16a34a"/>
   <rect x="500" y="105" width="82" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
   <text x="541" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">异步接收 Irecv()</text>
-  <rect x="565" y="105" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
-  <text x="585" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
-  <rect x="605" y="108" width="60" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
-  <text x="635" y="122" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#1d4ed8">本地计算</text>
-  <polygon points="695,121 695,111 697,111 697,121" fill="#2563eb"/>
+  <rect x="585" y="105" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="605" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
+  <rect x="630" y="108" width="60" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="660" y="122" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#1d4ed8">本地计算</text>
+  <polygon points="700,121 700,111 702,111 702,121" fill="#2563eb"/>
   <text x="725" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb">等待 Wait()</text>
 
   <!-- Background computing box -->
-  <rect x="540" y="135" width="240" height="16" rx="3" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="0.5" stroke-dasharray="3"/>
-  <text x="653" y="146" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#16a34a">后台执行数据传输（计算·通信重叠）</text>
+  <rect x="580" y="135" width="200" height="16" rx="3" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="0.5" stroke-dasharray="3"/>
+  <text x="680" y="146" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#16a34a">后台执行数据传输（计算·通信重叠）</text>
 
   <!-- Note for non-blocking -->
   <rect x="460" y="156" width="300" height="32" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
