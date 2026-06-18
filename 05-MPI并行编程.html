@@ -300,7 +300,7 @@
   <text x="400" y="280" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#64748b">通过 <tspan font-weight="bold" fill="#2563eb">rank</tspan> 编号识别身份，<tspan font-weight="bold" fill="#2563eb">if-else</tspan> 分支执行不同代码路径</text>
   <!-- Communication arrows between processes -->
   <rect x="40" y="300" width="700" height="42" rx="6" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1"/>
-  <text x="400" y="322" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#0369a1">进程间通过 MPI 消息传递（send/recv）进行数据交换与协作</text>
+  <text x="390" y="322" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#0369a1">进程间通过 MPI 消息传递（send/recv）进行数据交换与协作</text>
   <!-- Bidirectional arrows between processes -->
   <line x1="200" y1="320" x2="218" y2="320" stroke="#7dd3fc" stroke-width="1.5"/>
   <line x1="382" y1="320" x2="398" y2="320" stroke="#7dd3fc" stroke-width="1.5"/>
@@ -714,8 +714,8 @@ req.Wait()  # 确保发送完成
   <text x="408" y="82" font-family="monospace" font-size="12" fill="#64748b">P0 (发送方)</text>
   <line x1="500" y1="78" x2="750" y2="78" stroke="#cbd5e1" stroke-width="1"/>
   <polygon points="530,78 530,68 532,68 532,78" fill="#16a34a"/>
-  <rect x="500" y="62" width="72" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
-  <text x="530" y="73" text-anchor="middle" font-family="monospace" font-size="8" fill="#16a34a">异步发送 Isend()</text>
+  <rect x="495" y="62" width="82" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="536" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">异步发送 Isend()</text>
   <rect x="560" y="62" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
   <text x="580" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
   <!-- Compute period -->
@@ -730,8 +730,8 @@ req.Wait()  # 确保发送完成
   <text x="408" y="125" font-family="monospace" font-size="12" fill="#64748b">P1 (接收方)</text>
   <line x1="500" y1="121" x2="750" y2="121" stroke="#cbd5e1" stroke-width="1"/>
   <polygon points="535,121 535,111 537,111 537,121" fill="#16a34a"/>
-  <rect x="505" y="105" width="72" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
-  <text x="535" y="116" text-anchor="middle" font-family="monospace" font-size="8" fill="#16a34a">异步接收 Irecv()</text>
+  <rect x="500" y="105" width="82" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="541" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">异步接收 Irecv()</text>
   <rect x="565" y="105" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
   <text x="585" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
   <rect x="605" y="108" width="60" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
@@ -741,7 +741,7 @@ req.Wait()  # 确保发送完成
 
   <!-- Background computing box -->
   <rect x="540" y="135" width="240" height="16" rx="3" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="0.5" stroke-dasharray="3"/>
-  <text x="653" y="146" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#16a34a">后台执行数据传输（计算·通信重叠）</text>
+  <text x="653" y="146" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#16a34a">后台执行数据传输（计算·通信重叠）</text>
 
   <!-- Note for non-blocking -->
   <rect x="460" y="156" width="300" height="32" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
@@ -832,7 +832,7 @@ elif rank == 1:
   <!-- Application data box -->
   <rect x="70" y="112" width="200" height="36" rx="6" fill="#dbeafe" stroke="#60a5fa" stroke-width="1"/>
   <text x="170" y="126" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#1e40af">应用层数据对象</text>
-  <text x="170" y="141" text-anchor="middle" font-family="monospace" font-size="10" fill="#3b82f6">data = {"msg": "Hello", "val": 42}</text>
+  <text x="170" y="141" text-anchor="middle" font-family="monospace" font-size="9" fill="#3b82f6">data = {"msg": "Hello", "val": 42}</text>
 
   <!-- Arrow down -->
   <line x1="170" y1="148" x2="170" y2="165" stroke="#2563eb" stroke-width="1.5" marker-end="url(#p2pArrow)"/>
@@ -864,7 +864,7 @@ elif rank == 1:
   <!-- Application data (received) -->
   <rect x="530" y="168" width="200" height="36" rx="6" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
   <text x="630" y="182" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#166534">应用层数据对象（还原）</text>
-  <text x="630" y="197" text-anchor="middle" font-family="monospace" font-size="10" fill="#22c55e">data = {"msg": "Hello", "val": 42}</text>
+  <text x="630" y="197" text-anchor="middle" font-family="monospace" font-size="9" fill="#22c55e">data = {"msg": "Hello", "val": 42}</text>
 
   <!-- Message envelope annotation -->
   <rect x="285" y="252" width="230" height="72" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
@@ -1070,7 +1070,7 @@ elif rank == 1:
   <text x="680" y="408" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">Reduce + Bcast 的优化版</text>
 
   <!-- Bottom: comparison table -->
-  <rect x="15" y="420" width="790" height="190" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="15" y="420" width="790" height="210" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
   <text x="410" y="442" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1e293b">集合通信函数对比</text>
 
   <line x1="35" y1="420" x2="785" y2="455" stroke="#f1f5f9" stroke-width="1"/>
@@ -1082,6 +1082,8 @@ elif rank == 1:
   <line x1="35" y1="490" x2="785" y2="490" stroke="#f1f5f9" stroke-width="1"/>
   <line x1="35" y1="525" x2="785" y2="525" stroke="#f1f5f9" stroke-width="1"/>
   <line x1="35" y1="560" x2="785" y2="560" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="35" y1="590" x2="785" y2="590" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="35" y1="615" x2="785" y2="615" stroke="#f1f5f9" stroke-width="1"/>
 
   <!-- Table headers -->
   <text x="110" y="475" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" font-weight="bold" fill="#64748b">函数名</text>
