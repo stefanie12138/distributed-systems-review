@@ -80,7 +80,7 @@
             margin-bottom: 8px;
             color: #334155;
         }
-        p { margin-bottom: 12px; text-align: justify; }
+        p { margin-bottom: 12px; text-align: left; word-break: keep-all; overflow-wrap: break-word; hyphens: none; }
         strong { color: #1a1a2e; }
         ul, ol {
             margin-bottom: 12px;
@@ -140,6 +140,7 @@
             border-top: 1px solid var(--border);
             margin: 32px 0;
         }
+        .katex { word-break: keep-all; hyphens: none; }
         .katex-display > .katex {
             text-align: left !important;
         }

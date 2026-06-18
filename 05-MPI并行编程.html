@@ -80,7 +80,7 @@
             margin-bottom: 8px;
             color: #334155;
         }
-        p { margin-bottom: 12px; text-align: justify; }
+        p { margin-bottom: 12px; text-align: left; word-break: keep-all; overflow-wrap: break-word; hyphens: none; }
         strong { color: #1a1a2e; }
         ul, ol {
             margin-bottom: 12px;
@@ -140,6 +140,7 @@
             border-top: 1px solid var(--border);
             margin: 32px 0;
         }
+        .katex { word-break: keep-all; hyphens: none; }
         .katex-display > .katex {
             text-align: left !important;
         }
@@ -713,8 +714,8 @@ req.Wait()  # 确保发送完成
   <text x="408" y="82" font-family="monospace" font-size="12" fill="#64748b">P0 (发送方)</text>
   <line x1="500" y1="78" x2="750" y2="78" stroke="#cbd5e1" stroke-width="1"/>
   <polygon points="530,78 530,68 532,68 532,78" fill="#16a34a"/>
-  <rect x="500" y="62" width="60" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
-  <text x="530" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">异步发送 Isend()</text>
+  <rect x="500" y="62" width="72" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="530" y="73" text-anchor="middle" font-family="monospace" font-size="8" fill="#16a34a">异步发送 Isend()</text>
   <rect x="560" y="62" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
   <text x="580" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
   <!-- Compute period -->
@@ -729,8 +730,8 @@ req.Wait()  # 确保发送完成
   <text x="408" y="125" font-family="monospace" font-size="12" fill="#64748b">P1 (接收方)</text>
   <line x1="500" y1="121" x2="750" y2="121" stroke="#cbd5e1" stroke-width="1"/>
   <polygon points="535,121 535,111 537,111 537,121" fill="#16a34a"/>
-  <rect x="505" y="105" width="60" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
-  <text x="535" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">异步接收 Irecv()</text>
+  <rect x="505" y="105" width="72" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="535" y="116" text-anchor="middle" font-family="monospace" font-size="8" fill="#16a34a">异步接收 Irecv()</text>
   <rect x="565" y="105" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
   <text x="585" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
   <rect x="605" y="108" width="60" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
@@ -739,7 +740,7 @@ req.Wait()  # 确保发送完成
   <text x="725" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb">等待 Wait()</text>
 
   <!-- Background computing box -->
-  <rect x="568" y="135" width="170" height="16" rx="3" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="0.5" stroke-dasharray="3"/>
+  <rect x="540" y="135" width="240" height="16" rx="3" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="0.5" stroke-dasharray="3"/>
   <text x="653" y="146" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#16a34a">后台执行数据传输（计算·通信重叠）</text>
 
   <!-- Note for non-blocking -->
