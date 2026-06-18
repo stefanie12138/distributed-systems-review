@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第6讲：MapReduce与大数据生态 — 分布式系统复习</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+        ], ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']});"></script>
+    <style>
+        :root {
+            --bg: #fafafa;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #555;
+            --border: #e0e0e0;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --code-bg: #f4f4f5;
+            --heading-color: #1a1a2e;
+            --table-stripe: #f8fafc;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+        }
+        nav.breadcrumb {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            padding: 12px 16px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        nav.breadcrumb a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        nav.breadcrumb a:hover { text-decoration: underline; }
+        h1 {
+            font-size: 2em;
+            color: var(--heading-color);
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 12px;
+            margin-bottom: 28px;
+        }
+        h2 {
+            font-size: 1.5em;
+            color: var(--heading-color);
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 4px solid var(--accent);
+        }
+        h3 {
+            font-size: 1.2em;
+            color: var(--heading-color);
+            margin-top: 28px;
+            margin-bottom: 12px;
+        }
+        h4 {
+            font-size: 1.05em;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+        p { margin-bottom: 12px; text-align: justify; }
+        strong { color: #1a1a2e; }
+        ul, ol {
+            margin-bottom: 12px;
+            padding-left: 24px;
+        }
+        li { margin-bottom: 4px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.95em;
+            box-shadow: var(--shadow);
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            text-align: left;
+        }
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        tr:nth-child(even) td { background: var(--table-stripe); }
+        code {
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 16px 0;
+            line-height: 1.6;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: 0.88em;
+        }
+        blockquote {
+            border-left: 4px solid #94a3b8;
+            padding: 10px 16px;
+            margin: 16px 0;
+            background: #f8fafc;
+            color: #475569;
+            border-radius: 0 6px 6px 0;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 32px 0;
+        }
+        .katex-display > .katex {
+            text-align: left !important;
+        }
+        @media (max-width: 640px) {
+            .container { padding: 12px 14px 40px; }
+            h1 { font-size: 1.5em; }
+            h2 { font-size: 1.25em; }
+            table { font-size: 0.82em; }
+            th, td { padding: 6px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="index.html">← 返回首页</a>
+        </nav>
+        <h1>第6讲：MapReduce与大数据生态</h1>
+<h2>一、知识点讲解</h2>
+<h3>1.1 MapReduce 计算模型概述</h3>
+<h4>1.1.1 分布式并行计算的宏观思想</h4>
+<ul>
+<li>将面向大数据的计算任务划分为多个子任务，将输入文件划分成数量相等的多个分片（Split），每个子任务处理一个分片。</li>
+<li>不同的子任务在不同的计算节点上运行。</li>
+<li>最后将各个子任务的中间结果合并，计算出最终结果。</li>
+</ul>
+<h4>1.1.2 分布式并行计算框架/平台的作用</h4>
+<p>分布式计算平台（框架）和运行在平台之上的应用层模块相互协作完成一个完整的分布式计算任务。</p>
+<p><strong>平台的作用（6项）：</strong></p>
+<ol>
+<li><strong>自动分片</strong>：将输入数据自动分片，将每个分片交给一个计算子任务处理。</li>
+<li><strong>任务分发</strong>：将不同的计算子任务分发给不同的计算节点执行。</li>
+<li><strong>负载感知</strong>：子任务分发时考虑各个计算节点的当前负载。</li>
+<li><strong>数据本地性</strong>：尽量让计算子任务和对应的数据分片处于同一台物理主机（移动计算比移动数据更经济）。</li>
+<li><strong>混洗与合并</strong>：帮助实现中间计算结果的收集合并、中间结果在不同计算节点之间的交换（Shuffle/混洗）。</li>
+<li><strong>容错性</strong>：监视各个子任务的执行状态，将执行失败的子任务重新调度给其它节点执行。</li>
+<li><strong>可扩展性</strong>：对集群中计算节点的增长或减少可以自适应。</li>
+</ol>
+<p><strong>应用层模块的作用</strong>：专注于实现框架要求下和具体应用层逻辑相关的子任务计算逻辑。</p>
+<h4>1.1.3 MapReduce 并行计算模型核心思想</h4>
+<p>MapReduce 将大数据并行计算任务划分为三个阶段：</p>
+<ul>
+<li><strong>Map 阶段</strong>（第一阶段并行）</li>
+<li><strong>聚集混洗阶段</strong>（Shuffle，含二次分区）</li>
+<li><strong>Reduce 阶段</strong>（第二阶段并行）</li>
+</ul>
+<p>三个键值数组的转换关系：</p>
+<ul>
+<li>键值数组 <strong>X</strong> 经过 <strong>Map</strong> 转化为键值数组 <strong>Y</strong>。</li>
+<li>X 和 Y 之间可以是一对一、一对多和多对一的关系。</li>
+<li>键值数组 <strong>Y</strong> 经过 <strong>Reduce</strong> 转化为键值数组 <strong>Z</strong>。</li>
+<li>Y 和 Z 之间可以是一对一、一对多和多对一的关系。</li>
+<li>三个键值数组 X、Y、Z 的 Key 的类型和 Value 的类型不一定相同。</li>
+</ul>
+<p><strong>要点</strong>：通过 Map 子任务输出的 key 值部分控制不同子任务输出结果的相互交换和聚集。</p>
+<h4>1.1.4 MapReduce 适用场景</h4>
+<ul>
+<li>网页被引用频率统计</li>
+<li>逆向链接统计 <code>&lt;target, list(source)&gt;</code></li>
+<li>全文检索索引（倒排索引）</li>
+<li>海量数据全文查找或关键字匹配</li>
+<li>数据过滤</li>
+<li>数据去重</li>
+<li>数值数组计算总和、平均值、最大最小值、TopN</li>
+<li>数字图像直方图统计</li>
+<li>海量数据的随机采样</li>
+<li>child-parent 关系表推导 grandchild-grandparent 关系</li>
+<li>分布式排序（如 Terrasort 等算法）</li>
+</ul>
+<hr />
+<h3>1.2 MapReduce 工作流程</h3>
+<h4>1.2.1 整体流程图</h4>
+<pre><code>HDFS输入文件
+    │
+    ▼
+把输入文件划分为多个输入分片 (Split)
+    │
+    ▼
+从输入分片中解析出多个 K-V 对
+    │
+    ▼
+针对每个 K-V 对调用一次 Map 方法      ← Map阶段（第一阶段并行）
+    │
+    ▼
+对 Map 输出的 K-V 对按 Key 二次分区
+    │
+    ▼
+对每个二次分区中的数据按 Key 排序
+    │
+    ▼
+对二次分片中的数据按 Key 局部聚合     ← Shuffle/Combine阶段
+    │
+    ▼
+存入 HDFS 临时文件
+    │
+    ▼
+Reduce 任务从不同 Map 节点拉取数据
+    │
+    ▼
+将来自不同 Map 节点的数据合并排序
+    │
+    ▼
+针对二次分片中每个 K-V 调用一次 Reduce 方法  ← Reduce阶段（第二阶段并行）
+    │
+    ▼
+HDFS 输出文件
+</code></pre>
+<h4>1.2.2 Map 阶段详细过程</h4>
+<ol>
+<li>
+<p><strong>输入分片（Split）</strong>：平台将输入文件分片。分片大小、方式可定制，默认按 HDFS 分块大小（Block Size，通常 64MB/128MB）分片。</p>
+</li>
+<li>
+<p><strong>读取行记录</strong>：平台针对每个分片创建一个 Map 子任务。Map 子任务从文件分片中以"行记录"的形式逐条读取。文件分片中数据组织成行记录的方式可定制，默认遇到换行符 <code>\n</code> 为一行。</p>
+</li>
+<li>
+<p><strong>生成键值对</strong>：默认将行记录规整为<strong>行号作为 Key，行内容作为 Value</strong> 的形式。</p>
+</li>
+<li>
+<p><strong>调用 map 方法</strong>：每读入一条记录，就调用一次 Mapper 对象的 <code>map</code> 方法。Map 子任务根据具体计算需求输出一个或多个 <code>(key, value)</code> 对。输出中 key、value 的格式、类型和内容由 Map 程序自己决定。</p>
+</li>
+</ol>
+<h4>1.2.3 Shuffle（聚集混洗）阶段详细过程</h4>
+<ol>
+<li><strong>二次分区（Partition）</strong>：Map Task 执行完毕后生成一个 <code>(key, value)</code> 数组。平台将 Map Task 中间计算结果进行二次分片。二次分片逻辑可定制，默认方式是将 key 值取 Hash 然后模除 Reduce Task 节点数。</li>
+</ol>
+<p>$$\text{Partition}(key) = H(key) \bmod R$$</p>
+<p>其中 $R$ 为 Reduce Task 的数量。</p>
+<ol>
+<li>
+<p><strong>分片内排序（Sort）</strong>：框架将每个二次分片内的 <code>&lt;key, value&gt;</code> 数组进行分片内排序。</p>
+</li>
+<li>
+<p><strong>局部聚合（Combine）</strong>：框架将每个二次分片内的元素按 key 值进行局部聚合。局部聚合处理逻辑可通过 Combiner 对象定制。默认逻辑是将 <code>&lt;k1, v1&gt;</code>、<code>&lt;k1, v2&gt;</code>、<code>&lt;k1, v3&gt;</code>... 聚合成 <code>&lt;k1, [v1, v2, v3]&gt;</code>。</p>
+</li>
+<li>
+<p><strong>暂存 HDFS</strong>：经过排序和局部聚合之后的二次分片数据被暂存入 HDFS。</p>
+</li>
+</ol>
+<h4>1.2.4 Reduce 阶段详细过程</h4>
+<ol>
+<li>
+<p>框架针对用户对 Reduce Task 数目的设定创建 n 个 Reduce Task。设定方法：
+   <code>conf.setNumReduceTasks(int n)</code></p>
+</li>
+<li>
+<p>框架将每个二次分片分发给一个 Reduce Task。</p>
+</li>
+<li>
+<p>Reduce Task 从二次分片每取出一条 <code>(key, &lt;v1, v2, v3...&gt;)</code> 形式的记录，就调用一次 Reducer 对象的 <code>reduce</code> 方法，该方法生成最终结果。</p>
+</li>
+<li>
+<p>如果 Reduce 阶段输出不是最终结果，还可以以输出数组为输入启动新一轮 MapReduce 过程。</p>
+</li>
+</ol>
+<h4>1.2.5 Combiner 阶段</h4>
+<p>Combiner 是一个可选的本地优化阶段，在 Map 端对中间结果进行局部归约以减少网络传输量。</p>
+<p>形式化定义：</p>
+<ul>
+<li><code>map: (K1, V1) → list(K2, V2)</code></li>
+<li><code>combine: (K2, list(V2)) → list(K3, V3)</code></li>
+<li><code>reduce: (K3, list(V3)) → list(K4, V4)</code></li>
+</ul>
+<p><strong>Combiner 的使用条件</strong>：Combiner 的逻辑必须和 Reducer 兼容（通常是同一个类），适用于满足结合律和交换律的操作（如求和、计数、最大值），但不适用于求平均值等需要全局信息的操作（除非 Combine 阶段输出 sum 和 count）。</p>
+<hr />
+<h3>1.3 MapReduce 编程实践</h3>
+<h4>1.3.1 MapReduce 程序构成</h4>
+<p>一个完整的 MapReduce 程序由以下类组成：</p>
+<ul>
+<li><strong>Mapper 类</strong>：实现 <code>map</code> 方法，签名 <code>(K1, V1) → list(K2, V2)</code></li>
+<li><strong>Reducer 类</strong>：实现 <code>reduce</code> 方法，签名 <code>(K3, list(V3)) → list(K4, V4)</code></li>
+<li><strong>Combiner 类</strong>（可选）：实现 <code>reduce</code> 方法，签名 <code>(K2, list(V2)) → list(K3, V3)</code></li>
+<li><strong>Client 类</strong>（驱动程序）：</li>
+<li>设置工作参数</li>
+<li>创建 MapReduce Job 对象</li>
+<li>设置要上传给 Hadoop 平台的 Jar 包或 Class</li>
+<li>设置 Mapper 类</li>
+<li>设置 Combiner 类</li>
+<li>设置 Reducer 类</li>
+<li>设置输出记录的形式</li>
+<li>设置输入文件路径、输出文件路径</li>
+<li>启动该 Job 并等待其执行完毕</li>
+</ul>
+<h4>1.3.2 WordCount 经典案例</h4>
+<p><strong>问题</strong>：统计一组文本文件中每个单词出现的次数。</p>
+<p><strong>Map 阶段伪代码</strong>：</p>
+<pre><code>// 输入: (行号, 行内容)
+// 输出: (单词, 1)
+map(LongWritable key, Text value):
+    line = value.toString()
+    for each word in line.split():
+        context.write(new Text(word), new IntWritable(1))
+</code></pre>
+<p><strong>Reduce 阶段伪代码</strong>：</p>
+<pre><code>// 输入: (单词, [1, 1, 1, ...])
+// 输出: (单词, 总计数)
+reduce(Text key, Iterable&lt;IntWritable&gt; values):
+    sum = 0
+    for each val in values:
+        sum += val.get()
+    context.write(key, new IntWritable(sum))
+</code></pre>
+<p><strong>Combiner</strong>：可直接复用 Reducer 类，在 Map 端对相同 key 先做局部求和，减少 Shuffle 数据量。</p>
+<h4>1.3.3 TopN 问题的 Map/Combine/Reduce 思想</h4>
+<p><strong>问题</strong>：从海量数据中找出最大的 N 个值（如统计词频最高的 N 个单词）。</p>
+<p><strong>Map 阶段</strong>：每个 Map Task 在本地的数据分片中找出 TopN，只输出这 N 条记录。</p>
+<pre><code>// 每个 Map Task 维护一个大小为 N 的小顶堆
+map(key, value):
+    将 (key, value) 插入本地的小顶堆（容量为 N）
+    如果堆大小超过 N，弹出堆顶（最小值）
+
+// Map Task 的 cleanup 方法中输出堆中的 TopN
+cleanup():
+    for each item in heap:
+        context.write(item.key, item.value)
+</code></pre>
+<p><strong>Combine 阶段</strong>：逻辑与 Map 阶段的 cleanup 相同，在多个 TopN 的并集中再次选出 TopN。</p>
+<pre><code>combine(key, values):
+    维护一个大小为 N 的小顶堆
+    for each value in values:
+        将 value 插入堆
+        如果堆大小超过 N，弹出堆顶
+    for each item in heap:
+        context.write(item.key, item.value)
+</code></pre>
+<p><strong>Reduce 阶段</strong>：将来自所有 Map 的候选 TopN 进行最终合并，选出全局 TopN。</p>
+<pre><code>reduce(key, values):
+    维护一个大小为 N 的小顶堆
+    for each value in values:
+        将 value 插入堆
+        如果堆大小超过 N，弹出堆顶
+    for each item in heap:
+        context.write(item.key, item.value)
+</code></pre>
+<p><strong>关键思想</strong>：Map 端和 Combine 端都进行局部筛选，大幅减少要传输的数据量。每个 Map 只输出 N 条记录，最后 Reduce 在至多 $M \times N$ 条（M 为 Map Task 数）候选中选出全局 TopN。</p>
+<h4>1.3.4 微博粉丝统计（<code>&lt;ID1, ID2&gt;</code> 关系型数据）</h4>
+<p><strong>问题</strong>：输入每行 <code>&lt;ID1, ID2&gt;</code> 表示 ID1 关注了 ID2（ID1 是 ID2 的粉丝）。统计每个用户的粉丝数量和粉丝列表。</p>
+<p><strong>核心思想</strong>：将关注关系"翻转"，以被关注者（ID2）为 key，关注者（ID1）为 value。</p>
+<p><strong>Map 阶段</strong>：</p>
+<pre><code>// 输入: (行号, &quot;ID1, ID2&quot;)
+// 输出: (ID2, ID1) —— 注意 key 是被关注者
+map(LongWritable key, Text value):
+    tokens = value.toString().split(&quot;,&quot;)
+    follower = tokens[0].trim()     // ID1（粉丝）
+    followee = tokens[1].trim()     // ID2（被关注者）
+    context.write(new Text(followee), new Text(follower))
+</code></pre>
+<p><strong>Reduce 阶段</strong>：</p>
+<pre><code>// 输入: (被关注者ID, [粉丝ID1, 粉丝ID2, ...])
+// 输出: (被关注者ID, 粉丝数量 + 粉丝列表)
+reduce(Text key, Iterable&lt;Text&gt; values):
+    count = 0
+    followerList = []
+    for each val in values:
+        count++
+        followerList.add(val.toString())
+    output = &quot;粉丝数量: &quot; + count + &quot;, 粉丝列表: &quot; + followerList
+    context.write(key, new Text(output))
+</code></pre>
+<h4>1.3.5 grandchild-grandparent 关系推导</h4>
+<p><strong>问题</strong>：输入每行 <code>&lt;parent, child&gt;</code>，输出所有 <code>&lt;grandparent, grandchild&gt;</code> 关系。</p>
+<p><strong>思路</strong>：需要两轮 MapReduce。</p>
+<p><strong>第一轮</strong>：构建 child-parent 映射。
+- Map：输出 <code>(child, parent)</code> —— 以 child 为 key
+- Reduce：收集每个 child 的所有 parent</p>
+<p><strong>第二轮</strong>：构建 grandchild-grandparent。
+- Map：对每条 <code>&lt;parent, child&gt;</code> 记录，以 parent 为 key 去连接第一轮的 child-parent 映射（parent 是第一轮中的 child），输出 <code>(grandchild, grandparent)</code>
+- Reduce：归并结果</p>
+<h4>1.3.6 学生成绩统计典型题目</h4>
+<p><strong>输入格式</strong>：<code>班级, 姓名, 科目, 必修/选修, 成绩</code></p>
+<p><strong>问题1：计算每个学生必修课的平均成绩</strong>。</p>
+<pre><code>// Map阶段
+map(LongWritable key, Text value):
+    tokens = value.toString().split(&quot;,&quot;)
+    className = tokens[0].trim()
+    name = tokens[1].trim()
+    subject = tokens[2].trim()
+    type = tokens[3].trim()
+    score = Float.parseFloat(tokens[4].trim())
+
+    if type.equals(&quot;必修&quot;):
+        // key = 姓名, value = 成绩
+        context.write(new Text(name), new FloatWritable(score))
+
+// Reduce阶段
+reduce(Text key, Iterable&lt;FloatWritable&gt; values):
+    sum = 0.0
+    count = 0
+    for each val in values:
+        sum += val.get()
+        count++
+    avg = sum / count
+    context.write(key, new Text(&quot;必修课平均成绩: &quot; + avg))
+</code></pre>
+<p><strong>问题2：按科目统计每个班的平均成绩</strong>。</p>
+<pre><code>// Map阶段
+map(LongWritable key, Text value):
+    tokens = value.toString().split(&quot;,&quot;)
+    className = tokens[0].trim()
+    subject = tokens[2].trim()
+    score = Float.parseFloat(tokens[4].trim())
+
+    // key = 科目 + 班级（复合键）, value = 成绩
+    compositeKey = subject + &quot;\t&quot; + className
+    context.write(new Text(compositeKey), new FloatWritable(score))
+
+// Reduce阶段
+reduce(Text key, Iterable&lt;FloatWritable&gt; values):
+    sum = 0.0
+    count = 0
+    for each val in values:
+        sum += val.get()
+        count++
+    avg = sum / count
+    // 解析复合键
+    parts = key.toString().split(&quot;\t&quot;)
+    output = &quot;科目: &quot; + parts[0] + &quot;, 班级: &quot; + parts[1] + &quot;, 平均分: &quot; + avg
+    context.write(key, new Text(output))
+</code></pre>
+<hr />
+<h3>1.4 HDFS 分布式文件系统</h3>
+<h4>1.4.1 HDFS 概述</h4>
+<p>HDFS（Hadoop Distributed File System）是面向大数据的开源分布式文件系统，将分布式系统中多个节点的存储资源整合在一起，向用户/应用程序呈现统一的存储空间和文件系统目录树。用户无需关心数据存储在哪个节点上。</p>
+<ul>
+<li><strong>大文件被自动分块</strong>并分别存储到不同的节点上。</li>
+<li><strong>每个分块（Block）以多副本方式</strong>存放在不同节点上，默认副本数为 3。</li>
+</ul>
+<h4>1.4.2 HDFS 核心特性</h4>
+<ol>
+<li><strong>主/从架构</strong>：单个 NameNode（NN，主节点）+ 多个 DataNode（DN，从节点）。</li>
+<li><strong>高容错</strong>：采用数据多副本方案，部分硬件的损坏不会导致全部数据的丢失。</li>
+<li><strong>高吞吐量</strong>：支持多个客户端同时与多数据节点直接通信，实现了高吞吐量的数据访问（读数据吞吐量高）。</li>
+<li><strong>大文件支持</strong>：适合于 GB 到 TB 级别的大文件存储。<strong>不适合大量小文件存储</strong>（原因见 1.4.6）。</li>
+<li><strong>简单一致性模型</strong>：更适合于<strong>一次写入多次读取（write-once-read-many）</strong>的访问模型。支持将内容追加到文件末尾，但不能从文件任意位置新增/修改数据。</li>
+</ol>
+<h4>1.4.3 NameNode 和 DataNode 的功能</h4>
+<p><strong>NameNode（主节点）</strong>：
+- 存储文件系统的<strong>元数据</strong>（目录信息、文件名、每个文件由哪些分块组成、Block 到 DataNode 的映射关系等）。
+- 管理数据节点（DataNode 的注册、心跳监控）。
+- 负责多副本维护和存储负载均衡。
+- 处理客户端请求的控制流（文件打开、关闭、重命名等）。</p>
+<p><strong>DataNode（从节点）</strong>：
+- 负责存储每个文件的<strong>实体数据</strong>（文件的分块数据/Block 数据）。
+- 处理客户端的数据流读写请求。
+- 定期向 NameNode 发送心跳和 Block 报告。
+- 根据 NameNode 指令进行 Block 的复制、删除等。</p>
+<p><strong>架构关系</strong>：
+- 控制流：客户端 → NameNode（元数据操作）
+- 数据流：客户端 → DataNode（实际数据读写）
+- NameNode 向 DataNode 发送管理指令（多副本维护、负载均衡）</p>
+<h4>1.4.4 客户端读取 HDFS 文件的交互过程</h4>
+<ol>
+<li>客户端向 <strong>NameNode</strong> 发送文件读取请求，传入文件路径。</li>
+<li>NameNode 查询元数据，返回该文件的 <strong>Block 列表</strong>及每个 Block 所在的 <strong>DataNode 地址列表</strong>（按距离客户端由近到远排序，优先返回同一机架或本地的 DataNode）。</li>
+<li>客户端从返回的 DataNode 列表中选择<strong>最近的 DataNode</strong>，建立连接并读取第一个 Block 的数据。</li>
+<li>第一个 Block 读取完毕后，继续读取下一个 Block，直到文件的所有 Block 读取完毕。</li>
+<li>如果读取某个 DataNode 失败，客户端会从备选 DataNode 列表中选取另一个 DataNode 重新读取该 Block。</li>
+<li>客户端最终将读取到的所有 Block 数据组装成完整文件。</li>
+</ol>
+<p><strong>关键点</strong>：NameNode 不参与实际数据传输，只负责元数据查询；数据直接在客户端与 DataNode 之间传输。</p>
+<h4>1.4.5 数据可靠性机制</h4>
+<p>HDFS 通过以下技术提高数据存储的可靠性：</p>
+<ol>
+<li><strong>多副本机制（Replication）</strong>：</li>
+<li>每个 Block 默认存储 3 个副本（可通过配置修改）。</li>
+<li>副本分布在不同节点（甚至不同机架）上，单个节点/机架故障不影响数据完整性。</li>
+<li>
+<p>NameNode 持续监控 Block 副本数，发现副本不足时自动触发复制。</p>
+</li>
+<li>
+<p><strong>机架感知（Rack Awareness）</strong>：</p>
+</li>
+<li>HDFS 能够感知 DataNode 所属的物理机架。</li>
+<li>副本放置策略：第一个副本放在本地节点（或随机节点），第二个副本放在同一机架的另一个节点，第三个副本放在不同机架的节点。</li>
+<li>
+<p>目的：同时考虑写带宽（同机架传输快）和容错性（跨机架防止单点故障）。</p>
+</li>
+<li>
+<p><strong>心跳机制（Heartbeat）</strong>：</p>
+</li>
+<li>DataNode 定期（默认3秒）向 NameNode 发送心跳信号。</li>
+<li>
+<p>如果 NameNode 超过一定时间（默认10分钟）未收到某 DataNode 心跳，则标记该节点为失效，并触发该节点上所有 Block 的补充复制。</p>
+</li>
+<li>
+<p><strong>安全模式（Safe Mode）</strong>：</p>
+</li>
+<li>
+<p>NameNode 启动后自动进入安全模式，等待各 DataNode 上报 Block 信息，确认数据完整性后才退出。</p>
+</li>
+<li>
+<p><strong>校验和（Checksum）</strong>：</p>
+</li>
+<li>
+<p>HDFS 在写入时为每个 Block 计算校验和，读取时验证校验和以检测数据损坏。</p>
+</li>
+<li>
+<p><strong>元数据持久化</strong>：</p>
+</li>
+<li>NameNode 的元数据通过 FsImage（命名空间快照）和 EditLog（操作日志）持久化到本地磁盘，并可配置 Secondary NameNode 或 Standby NameNode 提供备份。</li>
+</ol>
+<h4>1.4.6 小文件问题</h4>
+<p><strong>为什么 HDFS 不适合存储大量小文件？</strong></p>
+<ol>
+<li>
+<p><strong>NameNode 内存压力</strong>：每个文件、目录、Block 的元数据（约 150 字节/条目）都存储在 NameNode 的内存中。大量小文件意味着大量的元数据条目，会耗尽 NameNode 的内存资源。</p>
+</li>
+<li>
+<p><strong>MapReduce 效率低</strong>：MapReduce 默认每个文件分片对应一个 Map Task。大量小文件会产生大量 Map Task（远超过实际数据量需要的任务数），Map Task 的创建和调度开销远大于数据处理本身。</p>
+</li>
+<li>
+<p><strong>寻道时间大于传输时间</strong>：每个 Block 的读取需要磁盘寻道，小文件场景下寻道时间占比大。</p>
+</li>
+</ol>
+<p><strong>解决方案</strong>：使用 SequenceFile、HAR（Hadoop Archive）或 Parquet/ORC 等列存格式将小文件合并为大文件。</p>
+<hr />
+<h3>1.5 Spark 计算模型</h3>
+<h4>1.5.1 Spark 与 MapReduce 的对比</h4>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>MapReduce</th>
+<th>Spark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>计算模型</strong></td>
+<td>基于磁盘的批处理，Map → Shuffle → Reduce</td>
+<td>基于内存的 DAG 计算，RDD 转换与动作</td>
+</tr>
+<tr>
+<td><strong>中间结果存储</strong></td>
+<td>写入 HDFS 磁盘</td>
+<td>优先存储在内存中</td>
+</tr>
+<tr>
+<td><strong>速度</strong></td>
+<td>较慢（磁盘 I/O 开销大）</td>
+<td>快（内存计算，MapReduce 的 10-100 倍）</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>一次性大规模批处理</td>
+<td>迭代计算、交互式查询、流处理</td>
+</tr>
+<tr>
+<td><strong>编程模型</strong></td>
+<td>仅 Map 和 Reduce 两个算子</td>
+<td>丰富的 Transformation 和 Action 算子</td>
+</tr>
+<tr>
+<td><strong>容错机制</strong></td>
+<td>通过重新执行失败 Task</td>
+<td>通过 RDD 的 Lineage（血缘）重新计算</td>
+</tr>
+<tr>
+<td><strong>语言支持</strong></td>
+<td>主要 Java</td>
+<td>Java, Scala, Python, R</td>
+</tr>
+</tbody>
+</table>
+<h4>1.5.2 RDD 概念</h4>
+<p><strong>RDD（Resilient Distributed Dataset，弹性分布式数据集）</strong>是 Spark 的核心数据抽象：</p>
+<ul>
+<li><strong>不可变（Immutable）</strong>：RDD 一旦创建就不能修改，只能通过 Transformation 生成新的 RDD。</li>
+<li><strong>分区（Partitioned）</strong>：RDD 的数据分布在集群的多个节点上，可并行操作。</li>
+<li><strong>容错（Resilient）</strong>：通过 Lineage（血缘/世系）记录了如何从其他 RDD 转换而来，当分区数据丢失时可自动从父 RDD 重新计算恢复。</li>
+<li><strong>惰性求值（Lazy Evaluation）</strong>：Transformation 操作不会立即执行，只有遇到 Action 操作时才会触发实际计算。</li>
+</ul>
+<h4>1.5.3 Spark 编程模型</h4>
+<p>两种操作类型：</p>
+<ul>
+<li><strong>Transformation（转换）</strong>：从一个 RDD 生成另一个 RDD，如 <code>map</code>、<code>filter</code>、<code>flatMap</code>、<code>reduceByKey</code>、<code>groupByKey</code>、<code>sortByKey</code>、<code>join</code> 等。惰性求值，不立即执行。</li>
+<li><strong>Action（动作）</strong>：触发实际计算并返回结果，如 <code>count</code>、<code>collect</code>、<code>reduce</code>、<code>saveAsTextFile</code>、<code>foreach</code> 等。</li>
+</ul>
+<p><strong>典型伪代码模板</strong>：</p>
+<pre><code>// 1. 创建 SparkContext
+sc = new SparkContext(conf)
+
+// 2. 从 HDFS 读取数据创建 RDD
+rdd = sc.textFile(&quot;hdfs://input/path&quot;)
+
+// 3. Transformation 链
+result = rdd.map(...)        // 映射转换
+            .filter(...)     // 过滤
+            .flatMap(...)    // 扁平映射
+            .reduceByKey(...)// 按键归约
+            .sortByKey()     // 按键排序
+
+// 4. Action 触发计算
+result.saveAsTextFile(&quot;hdfs://output/path&quot;)
+</code></pre>
+<hr />
+<h3>1.6 数据分区与一致性哈希</h3>
+<h4>1.6.1 基于哈希的数据分区法</h4>
+<p><strong>基本原理</strong>：对数据记录的主键（key）计算哈希值 $h = H(key)$，然后对服务器数量 $N$ 取模，得到存储该记录的服务器编号：</p>
+<p>$$\text{ServerID} = H(key) \bmod N$$</p>
+<p><strong>哈希函数要求</strong>：
+- 均匀分布：尽量使数据均匀分布在各节点上。
+- 确定性：相同的 key 总是映射到同一个节点。</p>
+<p><strong>优点</strong>：
+- 实现简单，算法复杂度 $O(1)$。
+- 数据分布均匀（假设好的哈希函数）。</p>
+<p><strong>缺点</strong>：
+- 增加或删除节点时，大部分数据需要重新分布（重新取模）。当 $N$ 变化时，$\bmod N$ 的结果对大部分 key 都会改变，导致大量数据迁移。</p>
+<h4>1.6.2 一致性哈希算法</h4>
+<p><strong>基本概念</strong>：
+- 将哈希函数的输出值范围映射到一个<strong>环形空间</strong>（Hash Ring），通常为 $[0, 2^{m}-1]$（如 $[0, 2^{32}-1]$）。
+- 每个服务器节点根据其标识的哈希值映射到环上的一个点。
+- 每个数据记录（key）根据其哈希值映射到环上的一个点。
+- 数据记录的存储规则：在环上<strong>顺时针查找第一个遇到的服务器节点</strong>，将数据存储在该节点上。</p>
+<p><strong>数据分布确定方法</strong>：
+1. 计算各服务器标识的哈希值，确定在环上的位置。
+2. 计算各数据记录的哈希值，确定在环上的位置。
+3. 每个数据记录顺时针遇到的第一个服务器节点即为存储节点。
+4. 每台服务器存储从当前节点逆时针到上一节点之间的所有数据记录。</p>
+<p><strong>优点</strong>：
+- 增加或删除节点时，只影响环上相邻节点的数据分布，数据迁移量大幅减少。
+- 当增加节点时，只有顺时针方向下一个节点需要将部分数据迁移到新节点。
+- 当删除节点时，只有被删除节点上的数据需要迁移到顺时针方向下一个节点。</p>
+<p><strong>缺点</strong>：
+- 数据分布可能不均匀（节点在环上的位置不均匀导致部分节点存储更多数据）。
+- 解决方法：引入<strong>虚拟节点（Virtual Nodes）</strong>，每个物理节点映射多个虚拟节点到环上。</p>
+<h4>1.6.3 增加节点时的数据迁移量计算</h4>
+<p><strong>哈希取模法的数据迁移量</strong>：
+- 从 $N$ 台服务器扩展到 $N+1$ 台，约 $\frac{N}{N+1}$ 的数据需要移动（即大部分数据）。
+- 具体公式：迁移比例约为 $1 - \frac{1}{N+1}$。</p>
+<p><strong>一致性哈希的数据迁移量</strong>：
+- 只移动新节点与其顺时针方向下一个节点之间的数据。
+- 理论上约为总数据的 $\frac{1}{N+1}$（假设数据均匀分布）。但实际上取决于数据在环上的分布。</p>
+<hr />
+<h3>1.7 Hadoop/Spark 实验环境（基于 Docker）</h3>
+<h4>1.7.1 Docker 容器技术概述</h4>
+<p>Docker 是一种轻量级虚拟化技术，与传统的虚拟机不同：</p>
+<ul>
+<li><strong>载体为进程</strong>（非完整操作系统）。</li>
+<li>容器为运行于其中的应用虚拟化出独立的：</li>
+<li>文件系统</li>
+<li>网络环境（IP 地址、路由表、主机名、子网等）</li>
+<li>应用运行时环境（依赖库、环境变量、配置文件等）</li>
+</ul>
+<p><strong>与虚拟机的区别</strong>：容器共享宿主机的操作系统内核，启动快、资源开销小，而虚拟机需要完整的 Guest OS。</p>
+<h4>1.7.2 容器编排调度系统</h4>
+<p>容器编排调度系统的功能（分布式系统的 OS）：
+- 分发容器镜像
+- 按需启动、关停容器
+- 按需迁移容器
+- 资源调度（存储、网络）
+- 负载均衡
+- 自动扩容、缩容
+- 自动故障恢复</p>
+<p>常见工具：Docker Compose（单机编排）、Kubernetes（集群编排）。</p>
+<h4>1.7.3 Hadoop/Spark 实验环境部署</h4>
+<p><strong>环境组成</strong>：
+- HDFS 集群：NameNode + 多个 DataNode
+- YARN 集群：Resource Manager + 多个 Node Manager
+- Client Node：用于提交 MapReduce/Spark 任务
+- 监控集群：MapReduce History Server + Spark History Server
+- Web Server</p>
+<p>以上组件均以 Docker 容器形式运行在同一子网内。</p>
+<p><strong>基本操作流程</strong>：</p>
+<pre><code class="language-bash"># 1. 启动实验环境
+cd /path/to/hadoop-sandbox
+docker-compose up -d
+
+# 2. SSH 登录到 Client Node
+ssh -p 2222 sandbox@localhost
+# 密码：sandbox
+
+# 3. 配置 Maven 环境变量
+echo 'export MAVEN_HOME=/home/sandbox/shared/maven' &gt;&gt; ~/.bashrc
+echo 'export PATH=$MAVEN_HOME/bin:$PATH' &gt;&gt; ~/.bashrc
+source ~/.bashrc
+
+# 4. 关闭实验环境
+docker-compose down
+</code></pre>
+<p><strong>HDFS 常用命令</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hadoop fs -ls</code></td>
+<td>显示当前用户目录下的文件和目录</td>
+</tr>
+<tr>
+<td><code>hadoop fs -mkdir test</code></td>
+<td>创建子目录（加 <code>-p</code> 创建多级目录）</td>
+</tr>
+<tr>
+<td><code>hadoop fs -put input.txt test</code></td>
+<td>上传本地文件到 HDFS</td>
+</tr>
+<tr>
+<td><code>hadoop fs -cat input.txt</code></td>
+<td>查看 HDFS 中文件内容</td>
+</tr>
+<tr>
+<td><code>hadoop fs -rm input.txt</code></td>
+<td>删除文件</td>
+</tr>
+<tr>
+<td><code>hadoop fs -rm -r test</code></td>
+<td>删除子目录（需加 <code>-r</code>）</td>
+</tr>
+<tr>
+<td><code>hadoop fs -cp URI dest</code></td>
+<td>复制系统内文件</td>
+</tr>
+<tr>
+<td><code>hadoop fs -get src localdst</code></td>
+<td>下载文件到本地</td>
+</tr>
+<tr>
+<td><code>hadoop fs -mv URI dest</code></td>
+<td>移动文件</td>
+</tr>
+<tr>
+<td><code>hadoop fs -du URI</code></td>
+<td>显示文件大小</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Web 监控服务</strong>：
+- HDFS 监控：<code>http://localhost:9870/</code>
+- MapReduce Job History：<code>http://localhost:19888/jobhistory</code>
+- Hadoop 集群状态：<code>http://localhost:8080/</code></p>
+<p><strong>运行自定义程序</strong>：
+1. 将程序/工程目录存放在 <code>hadoop-sandbox/shared</code> 目录下。
+2. 通过 SSH 登录 Client Node，使用 Maven 编译和运行。</p>
+<hr />
+<h2>二、相关真题与解析</h2>
+<hr />
+<h3>题目1（来源：2019年、2020年A卷、2020回忆版、2022年A卷）</h3>
+<p><strong>原题：</strong>
+1. HDFS 的 NameNode 节点和 DataNode 节点的主要功能分别是什么？（4分）
+2. 简述客户端读取一个 HDFS 文件时与 NameNode 节点和 DataNode 节点的交互过程。（4分）</p>
+<p><strong>解析/答案：</strong></p>
+<p><strong>NameNode 的主要功能</strong>：
+- 存储文件系统的元数据（目录结构、文件名、每个文件由哪些 Block 组成、Block 与 DataNode 的映射关系等）。
+- 管理 DataNode（注册、心跳监控、存活检测）。
+- 负责多副本的维护和存储负载均衡。
+- 处理客户端的控制流请求（打开、关闭、重命名文件等元数据操作）。</p>
+<p><strong>DataNode 的主要功能</strong>：
+- 存储文件的实际数据块（Block 数据）。
+- 处理客户端的数据流读写请求。
+- 定期（默认 3 秒）向 NameNode 发送心跳信号和 Block 报告。
+- 根据 NameNode 的指令执行 Block 的复制、删除等操作。</p>
+<p><strong>客户端读取 HDFS 文件的交互过程</strong>：
+1. 客户端向 NameNode 发送文件读取请求，提供文件路径。
+2. NameNode 查询元数据，返回该文件的所有 Block 列表以及每个 Block 所在的 DataNode 地址列表（按网络距离排序，优先返回最近的 DataNode）。
+3. 客户端从返回的 DataNode 列表中选择最近的 DataNode，直接建立连接读取第一个 Block 的数据。
+4. 依次读取后续每个 Block，直到文件所有 Block 读取完成。
+5. 若某个 DataNode 读取失败，客户端自动尝试备选 DataNode 列表中的下一个节点。
+6. 客户端将各 Block 数据拼接成完整文件。</p>
+<p><strong>关键点</strong>：NameNode 只参与控制流（返回元数据），不参与数据流传输；数据在客户端和 DataNode 之间直接传输，实现高吞吐。</p>
+<hr />
+<h3>题目2（来源：2022年A卷）</h3>
+<p><strong>原题：</strong> 为了提高数据存储的可靠性，HDFS 在设计上采取了哪些技术措施？（至少给出 2 种）（4分）</p>
+<p><strong>解析/答案：</strong></p>
+<ol>
+<li>
+<p><strong>多副本机制（Replication）</strong>：每个数据 Block 默认保存 3 个副本，存储在不同的 DataNode 上（通常分布在不同机架）。当某个节点故障导致副本丢失时，NameNode 检测到副本数不足后会自动触发补充复制。</p>
+</li>
+<li>
+<p><strong>机架感知策略（Rack Awareness）</strong>：副本放置时考虑物理机架分布。典型策略为：第一副本放在写入节点（或随机），第二副本放同机架另一节点，第三副本放不同机架节点。这样可以同时兼顾写效率（同机架数据传输快）和容错（不同机架之间冗余）。</p>
+</li>
+<li>
+<p><strong>心跳机制（Heartbeat）</strong>：DataNode 定期向 NameNode 发送心跳信号，若超时未收到则 NameNode 标记该 DataNode 为失效，并自动触发该节点上所有 Block 的重新复制。</p>
+</li>
+<li>
+<p><strong>安全模式（Safe Mode）</strong>：NameNode 启动后进入安全模式，等待各 DataNode 上报 Block 信息，确认数据完整性后才退出安全模式允许客户端写入。</p>
+</li>
+<li>
+<p><strong>元数据持久化与备份</strong>：通过 FsImage 和 EditLog 持久化元数据，并可通过 Secondary NameNode 或 Standby NameNode 进行备份。</p>
+</li>
+</ol>
+<hr />
+<h3>题目3（来源：2022年A卷）</h3>
+<p><strong>原题：</strong> 为什么 HDFS 不适合存储大量的小文件？（2分）</p>
+<p><strong>解析/答案：</strong></p>
+<ol>
+<li>
+<p><strong>NameNode 内存压力</strong>：每个文件/目录/Block 的元数据（约 150 字节）都存储在 NameNode 的内存中。大量小文件意味着海量元数据条目，会耗尽 NameNode 有限的内存资源，导致系统无法扩展。</p>
+</li>
+<li>
+<p><strong>MapReduce 计算效率低</strong>：MapReduce 默认每个文件分片对应一个 Map Task，大量小文件会产生大量 Map Task，而 Task 的创建和调度开销远大于实际数据处理开销，造成资源浪费。</p>
+</li>
+<li>
+<p><strong>磁盘寻道开销大</strong>：每个 Block 读取需要磁盘寻道，大量小文件导致寻道时间远大于数据传输时间，降低了系统吞吐量。</p>
+</li>
+</ol>
+<hr />
+<h3>题目4（来源：2022年A卷）</h3>
+<p><strong>原题：</strong> 假设某分布式数据库系统根据新插入数据记录的主键（key）选择不同的服务器节点存储该记录，共有 N 个存储服务器，标识号分别为 $ID_1, ID_2, \ldots, ID_N$。另外假定存在理想的无碰撞哈希函数 $H$，能够将任意的字符串转化为 5 bit 的正整数，$H$ 的输出结果在区间 $[0, 31]$ 上均匀分布。向该数据库共插入了 10 条记录，这 10 条记录的主键的哈希值分别为 $1, 3, 5, 9, 14, 15, 19, 21, 26, 31$。</p>
+<p><strong>(1) 假定用以下策略选择具体的存储服务器：计算 $i = H(key) \bmod N$，其中 mod 表示取余运算，然后将当前记录存储在服务器 $ID_{i+1}$ 中。初始时 $N = 3$，当增加一个服务器 $ID_4$ 时会有多少条数据记录需要在不同服务器节点间移动？给出计算过程。（4分）</strong></p>
+<p><strong>解析/答案</strong>：</p>
+<p><strong>第一步：计算 N=3 时每条记录的存储位置</strong></p>
+<p>$$i = H(key) \bmod 3$$</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">记录哈希值</th>
+<th style="text-align: center;">计算 $H \bmod 3$</th>
+<th style="text-align: center;">$i+1$</th>
+<th style="text-align: center;">存储服务器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">$1 \bmod 3 = 1$</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">$ID_2$</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">$3 \bmod 3 = 0$</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">$ID_1$</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">$5 \bmod 3 = 2$</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">$ID_3$</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">$9 \bmod 3 = 0$</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">$ID_1$</td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">$14 \bmod 3 = 2$</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">$ID_3$</td>
+</tr>
+<tr>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">$15 \bmod 3 = 0$</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">$ID_1$</td>
+</tr>
+<tr>
+<td style="text-align: center;">19</td>
+<td style="text-align: center;">$19 \bmod 3 = 1$</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">$ID_2$</td>
+</tr>
+<tr>
+<td style="text-align: center;">21</td>
+<td style="text-align: center;">$21 \bmod 3 = 0$</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">$ID_1$</td>
+</tr>
+<tr>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">$26 \bmod 3 = 2$</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">$ID_3$</td>
+</tr>
+<tr>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">$31 \bmod 3 = 1$</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">$ID_2$</td>
+</tr>
+</tbody>
+</table>
+<p>N=3 时存储分布：
+- $ID_1$：3, 9, 15, 21（4 条）
+- $ID_2$：1, 19, 31（3 条）
+- $ID_3$：5, 14, 26（3 条）</p>
+<p><strong>第二步：计算 N=4 时每条记录的新存储位置</strong></p>
+<p>$$i = H(key) \bmod 4$$</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">记录哈希值</th>
+<th style="text-align: center;">计算 $H \bmod 4$</th>
+<th style="text-align: center;">$i+1$</th>
+<th style="text-align: center;">新存储服务器</th>
+<th style="text-align: center;">原服务器</th>
+<th style="text-align: center;">是否迁移</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">$1 \bmod 4 = 1$</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">$ID_2$</td>
+<td style="text-align: center;">$ID_2$</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">$3 \bmod 4 = 3$</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">$ID_4$</td>
+<td style="text-align: center;">$ID_1$</td>
+<td style="text-align: center;"><strong>是</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">$5 \bmod 4 = 1$</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">$ID_2$</td>
+<td style="text-align: center;">$ID_3$</td>
+<td style="text-align: center;"><strong>是</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">$9 \bmod 4 = 1$</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">$ID_2$</td>
+<td style="text-align: center;">$ID_1$</td>
+<td style="text-align: center;"><strong>是</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">$14 \bmod 4 = 2$</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">$ID_3$</td>
+<td style="text-align: center;">$ID_3$</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">$15 \bmod 4 = 3$</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">$ID_4$</td>
+<td style="text-align: center;">$ID_1$</td>
+<td style="text-align: center;"><strong>是</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;">19</td>
+<td style="text-align: center;">$19 \bmod 4 = 3$</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">$ID_4$</td>
+<td style="text-align: center;">$ID_2$</td>
+<td style="text-align: center;"><strong>是</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;">21</td>
+<td style="text-align: center;">$21 \bmod 4 = 1$</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">$ID_2$</td>
+<td style="text-align: center;">$ID_1$</td>
+<td style="text-align: center;"><strong>是</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">$26 \bmod 4 = 2$</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">$ID_3$</td>
+<td style="text-align: center;">$ID_3$</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">$31 \bmod 4 = 3$</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">$ID_4$</td>
+<td style="text-align: center;">$ID_2$</td>
+<td style="text-align: center;"><strong>是</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>第三步：结果统计</strong></p>
+<p>需要迁移的记录共 <strong>7 条</strong>（哈希值为 3, 5, 9, 15, 19, 21, 31）。</p>
+<p><strong>结论</strong>：当从 $N=3$ 增加到 $N=4$ 时，使用哈希取模分区策略需要迁移 <strong>7 条</strong>数据记录，占总数据的 70%。</p>
+<hr />
+<h3>题目5（来源：2022年A卷）</h3>
+<p><strong>原题：</strong> 设 $N=3$，并且 $H(ID_1)=4$，$H(ID_2)=23$，$H(ID_3)=13$。如果采用基于一致性哈希算法的服务器选择策略，那么这三台服务器分别存储了几条记录？给出计算过程。（4分）</p>
+<p>（注：10 条记录的哈希值仍为 $1, 3, 5, 9, 14, 15, 19, 21, 26, 31$，哈希空间为 $[0, 31]$）</p>
+<p><strong>解析/答案</strong>：</p>
+<p><strong>第一步：确定三台服务器在哈希环上的位置</strong></p>
+<p>将服务器按哈希值排序：</p>
+<ul>
+<li>$ID_1$：$H = 4$，位置在环上 4</li>
+<li>$ID_3$：$H = 13$，位置在环上 13</li>
+<li>$ID_2$：$H = 23$，位置在环上 23</li>
+</ul>
+<p><strong>第二步：确定每台服务器的负责区间</strong></p>
+<p>一致性哈希规则：每条数据顺时针遇到的第一台服务器即为存储节点。</p>
+<p>由于哈希空间是环状的 $[0, 31]$（共 32 个位置），各服务器负责的区间为：</p>
+<ul>
+<li><strong>$ID_1$（H=4）</strong>：从 $ID_2$ 的下一位置（24）逆时针回到 4。即负责区间 $[24, 4]$（顺时针方向，经过 24→31→0→4）。等价于两个区间：$(23, 31]$ 和 $[0, 4]$。</li>
+<li><strong>$ID_3$（H=13）</strong>：负责区间 $(4, 13]$（从 5 到 13）。</li>
+<li><strong>$ID_2$（H=23）</strong>：负责区间 $(13, 23]$（从 14 到 23）。</li>
+</ul>
+<p><strong>第三步：将数据记录分配到服务器</strong></p>
+<p>10 条记录的哈希值：$1, 3, 5, 9, 14, 15, 19, 21, 26, 31$</p>
+<ul>
+<li><strong>$ID_1$</strong>（区间 $(23, 31] \cup [0, 4]$）：</li>
+<li>26（在 24-31 区间）✓</li>
+<li>31（在 24-31 区间）✓</li>
+<li>1（在 0-4 区间）✓</li>
+<li>3（在 0-4 区间）✓</li>
+<li>
+<p><strong>共 4 条</strong>：1, 3, 26, 31</p>
+</li>
+<li>
+<p><strong>$ID_3$</strong>（区间 $(4, 13]$）：</p>
+</li>
+<li>5（在 5-13 区间）✓</li>
+<li>9（在 5-13 区间）✓</li>
+<li>
+<p><strong>共 2 条</strong>：5, 9</p>
+</li>
+<li>
+<p><strong>$ID_2$</strong>（区间 $(13, 23]$）：</p>
+</li>
+<li>14（在 14-23 区间）✓</li>
+<li>15（在 14-23 区间）✓</li>
+<li>19（在 14-23 区间）✓</li>
+<li>21（在 14-23 区间）✓</li>
+<li><strong>共 4 条</strong>：14, 15, 19, 21</li>
+</ul>
+<p><strong>第四步：汇总结果</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">服务器</th>
+<th style="text-align: center;">哈希值</th>
+<th style="text-align: left;">存储记录哈希值</th>
+<th style="text-align: center;">记录数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">$ID_1$</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;">1, 3, 26, 31</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr>
+<td style="text-align: center;">$ID_3$</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: left;">5, 9</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">$ID_2$</td>
+<td style="text-align: center;">23</td>
+<td style="text-align: left;">14, 15, 19, 21</td>
+<td style="text-align: center;">4</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>题目6（来源：2022年A卷）</h3>
+<p><strong>原题：</strong> 接上题，仍然采用基于一致性哈希算法的服务器选择策略，当增加一个服务器 $ID_4$（已知 $H(ID_4)=30$）时，有多少条数据记录需要在不同服务器节点间移动？给出计算过程。（4分）</p>
+<p><strong>解析/答案</strong>：</p>
+<p><strong>第一步：更新哈希环</strong></p>
+<p>增加 $ID_4$（$H=30$）后，四台服务器在环上的排序为：</p>
+<ul>
+<li>$ID_1$：$H = 4$</li>
+<li>$ID_3$：$H = 13$</li>
+<li>$ID_2$：$H = 23$</li>
+<li>$ID_4$：$H = 30$</li>
+</ul>
+<p><strong>第二步：确定新服务器 $ID_4$ 的负责区间</strong></p>
+<p>一致性哈希中，新加入的节点只从顺时针方向的下一台服务器"接管"部分区间。</p>
+<p>$ID_4$（H=30）的负责区间：从上一台服务器 $ID_2$（H=23）的下一位置到 $ID_4$ 自身，即 $(23, 30]$（24 到 30）。</p>
+<p><strong>第三步：确定哪些记录需要迁移</strong></p>
+<p>原有存储分布（N=3 时）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">服务器</th>
+<th style="text-align: left;">存储记录哈希值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">$ID_1$</td>
+<td style="text-align: left;">1, 3, 26, 31</td>
+</tr>
+<tr>
+<td style="text-align: center;">$ID_3$</td>
+<td style="text-align: left;">5, 9</td>
+</tr>
+<tr>
+<td style="text-align: center;">$ID_2$</td>
+<td style="text-align: left;">14, 15, 19, 21</td>
+</tr>
+</tbody>
+</table>
+<p>新服务器 $ID_4$ 负责区间 $(23, 30]$（24-30），需要从原服务器中接管落在此区间的记录。</p>
+<p>检查每条记录的哈希值是否落在 $(23, 30]$：
+- 1 → 不在
+- 3 → 不在
+- 5 → 不在
+- 9 → 不在
+- 14 → 不在
+- 15 → 不在
+- 19 → 不在
+- 21 → 不在
+- <strong>26 → 在 $(23, 30]$ 区间内 ✓</strong>（原属 $ID_1$）
+- 31 → 不在（31 &gt; 30，仍由顺时针方向的 $ID_1$ 负责）</p>
+<p>$ID_4$ 的区间 $(23, 30]$ 原本是由 $ID_1$ 负责的（在 N=3 时，$(23, 31] \cup [0, 4]$ 全属 $ID_1$）。新节点 $ID_4$ 插入后，原 $ID_1$ 的区间 $(23, 30]$ 被 $ID_4$ 接替。</p>
+<p>所以要迁移的记录是哈希值为 <strong>26</strong> 的记录，从 $ID_1$ 迁移到 $ID_4$。</p>
+<p><strong>第四步：结果</strong></p>
+<p>需要迁移的记录数：<strong>1 条</strong>（哈希值 26）。</p>
+<p>与哈希取模法的 7 条迁移量相比，一致性哈希大幅减少了数据迁移量（仅 1 条 vs 7 条），体现了其显著优势。</p>
+<hr />
+<h3>题目7（来源：2019年）</h3>
+<p><strong>原题：</strong> MapReduce 编程：简述 TopN 问题的 map、combine 及 reduce 思想。</p>
+<p><strong>解析/答案：</strong></p>
+<p><strong>核心思想</strong>：在每个阶段（Map、Combine、Reduce）都维护一个容量为 N 的小顶堆（或类似数据结构），只保留当前阶段内的 TopN，逐步过滤出全局 TopN。</p>
+<p><strong>Map 阶段思想</strong>：
+- 每个 Map Task 处理一个输入分片中的数据。
+- 在本地维护一个容量为 N 的小顶堆，用于筛选本分片内的 TopN。
+- map 方法每处理一条记录，将其插入小顶堆；若堆大小超过 N，弹出堆顶（最小值）。
+- 在 cleanup 方法中输出堆中所有记录。</p>
+<p><strong>Combine 阶段思想</strong>：
+- Combine 阶段在 Map 端对多个 Map 输出的中间 TopN 结果进行本地合并。
+- 逻辑与 Map 的 cleanup 相同：接收 <code>&lt;key, value&gt;</code> 对，在多个 TopN 的并集中再次利用小顶堆选出 TopN。
+- 目的是在 Shuffle 之前大幅减少需要传输到 Reduce 端的数据量。</p>
+<p><strong>Reduce 阶段思想</strong>：
+- Reduce 接收所有 Map 端输出的候选 TopN 记录（每个 Map 最多 N 条）。
+- 在 Reduce 端同样维护容量为 N 的小顶堆，合并所有 Map 传来的候选数据，选出全局最终 TopN。
+- 若按频次排序（如 TopN 词频），通常先做一轮 WordCount 得到 <code>&lt;word, count&gt;</code>，再做一轮 TopN。</p>
+<p><strong>关键优势</strong>：Map 端和 Combine 端有效削减了传输数据量。假设 M 个 Map Task，Reduce 端最多只需处理 $M \times N$ 条记录，而不是全部数据。</p>
+<hr />
+<h3>题目8（来源：2019年、2020年A卷、2020回忆版）</h3>
+<p><strong>原题：</strong> MapReduce 编程：输入每行 <code>&lt;ID1, ID2&gt;</code> 表示 ID1 关注了 ID2（ID1 是 ID2 的粉丝）。要求输出粉丝数量超过 50 万的博主 ID 及其粉丝数量。请给出 Map 方法和 Reduce 方法的伪代码。（12分）</p>
+<p><strong>解析/答案：</strong></p>
+<p><strong>设计思路</strong>：将关注关系"翻转"——Map 以被关注者（ID2）为 key 输出，Reduce 统计每个 key 下的粉丝数量，最后过滤出粉丝数超过 50 万的博主。</p>
+<p><strong>Map 方法伪代码</strong>：</p>
+<pre><code>class FanCountMapper:
+    method map(LongWritable key, Text value):
+        // 解析输入行
+        line = value.toString()
+        tokens = line.split(&quot;,&quot;)
+        follower = tokens[0].trim()      // ID1：粉丝
+        followee = tokens[1].trim()      // ID2：被关注者（博主）
+
+        // 输出：(被关注者ID, 1)，每个粉丝贡献计数1
+        // 或输出 (被关注者ID, 粉丝ID)，便于同时获得粉丝列表
+        context.write(new Text(followee), new IntWritable(1))
+</code></pre>
+<p><strong>Reduce 方法伪代码</strong>：</p>
+<pre><code>class FanCountReducer:
+    method reduce(Text key, Iterable&lt;IntWritable&gt; values):
+        // key: 博主ID, values: 粉丝计数列表 [1, 1, 1, ...]
+        fanCount = 0
+
+        for each val in values:
+            fanCount += val.get()
+
+        // 过滤：只输出粉丝数超过 50 万的博主
+        if fanCount &gt; 500000:
+            output = &quot;博主ID: &quot; + key.toString() + &quot;, 粉丝数: &quot; + fanCount
+            context.write(key, new Text(output))
+</code></pre>
+<p><strong>备选方案（输出粉丝列表）</strong>：</p>
+<p>如果题目要求同时输出粉丝数量和粉丝列表：</p>
+<pre><code>// Map 输出 (被关注者ID, 粉丝ID)
+map(LongWritable key, Text value):
+    tokens = value.toString().split(&quot;,&quot;)
+    follower = tokens[0].trim()
+    followee = tokens[1].trim()
+    context.write(new Text(followee), new Text(follower))
+
+// Reduce
+reduce(Text key, Iterable&lt;Text&gt; values):
+    fanCount = 0
+    fanList = []
+    for each val in values:
+        fanCount++
+        fanList.add(val.toString())
+    if fanCount &gt; 500000:
+        context.write(key, new Text(&quot;粉丝数: &quot; + fanCount + &quot;, 粉丝列表: &quot; + fanList))
+</code></pre>
+<hr />
+<h3>题目9（来源：2020年A卷）</h3>
+<p><strong>原题：</strong> 关于数据分区：为加强疫情防控，某热门景区计划在关系型数据库中保存每日到访的游客实名信息。游客信息数据表的联合主键包含两个字段：身份证号，访问日期。计划将游客信息分布存储在 7 台硬件配置接近的服务器中，每台服务器上都运行一个关系型数据库系统软件。另外部署一台 Web 服务器运行前端软件模块以处理客户端插入和查询游客信息的交互请求。系统支持两类查询。查询类型 1：给定身份证号查询游客信息；查询类型 2：给定日期查询当日到访的游客信息列表。</p>
+<p><strong>(1) 假定采用基于哈希的数据分区法，即根据身份证号的哈希值进行分区。请简述 Web 服务器中前端软件实现游客信息插入的基本思想。（4分）</strong></p>
+<p><strong>答案</strong>：
+1. 前端软件接收到插入请求后，提取游客的身份证号。
+2. 对身份证号进行哈希计算：$h = H(身份证号)$。
+3. 计算目标服务器编号：$ServerID = h \bmod 7$。
+4. 将游客信息记录发送到对应编号的服务器上的数据库执行 INSERT 操作。</p>
+<p><strong>(2) 在上述分区法中，简述前端软件实现类型 1 查询（给定身份证号查询）的基本思想。（2分）</strong></p>
+<p><strong>答案</strong>：
+1. 对给定的身份证号进行哈希计算：$h = H(身份证号)$。
+2. 计算目标服务器编号：$ServerID = h \bmod 7$。
+3. 直接向该服务器发送查询请求，检索该身份证号对应的游客记录并返回。</p>
+<p><strong>(3) 在上述分区法中，简述前端软件实现类型 2 查询（给定日期查询当日到访游客）的基本思想。（4分）</strong></p>
+<p><strong>答案</strong>：
+类型 2 查询（按日期查询）需要扫描所有服务器，因为数据按身份证号分区而非按日期分区：</p>
+<ol>
+<li>前端软件向所有 7 台服务器<strong>并行发送</strong>查询请求，查询条件为"访问日期 = 给定日期"。</li>
+<li>收集所有 7 台服务器返回的查询结果。</li>
+<li>将各服务器的结果<strong>合并</strong>，形成完整的当日游客列表返回给客户端。</li>
+</ol>
+<p><strong>(4) 另一种数据分区方法是根据游客所属的地理区域进行分区，即 7 台服务器分别对应全国 7 大地理分区。与基于哈希的数据分区法相比，该分区方法有什么缺点？（4分）</strong></p>
+<p><strong>答案</strong>：
+1. <strong>数据分布不均匀（数据倾斜）</strong>：不同地理区域的人口数量和旅游业活跃度差异很大（如华东地区远多于西北地区），导致各服务器的存储量和查询负载严重不均，部分服务器成为瓶颈。
+2. <strong>可扩展性差</strong>：若需要增加或调整服务器数量（如从 7 个地理分区变为更多分区），需要重新划分地理区域并大规模迁移数据，操作复杂。
+3. <strong>特定于该应用场景</strong>：地理分区缺乏通用性，哈希分区可以适用于各种以身份证号为主键的场景。
+4. <strong>热点问题</strong>：热门省份（如广东、北京、上海所在的地理分区）的服务器可能在旅游旺季严重过载。</p>
+<hr />
+<h3>题目10（来源：2022年A卷）</h3>
+<p><strong>原题：</strong> MapReduce 编程：输入数据为公司员工的工资信息，格式为 <code>员工姓名, 部门, 年份, 月份, 工资金额</code>。已知 2021 年没有人员流动，要求统计不同部门员工 2021 年的年平均工资。用伪代码描述该 MapReduce 程序的主要设计思想。（12分）</p>
+<p><strong>解析/答案：</strong></p>
+<p><strong>设计思路</strong>：</p>
+<p>本题的核心是先按"部门 + 员工姓名"聚合计算每个员工 2021 年的总工资（12 个月），然后再按"部门"聚合计算该部门所有员工的年平均工资。</p>
+<p><strong>Map 方法伪代码</strong>：</p>
+<pre><code>class SalaryMapper:
+    method map(LongWritable key, Text value):
+        // 输入行: 员工姓名, 部门, 年份, 月份, 工资金额
+        tokens = value.toString().split(&quot;,&quot;)
+        name = tokens[0].trim()
+        dept = tokens[1].trim()
+        year = tokens[2].trim()
+        month = tokens[3].trim()
+        salary = Float.parseFloat(tokens[4].trim())
+
+        // 只处理 2021 年的数据
+        if year == &quot;2021&quot;:
+            // key = 部门 + &quot;\t&quot; + 员工姓名（复合键）
+            // value = 工资金额
+            outKey = dept + &quot;\t&quot; + name
+            context.write(new Text(outKey), new FloatWritable(salary))
+</code></pre>
+<p><strong>Reduce 方法伪代码</strong>：</p>
+<pre><code>class SalaryReducer:
+    method reduce(Text key, Iterable&lt;FloatWritable&gt; values):
+        // key: 部门\t员工姓名
+        // values: 该员工2021年各月的工资金额
+
+        totalSalary = 0.0
+        monthCount = 0
+
+        for each val in values:
+            totalSalary += val.get()
+            monthCount++
+
+        // 计算该员工的年平均工资
+        // 注：2021年共12个月，但由于可能有缺月数据，用实际月份数
+        annualAvg = totalSalary / 12.0  // 或 / monthCount
+
+        // 如果需要按部门汇总，此时需要第二轮MapReduce
+        // 但本题只需直接输出（或按部门分组后计算均值）
+
+        // 方案一：直接输出每个员工的年平均
+        // context.write(key, new FloatWritable(annualAvg))
+
+        // 方案二：如果要求&quot;部门平均&quot;，则先输出员工年总工资和计数
+        // 这里用方案二
+        parts = key.toString().split(&quot;\t&quot;)
+        dept = parts[0]
+        name = parts[1]
+
+        // 输出 (部门, 员工年平均工资) 供后续处理
+        context.write(new Text(dept), new Text(name + &quot;:&quot; + annualAvg))
+</code></pre>
+<p><strong>如果只需一轮 MapReduce 的方案（直接求部门平均）</strong>：</p>
+<pre><code>// Map 阶段：以部门为 key，输出 (部门, 员工姓名:各月工资)
+map(LongWritable key, Text value):
+    tokens = value.toString().split(&quot;,&quot;)
+    name = tokens[0].trim()
+    dept = tokens[1].trim()
+    year = tokens[2].trim()
+    salary = Float.parseFloat(tokens[4].trim())
+
+    if year == &quot;2021&quot;:
+        // key = 部门, value = 员工姓名:工资
+        context.write(new Text(dept), new Text(name + &quot;:&quot; + salary))
+
+// Reduce 阶段：计算部门年平均工资
+reduce(Text key, Iterable&lt;Text&gt; values):
+    // key: 部门
+    // values: 该部门所有员工各月的工资记录 &quot;员工姓名:工资金额&quot;
+
+    // 用 Map&lt;String, List&lt;Float&gt;&gt; 按员工姓名分组
+    employeeSalaries = new HashMap()  // 员工姓名 → 工资列表
+
+    for each val in values:
+        parts = val.toString().split(&quot;:&quot;)
+        empName = parts[0]
+        empSalary = Float.parseFloat(parts[1])
+
+        if employeeSalaries containsKey empName:
+            employeeSalaries.get(empName).add(empSalary)
+        else:
+            employeeSalaries.put(empName, [empSalary])
+
+    // 计算部门总年平均工资
+    totalAnnualAvg = 0.0
+    empCount = 0
+    for each emp in employeeSalaries:
+        sum = 0.0
+        for each s in employeeSalaries.get(emp):
+            sum += s
+        totalAnnualAvg += sum / 12.0
+        empCount++
+
+    deptAvg = totalAnnualAvg / empCount
+    context.write(key, new Text(&quot;部门年平均工资: &quot; + deptAvg))
+</code></pre>
+<p><strong>关键点</strong>：
+- 先筛选 2021 年的数据。
+- 已知无人员流动，每个员工全年 12 个月都有工资记录（12 条）。
+- 以"部门 + 员工姓名"为 key 聚合各月工资。
+- 计算每个员工的年平均工资，再求部门平均。</p>
+<hr />
+<h3>题目11（来源：2020年A卷、2020回忆版）</h3>
+<p><strong>原题：</strong> Spark 编程：输入 HDFS 文件中保存了学生成绩信息，格式为 <code>班级, 姓名, 科目, 必修/选修, 成绩</code>。要求编写 Spark 程序，统计学生必修课平均成绩在 90~100, 80~89, 70~79, 60~69 和 60 分以下这 5 个分数段的人数。请给出该程序的伪代码。（12分）</p>
+<p><strong>解析/答案：</strong></p>
+<p><strong>设计思路</strong>：
+1. 从 HDFS 读取数据创建 RDD。
+2. 过滤出必修课数据。
+3. 按学生姓名聚合计算每个学生的必修课平均成绩。
+4. 按分数段分类统计人数。</p>
+<p><strong>伪代码</strong>：</p>
+<pre><code>// 1. 创建 SparkContext
+SparkConf conf = new SparkConf().setAppName(&quot;ScoreDistribution&quot;)
+JavaSparkContext sc = new JavaSparkContext(conf)
+
+// 2. 从 HDFS 读取数据
+JavaRDD&lt;String&gt; lines = sc.textFile(&quot;hdfs://input/path&quot;)
+
+// 3. 过滤必修课，提取 (学生姓名, 成绩)
+JavaPairRDD&lt;String, Double&gt; requiredCourseScores = lines
+    .filter(line -&gt; {
+        tokens = line.split(&quot;,&quot;)
+        return tokens[3].trim().equals(&quot;必修&quot;)
+    })
+    .mapToPair(line -&gt; {
+        tokens = line.split(&quot;,&quot;)
+        name = tokens[1].trim()
+        score = Double.parseDouble(tokens[4].trim())
+        return new Tuple2&lt;String, Double&gt;(name, score)
+    })
+
+// 4. 计算每个学生的必修课平均成绩
+//    使用 aggregateByKey 或 combineByKey
+JavaPairRDD&lt;String, (Double, Integer)&gt; studentSumCount = requiredCourseScores
+    .aggregateByKey(
+        // 初始值: (总分, 科目数)
+        new Tuple2&lt;Double, Integer&gt;(0.0, 0),
+        // seqOp: 分区内聚合
+        (acc, score) -&gt; new Tuple2&lt;Double, Integer&gt;(acc._1 + score, acc._2 + 1),
+        // combOp: 跨分区合并
+        (acc1, acc2) -&gt; new Tuple2&lt;Double, Integer&gt;(acc1._1 + acc2._1, acc1._2 + acc2._2)
+    )
+
+// 计算平均分
+JavaRDD&lt;Double&gt; avgScores = studentSumCount
+    .map(tuple -&gt; tuple._2._1 / tuple._2._2)
+
+// 5. 按分数段分类统计人数
+JavaPairRDD&lt;String, Integer&gt; distribution = avgScores
+    .mapToPair(avg -&gt; {
+        if (avg &gt;= 90) return new Tuple2&lt;String, Integer&gt;(&quot;90~100&quot;, 1)
+        else if (avg &gt;= 80) return new Tuple2&lt;String, Integer&gt;(&quot;80~89&quot;, 1)
+        else if (avg &gt;= 70) return new Tuple2&lt;String, Integer&gt;(&quot;70~79&quot;, 1)
+        else if (avg &gt;= 60) return new Tuple2&lt;String, Integer&gt;(&quot;60~69&quot;, 1)
+        else return new Tuple2&lt;String, Integer&gt;(&quot;60以下&quot;, 1)
+    })
+    .reduceByKey((a, b) -&gt; a + b)
+
+// 6. 输出结果
+distribution.saveAsTextFile(&quot;hdfs://output/path&quot;)
+</code></pre>
+<p><strong>备选方案（使用 groupByKey + mapValues）</strong>：</p>
+<pre><code>// 更简洁的写法
+JavaPairRDD&lt;String, Iterable&lt;Double&gt;&gt; studentScores = requiredCourseScores
+    .groupByKey()
+
+JavaRDD&lt;Double&gt; avgScores = studentScores
+    .map(tuple -&gt; {
+        sum = 0.0
+        count = 0
+        for score in tuple._2:
+            sum += score
+            count++
+        return sum / count
+    })
+
+// 分类统计同上
+</code></pre>
+<p><strong>关键点</strong>：
+- <code>filter</code> 只保留必修课。
+- <code>reduceByKey</code> 或 <code>aggregateByKey</code> 实现按学生姓名聚合。
+- <code>map</code> 将平均分映射为分数段区间。
+- <code>reduceByKey</code> 统计各分数段人数。</p>
+<hr />
+<h3>题目12（来源：2022年A卷）</h3>
+<p><strong>原题：</strong> Spark 编程：输入 HDFS 数据文件中保存了一个大规模的有向图，该文件每一行都存放了一个形如 <code>&lt;ID1, ID2, Weight&gt;</code> 的三元组，表示一条以节点 ID1 为始点、节点 ID2 为终点的有向边，Weight 是边的权值。现要求设计基于 Spark 并行计算模型的程序对该文件进行分析，获得所有度数（出度 + 入度）大于 1000 的节点的标识。用伪代码描述该 Spark 程序的主要思想。（12分）</p>
+<p><strong>解析/答案：</strong></p>
+<p><strong>设计思路</strong>：
+- 出度：以某节点为始点的边数，即从该节点出发的边数。
+- 入度：以某节点为终点的边数，即指向该节点的边数。
+- 总度数 = 出度 + 入度。</p>
+<p>需要分别统计出度和入度，然后合并计算总度数。</p>
+<p><strong>伪代码</strong>：</p>
+<pre><code>// 1. 创建 SparkContext
+SparkConf conf = new SparkConf().setAppName(&quot;GraphDegree&quot;)
+JavaSparkContext sc = new JavaSparkContext(conf)
+
+// 2. 从 HDFS 读取数据
+JavaRDD&lt;String&gt; lines = sc.textFile(&quot;hdfs://input/path&quot;)
+
+// 3. 解析边数据
+JavaRDD&lt;Edge&gt; edges = lines.map(line -&gt; {
+    tokens = line.split(&quot;,&quot;)
+    src = tokens[0].trim()      // 始点 ID1
+    dst = tokens[1].trim()      // 终点 ID2
+    weight = Double.parseDouble(tokens[2].trim())
+    return new Edge(src, dst, weight)
+})
+
+// 4. 统计出度：以始点为 key，每个始点出现一次计 1
+JavaPairRDD&lt;String, Integer&gt; outDegrees = edges
+    .mapToPair(edge -&gt; new Tuple2&lt;String, Integer&gt;(edge.src, 1))
+    .reduceByKey((a, b) -&gt; a + b)
+
+// 5. 统计入度：以终点为 key，每个终点出现一次计 1
+JavaPairRDD&lt;String, Integer&gt; inDegrees = edges
+    .mapToPair(edge -&gt; new Tuple2&lt;String, Integer&gt;(edge.dst, 1))
+    .reduceByKey((a, b) -&gt; a + b)
+
+// 6. 合并出度和入度，计算总度数
+//    使用 union + reduceByKey，或使用 fullOuterJoin
+JavaPairRDD&lt;String, (Optional&lt;Integer&gt;, Optional&lt;Integer&gt;)&gt; joined = outDegrees
+    .fullOuterJoin(inDegrees)
+
+JavaRDD&lt;(String, Integer)&gt; totalDegrees = joined
+    .mapValues(tuple -&gt; {
+        out = tuple._1.orElse(0)
+        in = tuple._2.orElse(0)
+        return out + in
+    })
+    .filter(tuple -&gt; tuple._2 &gt; 1000)  // 过滤度数 &gt; 1000 的节点
+    .map(tuple -&gt; tuple._1)            // 只保留节点 ID
+
+// 7. 输出结果
+totalDegrees.saveAsTextFile(&quot;hdfs://output/path&quot;)
+</code></pre>
+<p><strong>备选方案（使用 union + reduceByKey）</strong>：</p>
+<pre><code>// 方法二：将出度和入度统一处理
+// 每个三元组生成两条记录：始点出度+1，终点入度+1
+JavaPairRDD&lt;String, Integer&gt; allDegrees = edges
+    .flatMapToPair(edge -&gt; {
+        List&lt;Tuple2&lt;String, Integer&gt;&gt; result = new ArrayList&lt;&gt;()
+        result.add(new Tuple2&lt;String, Integer&gt;(edge.src, 1))   // 出度
+        result.add(new Tuple2&lt;String, Integer&gt;(edge.dst, 1))   // 入度
+        return result.iterator()
+    })
+    .reduceByKey((a, b) -&gt; a + b)
+    .filter(tuple -&gt; tuple._2 &gt; 1000)
+
+// 输出
+allDegrees.saveAsTextFile(&quot;hdfs://output/path&quot;)
+</code></pre>
+<p><strong>备选方案二（分别求然后 union 求和）</strong>：</p>
+<pre><code>// 出度
+JavaPairRDD&lt;String, Integer&gt; outDeg = edges.mapToPair(e -&gt; (e.src, 1)).reduceByKey(+)
+// 入度
+JavaPairRDD&lt;String, Integer&gt; inDeg = edges.mapToPair(e -&gt; (e.dst, 1)).reduceByKey(+)
+// 合并
+JavaPairRDD&lt;String, Integer&gt; totalDeg = outDeg.union(inDeg).reduceByKey(+)
+// 过滤
+JavaRDD&lt;String&gt; result = totalDeg.filter(t -&gt; t._2 &gt; 1000).keys()
+</code></pre>
+<p><strong>关键点</strong>：
+- 利用 <code>flatMapToPair</code> 将每条边扩展为两条度记录（出度和入度），然后 <code>reduceByKey</code> 聚合。
+- 也可以分别计算 <code>outDegrees</code> 和 <code>inDegrees</code>，再用 <code>fullOuterJoin</code> 或 <code>union + reduceByKey</code> 合并。
+- 有向图中，每条边同时贡献一个出度（给始点）和一个入度（给终点），因此总度数 = 2 × 边数。
+- 过滤条件：<code>总度数 &gt; 1000</code>。</p>
+<hr />
+<h2>三、知识点总结与补充</h2>
+<h3>3.1 Hadoop 生态体系</h3>
+<p>Hadoop 平台是面向大数据的开源分布式平台，包含以下核心组件：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HDFS</strong></td>
+<td>分布式文件系统，负责数据存储</td>
+</tr>
+<tr>
+<td><strong>MapReduce</strong></td>
+<td>分布式计算框架，批处理</td>
+</tr>
+<tr>
+<td><strong>YARN</strong></td>
+<td>资源管理和任务调度</td>
+</tr>
+<tr>
+<td><strong>Hive</strong></td>
+<td>数据仓库，SQL-on-Hadoop</td>
+</tr>
+<tr>
+<td><strong>HBase</strong></td>
+<td>分布式 NoSQL 数据库</td>
+</tr>
+<tr>
+<td><strong>Spark</strong></td>
+<td>内存计算引擎</td>
+</tr>
+<tr>
+<td><strong>ZooKeeper</strong></td>
+<td>分布式协调服务</td>
+</tr>
+<tr>
+<td><strong>Flume</strong></td>
+<td>日志收集系统</td>
+</tr>
+<tr>
+<td><strong>Kafka</strong></td>
+<td>分布式消息队列</td>
+</tr>
+<tr>
+<td><strong>Sqoop</strong></td>
+<td>关系型数据库与 Hadoop 之间的数据传输工具</td>
+</tr>
+</tbody>
+</table>
+<h3>3.2 HDFS 架构模式</h3>
+<p>HDFS 和 MapReduce 均采用<strong>主从模式（Master-Slave）</strong>架构：
+- HDFS：NameNode（主）+ DataNode（从）
+- MapReduce（YARN）：Resource Manager（主）+ Node Manager（从）
+- 经典论文：《The Google File System》(2003)、《MapReduce》(2008)、《The Hadoop Distributed File System》(2010)</p>
+<h3>3.3 MapReduce 编程要点总结</h3>
+<ol>
+<li><strong>Key 的设计是关键</strong>：通过设计 Map 输出的 key 来控制哪些数据会被聚集到同一个 Reduce Task 中。</li>
+<li><strong>Combiner 的适用条件</strong>：必须是满足交换律和结合律的归约操作（求和、求最大值等），结果必须与全局归约等价。</li>
+<li><strong>数据本地性</strong>：优先在数据所在的节点上启动 Map Task（移动计算而非移动数据）。</li>
+<li><strong>二次分区的默认规则</strong>：$Hash(key) \bmod R$（$R$ 为 Reduce 数量）。</li>
+<li><strong>多轮 MapReduce</strong>：复杂问题（如 grandchild-grandparent）通常需要多轮 MapReduce 才能解决。</li>
+</ol>
+<h3>3.4 一致性哈希关键计算步骤</h3>
+<ol>
+<li>计算所有服务器标识的哈希值，映射到哈希环上。</li>
+<li>将哈希环上的服务器按哈希值排序。</li>
+<li>每台服务器负责环上从上一台服务器位置（不含）到自身位置（含）的区间。</li>
+<li>每条数据记录顺时针遇到的第一个服务器即为存储节点。</li>
+<li>增加新节点时，只有新节点负责区间的数据需要从相邻服务器迁移到新节点。</li>
+<li>删除节点时，该节点上的数据迁移到顺时针方向的下一个节点。</li>
+</ol>
+<h3>3.5 数据分区策略比较</h3>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>数据分布</th>
+<th>扩展性</th>
+<th>查询效率（按分区键）</th>
+<th>查询效率（非分区键）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>哈希取模</td>
+<td>均匀</td>
+<td>差（大量迁移）</td>
+<td>$O(1)$ 单节点</td>
+<td>$O(N)$ 全节点</td>
+</tr>
+<tr>
+<td>一致性哈希</td>
+<td>较均匀（需虚拟节点）</td>
+<td>好（少量迁移）</td>
+<td>$O(1)$ 单节点</td>
+<td>$O(N)$ 全节点</td>
+</tr>
+<tr>
+<td>范围分区</td>
+<td>可能倾斜</td>
+<td>中等</td>
+<td>$O(log N)$</td>
+<td>$O(N)$ 全节点</td>
+</tr>
+<tr>
+<td>地理分区</td>
+<td>通常不均匀</td>
+<td>差</td>
+<td>$O(1)$ 单节点</td>
+<td>$O(N)$ 全节点</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>四、经典论文</h2>
+<ol>
+<li><strong>《The Google File System》</strong> - Sanjay Ghemawat, Howard Gobioff, Shun-Tak Leung, 2003 年，SOSP。</li>
+<li><strong>《MapReduce: Simplified Data Processing on Large Clusters》</strong> - Jeffrey Dean, Sanjay Ghemawat, 2008 年，OSDI。</li>
+<li><strong>《The Hadoop Distributed File System》</strong> - Konstantin Shvachko 等, 2010 年，MSST。</li>
+</ol>
+    </div>
+</body>
+</html>

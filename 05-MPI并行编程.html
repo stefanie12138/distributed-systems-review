@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第7讲：MPI并行编程 — 分布式系统复习</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+        ], ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']});"></script>
+    <style>
+        :root {
+            --bg: #fafafa;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #555;
+            --border: #e0e0e0;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --code-bg: #f4f4f5;
+            --heading-color: #1a1a2e;
+            --table-stripe: #f8fafc;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+        }
+        nav.breadcrumb {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            padding: 12px 16px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        nav.breadcrumb a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        nav.breadcrumb a:hover { text-decoration: underline; }
+        h1 {
+            font-size: 2em;
+            color: var(--heading-color);
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 12px;
+            margin-bottom: 28px;
+        }
+        h2 {
+            font-size: 1.5em;
+            color: var(--heading-color);
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 4px solid var(--accent);
+        }
+        h3 {
+            font-size: 1.2em;
+            color: var(--heading-color);
+            margin-top: 28px;
+            margin-bottom: 12px;
+        }
+        h4 {
+            font-size: 1.05em;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+        p { margin-bottom: 12px; text-align: justify; }
+        strong { color: #1a1a2e; }
+        ul, ol {
+            margin-bottom: 12px;
+            padding-left: 24px;
+        }
+        li { margin-bottom: 4px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.95em;
+            box-shadow: var(--shadow);
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            text-align: left;
+        }
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        tr:nth-child(even) td { background: var(--table-stripe); }
+        code {
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 16px 0;
+            line-height: 1.6;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: 0.88em;
+        }
+        blockquote {
+            border-left: 4px solid #94a3b8;
+            padding: 10px 16px;
+            margin: 16px 0;
+            background: #f8fafc;
+            color: #475569;
+            border-radius: 0 6px 6px 0;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 32px 0;
+        }
+        .katex-display > .katex {
+            text-align: left !important;
+        }
+        @media (max-width: 640px) {
+            .container { padding: 12px 14px 40px; }
+            h1 { font-size: 1.5em; }
+            h2 { font-size: 1.25em; }
+            table { font-size: 0.82em; }
+            th, td { padding: 6px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="index.html">← 返回首页</a>
+        </nav>
+        <h1>第5讲：MPI并行编程</h1>
+<h2>一、知识点讲解</h2>
+<h3>1.1 MPI 概述</h3>
+<h4>1.1.1 MPI 的定义</h4>
+<p>MPI（Message Passing Interface，消息传递接口）是一种<strong>编写分布式并行程序的函数库规范（标准）</strong>。它不是一种具体的编程语言，也不是一个具体的软件实现，而是一套被广泛接受的<strong>接口标准</strong>。不同组织或个人可以基于该规范给出自己的具体实现，例如：</p>
+<ul>
+<li><strong>Open MPI</strong>：开源实现，广泛应用于 Linux 集群</li>
+<li><strong>MPICH</strong>：另一个广泛使用的开源实现</li>
+<li><strong>Microsoft MPI（MS-MPI）</strong>：微软在 Windows 平台上的实现</li>
+<li><strong>Intel MPI</strong>：Intel 针对其硬件平台优化的实现</li>
+</ul>
+<p>MPI 专门针对<strong>消息传递模型</strong>设计，为常用的编程语言（C、C++、Fortran、Python 等）都提供了接口支持。本课程以 Python 的 <strong>mpi4py</strong> 库为主要教学工具。</p>
+<h4>1.1.2 MPI 的核心价值</h4>
+<p>MPI 为编写分布式并行计算程序带来了以下便利：</p>
+<ol>
+<li><strong>简化分布式并行程序的管理</strong>：包括程序分发、多进程创建、多进程生命周期管理等</li>
+<li><strong>提供灵活高效的通信支持</strong>：支持单机多进程（共享内存机器上的多核并行）或分布式多机多进程间的消息通信</li>
+<li><strong>提高水平可扩展性</strong>：可以通过增加节点数量来提升计算能力，理论上可实现近似线性的加速比</li>
+<li><strong>平台兼容性好</strong>：同一套 MPI 代码可以在不同平台上编译运行，从笔记本电脑到超级计算机集群</li>
+<li><strong>丰富的集体通信原语</strong>：提供了广播、散播、收集、归约等多种聚集、分发、分组、规约通信和计算支持</li>
+<li><strong>提高资源利用率</strong>：支持负载均衡、同步/异步通信模式切换、错误处理等机制</li>
+</ol>
+<h4>1.1.3 MPI 与 MapReduce 的区别</h4>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>MPI</th>
+<th>MapReduce</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>编程模型</strong></td>
+<td>消息传递模型，显式控制进程间通信</td>
+<td>数据并行模型，Map 和 Reduce 两个阶段</td>
+</tr>
+<tr>
+<td><strong>通信方式</strong></td>
+<td>程序员显式调用 send/recv 等通信函数</td>
+<td>框架自动处理 shuffle/sort 等通信</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>科学计算、数值模拟、需要频繁迭代和通信的计算</td>
+<td>大规模数据处理、ETL、日志分析</td>
+</tr>
+<tr>
+<td><strong>数据存储</strong></td>
+<td>数据通常在内存中，由各进程独立管理</td>
+<td>数据存储在分布式文件系统（如 HDFS）中</td>
+</tr>
+<tr>
+<td><strong>容错机制</strong></td>
+<td>通常依赖检查点（checkpoint）恢复</td>
+<td>内置任务重试、数据副本容错</td>
+</tr>
+<tr>
+<td><strong>编程复杂度</strong></td>
+<td>较高，需手动管理数据划分和通信</td>
+<td>较低，只需实现 Map 和 Reduce 函数</td>
+</tr>
+<tr>
+<td><strong>性能</strong></td>
+<td>延迟低，适合细粒度并行</td>
+<td>适合粗粒度批处理，延迟较高</td>
+</tr>
+</tbody>
+</table>
+<h4>1.1.4 MPI 的适用场景</h4>
+<ul>
+<li><strong>科学计算与数值模拟</strong>：CFD（计算流体力学）、分子动力学模拟、天气预报</li>
+<li><strong>高性能计算（HPC）</strong>：求解偏微分方程、矩阵运算、FFT</li>
+<li><strong>大规模并行排序和搜索</strong>：分布式排序算法</li>
+<li><strong>机器学习的分布式训练</strong>：参数服务器模式、AllReduce 梯度同步（如 Horovod 框架底层就使用 MPI）</li>
+<li><strong>图像处理与渲染</strong>：分布式光线追踪、遥感影像处理</li>
+</ul>
+<hr />
+<h3>1.2 MPI 基本编程模型</h3>
+<h4>1.2.1 SPMD 模型</h4>
+<p>MPI 程序通常采用 <strong>SPMD（Single Program Multiple Data，单程序多数据）</strong> 模型：</p>
+<ul>
+<li><strong>Single Program（单程序）</strong>：所有进程运行同一份代码</li>
+<li><strong>Multiple Data（多数据）</strong>：每个进程处理不同的数据</li>
+</ul>
+<p>在 SPMD 模型中，程序员编写一份代码，通过 <code>mpiexec -n N</code> 命令启动 N 个进程同时运行这份代码。<strong>每个进程通过查询自己的 rank（编号）来确定自己的身份</strong>，然后根据分支条件（if-else）执行不同的代码路径，处理不同的数据片段。</p>
+<p>SPMD 模型的核心思想可以概括为：</p>
+<p>$$ \text{相同的代码} + \text{不同的 rank} \rightarrow \text{处理不同的数据} $$</p>
+<h4>1.2.2 进程与进程组</h4>
+<p><strong>进程</strong>是 MPI 程序的基本执行单元：</p>
+<ul>
+<li>与操作系统课程中的进程概念一致，每个进程拥有<strong>独立的内存地址空间</strong></li>
+<li>构成 MPI 程序的进程可以是<strong>单机内的多进程</strong>（利用多核 CPU），也可以是<strong>分布在多台机器上的分布式多进程</strong></li>
+<li>进程之间通过<strong>消息传递</strong>（message passing）进行数据交换，不能直接访问其他进程的内存</li>
+</ul>
+<p>单机多进程与多机多进程的对比：</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>单机多进程</th>
+<th>多机多进程</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通信方式</td>
+<td>共享内存或网络通信</td>
+<td>仅网络通信</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td>较低</td>
+<td>取决于网络</td>
+</tr>
+<tr>
+<td>扩展性</td>
+<td>受机器核数限制</td>
+<td>理论无限</td>
+</tr>
+</tbody>
+</table>
+<p><strong>进程组（Process Group）</strong>：</p>
+<ul>
+<li>进程组是 MPI 程序中全部进程集合的一个<strong>有序子集</strong></li>
+<li>进程组中每个进程被赋予一个在该组中<strong>唯一的序号</strong>，称为 <strong>rank</strong></li>
+<li>rank 的取值范围是 $$[0, \text{进程数}-1]$$</li>
+<li>rank 用于在进程组内标识和区分各个进程</li>
+</ul>
+<p><strong>通信器（Communicator）</strong>：</p>
+<ul>
+<li>通信器是进程组所依赖的通信基础设施，可以理解为一个"通信域"</li>
+<li><strong>组内通信器</strong>（intra-communicator）：进程组内的各个进程利用它相互通信</li>
+<li><strong>组间通信器</strong>（inter-communicator）：不同进程组的不同进程利用它相互通信</li>
+<li>通信器提供了丰富的<strong>点对点通信方法</strong>和<strong>集体通信方法</strong></li>
+<li><code>MPI.COMM_WORLD</code> 是默认的全局通信器，包含 MPI 程序启动时的所有进程</li>
+</ul>
+<pre><code class="language-python">from mpi4py import MPI
+
+# 获取默认全局通信器
+comm = MPI.COMM_WORLD
+
+# 获取当前进程的 rank
+rank = comm.Get_rank()
+
+# 获取总进程数
+size = comm.Get_size()
+</code></pre>
+<h4>1.2.3 消息传递模型</h4>
+<p>MPI 基于<strong>消息传递模型（Message Passing Model）</strong>，其核心特征包括：</p>
+<ol>
+<li><strong>显式通信</strong>：进程间通过显式调用 send 和 receive 函数进行数据交换。每个通信操作都同时涉及发送方和接收方</li>
+<li><strong>分布式内存</strong>：每个进程拥有自己独立的地址空间（分布式内存），数据共享必须通过消息传递完成</li>
+<li><strong>通信与同步耦合</strong>：阻塞型通信操作（如 send/recv）隐含着进程间的同步——接收方必须等待发送方的数据到达（反之亦然）</li>
+<li><strong>无共享状态</strong>：不需要锁、信号量等共享内存同步机制，天然避免了数据竞争（data race）问题</li>
+</ol>
+<p>消息传递模型与共享内存多线程模型的关键区别：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>消息传递模型（MPI）</th>
+<th>共享内存模型（多线程）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>内存模型</strong></td>
+<td>分布式内存，各进程独立地址空间</td>
+<td>共享内存，所有线程共享同一地址空间</td>
+</tr>
+<tr>
+<td><strong>通信方式</strong></td>
+<td>显式 send/recv</td>
+<td>直接读写共享变量</td>
+</tr>
+<tr>
+<td><strong>同步方式</strong></td>
+<td>阻塞通信隐合同步</td>
+<td>锁、信号量、条件变量等</td>
+</tr>
+<tr>
+<td><strong>可扩展性</strong></td>
+<td>可扩展到多机</td>
+<td>受限于单机</td>
+</tr>
+<tr>
+<td><strong>编程复杂度</strong></td>
+<td>需管理数据划分和通信</td>
+<td>需处理数据竞争和死锁</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>1.3 MPI 核心函数</h3>
+<p>以下以 Python 的 mpi4py 库为例介绍 MPI 核心 API。</p>
+<h4>1.3.1 环境管理函数</h4>
+<h5>MPI.Init() 和 MPI.Finalize()</h5>
+<p>在 C/C++ 的 MPI 中，<code>MPI_Init()</code> 和 <code>MPI_Finalize()</code> 是必须调用的函数，分别用于初始化和终止 MPI 环境。在 mpi4py 中，这些调用是<strong>自动完成的</strong>——导入 mpi4py 时自动调用 Init，程序结束时自动调用 Finalize，程序员通常不需要显式调用它们。</p>
+<pre><code class="language-python"># mpi4py 自动初始化 MPI 环境，无需显式调用 Init/Finalize
+from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+print(f&quot;Process {rank} is running&quot;)
+
+# mpi4py 会自动在程序结束时调用 Finalize
+</code></pre>
+<h5>MPI.COMM_WORLD</h5>
+<p>这是 MPI 中预定义的全局通信器，包含程序启动时的<strong>所有进程</strong>。它是最常用的通信器对象，所有进程间通信都通过它（或其派生的子通信器）进行。</p>
+<h5>comm.Get_rank()</h5>
+<pre><code class="language-python">rank = comm.Get_rank()
+</code></pre>
+<ul>
+<li><strong>功能</strong>：获取当前进程在通信器中的<strong>编号（rank）</strong></li>
+<li><strong>返回值</strong>：int 类型，取值范围 $$[0, \text{size}-1]$$</li>
+<li><strong>用途</strong>：程序中最重要的函数之一，用于确定当前进程的身份，从而执行不同的任务</li>
+</ul>
+<h5>comm.Get_size()</h5>
+<pre><code class="language-python">size = comm.Get_size()
+</code></pre>
+<ul>
+<li><strong>功能</strong>：获取通信器中包含的<strong>进程总数</strong></li>
+<li><strong>返回值</strong>：int 类型，等于 mpiexec 命令 <code>-n</code> 参数指定的进程数</li>
+<li><strong>用途</strong>：用于数据划分、循环边界计算等</li>
+</ul>
+<h5>comm.Get_name()</h5>
+<pre><code class="language-python">name = comm.Get_name()
+</code></pre>
+<ul>
+<li><strong>功能</strong>：获取通信器的名称（如 <code>MPI_COMM_WORLD</code>）</li>
+<li><strong>用途</strong>：调试和日志输出</li>
+</ul>
+<h4>1.3.2 点对点通信函数</h4>
+<p>点对点通信涉及两个进程：一个发送方和一个接收方。</p>
+<h5>comm.send(obj, dest, tag=0)</h5>
+<pre><code class="language-python">comm.send(data, dest=1, tag=0)
+</code></pre>
+<p>参数说明：
+- <strong>obj</strong>：要发送的 Python 对象（任意可序列化对象：int、float、list、numpy array 等）
+- <strong>dest</strong>（int）：目标进程的 rank（必须指定具体值）
+- <strong>tag</strong>（int，默认 0）：消息标签，用于区分不同类型的消息。接收方可以通过 tag 选择性接收</p>
+<p><strong>注意</strong>：<code>send()</code> 是<strong>阻塞型</strong>通信——调用后函数不会立即返回，直到发送缓冲区可以被安全重用为止（对于小消息通常很快返回，大消息可能等待）。</p>
+<h5>comm.recv(source=ANY_SOURCE, tag=ANY_TAG, status=None)</h5>
+<pre><code class="language-python">data = comm.recv(source=0, tag=MPI.ANY_TAG)
+</code></pre>
+<p>参数说明：
+- <strong>source</strong>（int 或 MPI.ANY_SOURCE）：指定接收来自哪个进程的消息。使用 <code>MPI.ANY_SOURCE</code> 可接收任意进程发来的消息
+- <strong>tag</strong>（int 或 MPI.ANY_TAG）：指定接收哪种标签的消息。使用 <code>MPI.ANY_TAG</code> 可接收任意标签的消息
+- <strong>返回值</strong>：接收到的 Python 对象</p>
+<p><strong>注意</strong>：<code>recv()</code> 是<strong>阻塞型</strong>通信——如果指定 source 的消息尚未到达，调用进程会一直等待（阻塞）。</p>
+<h5>comm.Send([buf], dest, tag=0) 和 comm.Recv([buf], source=ANY_SOURCE, tag=ANY_TAG)</h5>
+<p>这两个是大写开头的版本，用于发送和接收<strong>原始数组（raw array）或 NumPy 数组</strong>：</p>
+<pre><code class="language-python">import numpy as np
+
+# 发送 numpy 数组（比 send(obj) 更快，因为避免了序列化开销）
+data = np.array([1.0, 2.0, 3.0], dtype='d')
+comm.Send([data, MPI.DOUBLE], dest=1, tag=0)
+
+# 接收 numpy 数组
+recv_buf = np.zeros(3, dtype='d')
+comm.Recv([recv_buf, MPI.DOUBLE], source=0, tag=MPI.ANY_TAG)
+</code></pre>
+<p><strong>特点</strong>：
+- 要求发送端和接收端的<strong>数据类型必须匹配</strong>（使用 MPI 数据类型常量如 <code>MPI.DOUBLE</code>）
+- 比 <code>send(obj)</code> 和 <code>recv()</code> 更快，因为避免了 Python 对象的序列化/反序列化过程
+- 适用于大规模数值数组的传输</p>
+<h4>1.3.3 集体通信函数</h4>
+<p>集体通信涉及通信器中的所有进程（或一个大的子集），所有进程必须同时调用同一个集体通信函数。</p>
+<h5>comm.bcast(obj, root=0)</h5>
+<p><strong>广播</strong>：将 root 进程的数据发送给通信器中的所有进程（包括 root 自身）。</p>
+<pre><code class="language-python"># 进程 0 准备数据并通过广播发给所有进程
+if rank == 0:
+    data = {&quot;key&quot;: &quot;value&quot;, &quot;numbers&quot;: [1, 2, 3]}
+else:
+    data = None
+
+data = comm.bcast(data, root=0)
+# 此时所有进程的 data 都等于进程 0 发送的数据
+</code></pre>
+<p><strong>重要</strong>：<code>bcast</code> 是一个集体操作，<strong>所有进程必须都调用它</strong>。root 进程提供数据，其他进程虽然传入 data=None，但函数返回后所有进程都拥有了相同的数据。</p>
+<h5>comm.scatter(sendobj, root=0)</h5>
+<p><strong>散播（分发）</strong>：将 root 进程上的一个列表数据<strong>分散</strong>到所有进程，每个进程获得列表中的一项。</p>
+<pre><code class="language-python">if rank == 0:
+    data = [100, 200, 300, 400]  # 长度为 size 的列表
+else:
+    data = None
+
+my_data = comm.scatter(data, root=0)
+# rank=0 获得 100, rank=1 获得 200, rank=2 获得 300, rank=3 获得 400
+</code></pre>
+<p><strong>核心要点</strong>：发送列表的长度必须等于进程总数，列表的第 i 个元素被发送给 rank=i 的进程。</p>
+<h5>comm.gather(sendobj, root=0)</h5>
+<p><strong>收集</strong>：与 scatter 相反——每个进程将自己的数据发送给 root 进程，root 进程将所有数据汇总成一个列表。</p>
+<pre><code class="language-python">my_data = rank * 10  # 每个进程有自己的数据
+
+all_data = comm.gather(my_data, root=0)
+# root 进程：all_data = [0, 10, 20, 30]
+# 其他进程：all_data = None
+</code></pre>
+<h5>comm.reduce(sendobj, op=MPI.SUM, root=0)</h5>
+<p><strong>归约（Reduce）</strong>：将所有进程的数据按照指定的操作符进行归约计算，结果存储在 root 进程中。</p>
+<pre><code class="language-python">my_value = rank + 1  # rank=0:1, rank=1:2, rank=2:3, rank=3:4
+
+total = comm.reduce(my_value, op=MPI.SUM, root=0)
+# root 进程：total = 10 (1+2+3+4)
+# 其他进程：total = None
+</code></pre>
+<p><strong>MPI.Reduce 支持的操作符</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>含义</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MPI.SUM</code></td>
+<td>求和</td>
+<td>$$ \sum_{i=0}^{n-1} x_i $$</td>
+</tr>
+<tr>
+<td><code>MPI.PROD</code></td>
+<td>乘积</td>
+<td>$$ \prod_{i=0}^{n-1} x_i $$</td>
+</tr>
+<tr>
+<td><code>MPI.MAX</code></td>
+<td>取最大值</td>
+<td>$$ \max(x_0, x_1, ..., x_{n-1}) $$</td>
+</tr>
+<tr>
+<td><code>MPI.MIN</code></td>
+<td>取最小值</td>
+<td>$$ \min(x_0, x_1, ..., x_{n-1}) $$</td>
+</tr>
+<tr>
+<td><code>MPI.LAND</code></td>
+<td>逻辑与</td>
+<td>所有元素的逻辑与</td>
+</tr>
+<tr>
+<td><code>MPI.LOR</code></td>
+<td>逻辑或</td>
+<td>所有元素的逻辑或</td>
+</tr>
+<tr>
+<td><code>MPI.BAND</code></td>
+<td>按位与</td>
+<td>所有元素的按位与</td>
+</tr>
+<tr>
+<td><code>MPI.BOR</code></td>
+<td>按位或</td>
+<td>所有元素的按位或</td>
+</tr>
+<tr>
+<td><code>MPI.MAXLOC</code></td>
+<td>最大值位置</td>
+<td>返回最大值及其所在 rank</td>
+</tr>
+<tr>
+<td><code>MPI.MINLOC</code></td>
+<td>最小值位置</td>
+<td>返回最小值及其所在 rank</td>
+</tr>
+</tbody>
+</table>
+<h5>comm.allreduce(sendobj, op=MPI.SUM)</h5>
+<p><strong>全局归约</strong>：与 reduce 功能类似，但<strong>所有进程都能获得归约结果</strong>（不需要指定 root）。</p>
+<pre><code class="language-python">my_value = rank + 1
+total = comm.allreduce(my_value, op=MPI.SUM)
+# 所有进程的 total 都等于 10
+</code></pre>
+<p><code>allreduce</code> 等价于 <code>reduce</code> + <code>bcast</code>，但性能更好（优化了通信模式）。</p>
+<h5>comm.allgather(sendobj)</h5>
+<p><strong>全局收集</strong>：所有进程相互收集数据，<strong>每个进程</strong>都获得包含所有进程数据的完整列表。</p>
+<pre><code class="language-python">my_data = rank * 10
+all_data = comm.allgather(my_data)
+# 所有进程的 all_data 都等于 [0, 10, 20, 30]
+</code></pre>
+<h5>comm.barrier()</h5>
+<p><strong>栅栏同步</strong>：所有进程在此处等待，直到通信器中<strong>所有进程都到达</strong>该调用点后才继续执行。</p>
+<pre><code class="language-python">print(f&quot;Rank {rank}: Before barrier&quot;)
+comm.barrier()  # 所有进程在此同步
+print(f&quot;Rank {rank}: After barrier&quot;)
+# 所有&quot;Before barrier&quot;输出后，才会输出&quot;After barrier&quot;
+</code></pre>
+<p><strong>用途</strong>：
+- 在关键时间节点（如开始计时）进行全局同步
+- 将程序的执行分为不同的阶段
+- 调试时确保输出顺序可控</p>
+<hr />
+<h3>1.4 MPI 通信模式</h3>
+<h4>1.4.1 阻塞通信 vs 非阻塞通信</h4>
+<p><strong>阻塞通信</strong>（本课程重点讲解的内容）：</p>
+<ul>
+<li><strong>阻塞发送（send）</strong>：发送方调用 send 后，函数调用不会立即返回，直到发送缓冲区可以被安全复用</li>
+<li><strong>阻塞接收（recv）</strong>：接收方调用 recv 后，函数调用不会立即返回，直到收到匹配的消息</li>
+<li><strong>特点</strong>：语义简单、易于理解和调试；但可能导致死锁（如两个进程互相等待对方接收）</li>
+<li>阻塞通信同时也是<strong>同步</strong>的——通信操作会等待对端</li>
+</ul>
+<p><strong>非阻塞通信</strong>（课程提及但未深入展开）：</p>
+<ul>
+<li><strong>非阻塞发送（Isend）</strong>：立即返回一个 request 对象，程序可以继续执行；发送操作在后台进行</li>
+<li><strong>非阻塞接收（Irecv）</strong>：立即返回一个 request 对象，程序可以继续执行；必须用 <code>request.Wait()</code> 或 <code>request.Test()</code> 确保数据安全</li>
+<li><strong>非阻塞通信 + 等待操作</strong> 可以实现计算与通信的重叠（overlap），提高效率</li>
+</ul>
+<pre><code class="language-python"># 非阻塞通信示例（概念性）
+req = comm.Isend([data, MPI.INT], dest=1, tag=0)
+# 在此期间可以做计算...
+req.Wait()  # 确保发送完成
+</code></pre>
+<h4>1.4.2 点对点通信（Point-to-Point Communication）</h4>
+<p>点对点通信是 MPI 中最基本的通信模式，涉及<strong>恰好两个进程</strong>：</p>
+<ul>
+<li>发送方：调用 <code>comm.send()</code> 或 <code>comm.Send()</code></li>
+<li>接收方：调用 <code>comm.recv()</code> 或 <code>comm.Recv()</code></li>
+</ul>
+<p><strong>通信模式特点</strong>：</p>
+<ol>
+<li><strong>一对一</strong>：一个发送方对应一个接收方</li>
+<li><strong>消息匹配</strong>：通过 (source, dest, tag, communicator) 四元组来匹配消息</li>
+<li><strong>消息有序</strong>：同一对进程间、相同 tag 的消息保持发送顺序</li>
+<li><strong>缓冲区管理</strong>：MPI 实现负责消息的缓冲和传输</li>
+</ol>
+<p><strong>完整示例——p2p.py</strong>：</p>
+<pre><code class="language-python">from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+if rank == 0:
+    # 进程 0 发送数据给进程 1
+    data = {&quot;message&quot;: &quot;Hello from rank 0&quot;, &quot;value&quot;: 42}
+    comm.send(data, dest=1, tag=10)
+    print(f&quot;Rank {rank}: Sent data to rank 1&quot;)
+elif rank == 1:
+    # 进程 1 接收来自进程 0 的数据
+    data = comm.recv(source=0, tag=10)
+    print(f&quot;Rank {rank}: Received data from rank 0: {data}&quot;)
+</code></pre>
+<h4>1.4.3 集体通信（Collective Communication）</h4>
+<p>集体通信涉及通信器中的<strong>所有进程</strong>（或一个较大的子集）。</p>
+<h5>广播通信（Broadcast）</h5>
+<p><strong>bcast.py 示例——一对多通信</strong>：</p>
+<pre><code class="language-python">from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+
+if rank == 0:
+    data = [1, 2, 3, 4, 5]  # root 进程准备数据
+else:
+    data = None
+
+data = comm.bcast(data, root=0)
+print(f&quot;Rank {rank}: Received data = {data}&quot;)
+# 所有进程输出: Received data = [1, 2, 3, 4, 5]
+</code></pre>
+<p><strong>树形广播算法</strong>：</p>
+<p>MPI 底层通常使用树形结构来优化广播通信。基本原理如下：</p>
+<ul>
+<li>进程 0 将数据发送给进程 1 和进程 2</li>
+<li>进程 1 再将数据发送给进程 3 和进程 4</li>
+<li>以此类推，形成一棵通信树</li>
+</ul>
+<p>这种方法将通信复杂度从 $$O(N)$$（串行逐个发送）降低到 $$O(\log N)$$（树形转发）。</p>
+<p>假设有 $$N$$ 个进程，每个消息大小为 $$M$$ 字节，则：</p>
+<ul>
+<li><strong>直接广播</strong>（进程 0 依次发送给所有进程）：时间 $$T = (N-1) \times \frac{M}{B}$$</li>
+<li><strong>树形广播</strong>（二叉树转发）：时间 $$T \approx \log_2 N \times \frac{M}{B}$$</li>
+</ul>
+<p>其中 $$B$$ 为网络带宽。</p>
+<h5>散播通信（Scatter）</h5>
+<p>数据划分的核心操作。将一个大数组按块分发给所有进程。</p>
+<p><strong>Scatter 示意图</strong>：</p>
+<pre><code>数据：[A0, A1, A2, A3]  (root=0 持有)
+        ↓   ↓   ↓   ↓
+结果：  P0  P1  P2  P3
+</code></pre>
+<h5>收集通信（Gather）</h5>
+<p>各进程计算结果的汇总操作，与 Scatter 方向相反。</p>
+<p><strong>Gather 示意图</strong>：</p>
+<pre><code>数据：  P0  P1  P2  P3
+        ↓   ↓   ↓   ↓
+结果：[A0, A1, A2, A3]  (root=0 获得)
+</code></pre>
+<h5>归约通信（Reduce）</h5>
+<p>在收集的同时执行合并计算，如求和、求最大值等。</p>
+<p><strong>Reduce 示意图（求和）</strong>：</p>
+<pre><code>数据：  P0=1  P1=2  P2=3  P3=4
+         \    |    |    /
+          ┌───┴────┴───┐
+          │   MPI.SUM  │
+          └────────────┘
+                ↓
+           root=0 获得 10
+</code></pre>
+<p><strong>环形归约算法</strong>（一种优化实现）：</p>
+<ul>
+<li>第一阶段：每个进程将自己的数据发送给相邻进程</li>
+<li>第二阶段：每个进程将收到的合并结果继续发送</li>
+<li>经过 $$\log_2 N$$ 轮后，所有进程获得最终结果</li>
+</ul>
+<hr />
+<h3>1.5 MPI 编程示例</h3>
+<h4>1.5.1 并行累加求和（reduce.py）</h4>
+<p>利用 MPI Reduce 规约通信实现对 $$N$$ 个自然数 $$1, 2, 3, ..., N$$ 的累加求和。</p>
+<p><strong>并行算法设计思想</strong>：Map + Reduce 模式</p>
+<pre><code>各个节点完成局部计算（Map 阶段）→ 局部结果归并（Reduce 阶段）
+</code></pre>
+<p><strong>代码实现（reduce.py）</strong>：</p>
+<pre><code class="language-python">from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+N = 100  # 求和上界
+
+# 1. 数据划分：计算每个进程负责的范围
+chunk_size = N // size
+start = rank * chunk_size + 1
+end = (rank + 1) * chunk_size if rank != size - 1 else N
+
+# 2. 局部计算：每个进程对自己负责的数字求和（Map 阶段）
+local_sum = sum(range(start, end + 1))
+
+print(f&quot;Rank {rank}: range=[{start}, {end}], local_sum={local_sum}&quot;)
+
+# 3. 全局归约：所有进程的局部求和结果汇总（Reduce 阶段）
+total_sum = comm.reduce(local_sum, op=MPI.SUM, root=0)
+
+if rank == 0:
+    expected = N * (N + 1) // 2  # 高斯求和公式
+    print(f&quot;Parallel sum result: {total_sum}&quot;)
+    print(f&quot;Expected result:     {expected}&quot;)
+    print(f&quot;Correct: {total_sum == expected}&quot;)
+</code></pre>
+<p><strong>算法分析</strong>：</p>
+<ul>
+<li>时间复杂度：$$T(N, p) = O(\frac{N}{p}) + O(\log p) \cdot T_{comm}$$，其中 $$p$$ 为进程数</li>
+<li>加速比：$$S(p) = \frac{T_{seq}}{T_{par}} \approx \frac{N}{N/p + \log p \cdot T_{comm}}$$</li>
+<li>当 $$N$$ 很大且 $$p$$ 适中时，加速比接近线性</li>
+</ul>
+<h4>1.5.2 基于点对点通信的并行求和（sum1.py）</h4>
+<p>利用基本的 send/recv 方法手动实现并行求和：</p>
+<pre><code class="language-python">from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+N = 100
+chunk_size = N // size
+start = rank * chunk_size + 1
+end = (rank + 1) * chunk_size if rank != size - 1 else N
+
+# 局部求和
+local_sum = sum(range(start, end + 1))
+
+if rank == 0:
+    total = local_sum
+    # 进程 0 收集所有其他进程的局部和
+    for i in range(1, size):
+        partial = comm.recv(source=i, tag=0)
+        total += partial
+    print(f&quot;Total sum (via p2p): {total}&quot;)
+else:
+    # 其他进程将局部和发送给进程 0
+    comm.send(local_sum, dest=0, tag=0)
+</code></pre>
+<p><strong>与 Reduce 版本的比较</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>方面</th>
+<th>send/recv 版本</th>
+<th>reduce 版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代码复杂度</td>
+<td>需要手动编写收集逻辑</td>
+<td>一行 reduce 调用</td>
+</tr>
+<tr>
+<td>通信模式</td>
+<td>串行——进程 0 逐个接收</td>
+<td>树形/环形——并行优化</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>$$O(p)$$ 次通信</td>
+<td>$$O(\log p)$$ 次通信</td>
+</tr>
+<tr>
+<td>死锁风险</td>
+<td>存在（如果编码不慎）</td>
+<td>不存在（MPI 保证正确性）</td>
+</tr>
+</tbody>
+</table>
+<h4>1.5.3 并行计算定积分——梯形法（Trapezoidal Rule）</h4>
+<p>2025 年编程作业题目：利用 MPI 实现对连续函数 $$f(x)$$ 在区间 $$[a, b]$$ 上的定积分计算。</p>
+<p><strong>梯形法公式</strong>：</p>
+<p>将 $$[a, b]$$ 划分为 $$n$$ 个小区间，每个小区间宽度为 $$h = \frac{b - a}{n}$$，则：</p>
+<p>$$ \int_a^b f(x) dx \approx \frac{h}{2} \left[ f(x_0) + 2f(x_1) + 2f(x_2) + ... + 2f(x_{n-1}) + f(x_n) \right] $$</p>
+<p>其中 $$x_i = a + i \cdot h$$。</p>
+<p><strong>并行化思路</strong>：
+1. 将积分区间 $$[a, b]$$ 均匀划分为 $$p$$ 个子区间（$$p$$ 为进程数）
+2. 每个进程对自己的子区间使用梯形法进行局部积分计算
+3. 主进程（root=0）使用 <code>comm.reduce(op=MPI.SUM)</code> 汇总各进程的局部积分结果</p>
+<p><strong>并行算法代码框架</strong>：</p>
+<pre><code class="language-python">from mpi4py import MPI
+import numpy as np
+
+def f(x):
+    &quot;&quot;&quot;被积函数，这里以 sin(x) 为例&quot;&quot;&quot;
+    return np.sin(x)
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+a, b = 0.0, np.pi  # 积分区间
+n = 1000000  # 总小区间数
+
+# 1. 数据划分：每个进程处理的子区间
+local_n = n // size
+local_a = a + rank * local_n * (b - a) / n
+local_b = local_a + local_n * (b - a) / n
+
+# 2. 局部计算（梯形法）
+h = (local_b - local_a) / local_n
+x = np.linspace(local_a, local_b, local_n + 1)
+y = f(x)
+local_integral = h * (0.5 * y[0] + np.sum(y[1:-1]) + 0.5 * y[-1])
+
+# 3. 全局归约（Reduce）
+total_integral = comm.reduce(local_integral, op=MPI.SUM, root=0)
+
+if rank == 0:
+    print(f&quot;Integral of sin(x) from 0 to pi: {total_integral}&quot;)
+    print(f&quot;Exact value: 2.0&quot;)
+    print(f&quot;Error: {abs(total_integral - 2.0)}&quot;)
+</code></pre>
+<h4>1.5.4 矩阵乘法的并行计算（2026 年实验）</h4>
+<p><strong>2026 年课程实验题目</strong>：利用 MPI 实现矩阵乘法 $$C = A \times B$$ 的并行计算。</p>
+<ul>
+<li>$$A$$ 为 $$m \times k$$ 矩阵</li>
+<li>$$B$$ 为 $$k \times n$$ 矩阵</li>
+<li>$$C = A \times B$$ 为 $$m \times n$$ 矩阵</li>
+</ul>
+<p><strong>按行划分（Row-wise Decomposition）并行策略</strong>：</p>
+<ol>
+<li>将矩阵 $$A$$ 按行划分为 $$p$$ 个子块（$$p$$ 为进程数），每个子块包含 $$\frac{m}{p}$$ 行</li>
+<li>将完整的矩阵 $$B$$ 广播（bcast）给所有进程</li>
+<li>每个进程计算自己负责的 $$A$$ 子块与 $$B$$ 的乘积，得到 $$C$$ 的部分行</li>
+<li>主进程通过 gather 收集所有进程计算出的 $$C$$ 的部分行，组装成完整的 $$C$$</li>
+</ol>
+<p><strong>算法示意图</strong>：</p>
+<pre><code>        [A0]              [A0 × B]
+        [A1]    ×  B  =   [A1 × B]    ← 各进程并行计算
+        [A2]              [A2 × B]
+        [A3]              [A3 × B]
+</code></pre>
+<p><strong>核心代码框架</strong>：</p>
+<pre><code class="language-python">from mpi4py import MPI
+import numpy as np
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+m, k, n = 1000, 500, 800  # 矩阵维度
+
+# 1. 主进程生成矩阵 A 和 B
+if rank == 0:
+    A = np.random.rand(m, k)
+    B = np.random.rand(k, n)
+else:
+    A = None
+    B = None
+
+# 2. 广播矩阵 B 给所有进程
+B = comm.bcast(B, root=0)
+
+# 3. 按行分发矩阵 A
+rows_per_proc = m // size
+local_A = np.zeros((rows_per_proc, k))
+comm.Scatter(A, local_A, root=0)
+
+# 4. 局部矩阵乘法计算
+local_C = np.dot(local_A, B)  # (rows_per_proc × n)
+
+# 5. 收集所有局部结果
+if rank == 0:
+    C = np.zeros((m, n))
+else:
+    C = None
+comm.Gather(local_C, C, root=0)
+
+if rank == 0:
+    # 验证正确性
+    C_expected = np.dot(
+        np.random.rand(m, k) if False else A,  # 这里需要重新生成或保存原始 A
+        B
+    )
+    print(f&quot;Result shape: {C.shape}&quot;)
+</code></pre>
+<p><strong>性能瓶颈分析</strong>：</p>
+<ul>
+<li><strong>通信开销</strong>：Scatter A（$$O(m \times k)$$ 字节）和 Bcast B（$$O(k \times n)$$ 字节）是主要通信成本</li>
+<li><strong>负载均衡</strong>：当 $$m$$ 不能被 $$p$$ 整除时，最后一个进程处理的行数可能不同</li>
+<li><strong>可优化点</strong>：可以采用更高效的算法（如 Cannon 算法、SUMMA 算法）减少通信</li>
+</ul>
+<hr />
+<h3>1.6 MPI 编程环境搭建</h3>
+<h4>1.6.1 Windows 平台搭建步骤</h4>
+<p><strong>第一步：安装 Python</strong></p>
+<p>建议使用 <strong>Anaconda</strong> 发行版，它自带 conda 包管理器，方便后续操作。</p>
+<ul>
+<li>下载地址：https://www.anaconda.com/download</li>
+<li>安装后打开 Anaconda Prompt 或 CMD 进行后续操作</li>
+</ul>
+<p><strong>第二步：安装 MPI 实现（Microsoft MPI）</strong></p>
+<ul>
+<li>下载地址：https://learn.microsoft.com/en-us/message-passing-interface/microsoft-mpi</li>
+<li>需要下载并依次安装两个组件：</li>
+<li><strong>MS-MPI Redistributable Package</strong>（运行时库）</li>
+<li><strong>MS-MPI SDK</strong>（开发工具包）</li>
+<li>安装后 <code>mpiexec.exe</code> 通常出现在：<code>C:\Program Files\Microsoft MPI\Bin\</code></li>
+</ul>
+<p><strong>第三步：配置系统环境变量</strong></p>
+<p>将 MS-MPI 安装目录添加到系统环境变量 PATH 中：</p>
+<pre><code>C:\Program Files\Microsoft MPI\Bin
+</code></pre>
+<p><strong>第四步：安装 mpi4py 库</strong></p>
+<p>打开 Anaconda Prompt 或 CMD，执行：</p>
+<pre><code class="language-bash">pip install mpi4py
+</code></pre>
+<p>或使用 conda：</p>
+<pre><code class="language-bash">conda install -c conda-forge mpi4py
+</code></pre>
+<p><strong>注意</strong>：安装 mpi4py 时会自动检测并使用系统已安装的 MPI 库（如 MS-MPI），所以<strong>一定要先安装 MPI 实现</strong>，再安装 mpi4py。</p>
+<p><strong>第五步：验证安装</strong></p>
+<p>编写一个简单的测试程序 <code>test_mpi.py</code>：</p>
+<pre><code class="language-python">from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+print(f&quot;Hello from rank {rank} of {size}&quot;)
+</code></pre>
+<p>使用以下命令运行（假设使用 4 个进程）：</p>
+<pre><code class="language-bash">mpiexec -n 4 python test_mpi.py
+</code></pre>
+<p>预期输出（顺序可能不同）：</p>
+<pre><code>Hello from rank 0 of 4
+Hello from rank 1 of 4
+Hello from rank 2 of 4
+Hello from rank 3 of 4
+</code></pre>
+<h4>1.6.2 Linux 平台搭建步骤</h4>
+<pre><code class="language-bash"># 1. 安装 Open MPI
+sudo apt-get install openmpi-bin openmpi-common libopenmpi-dev
+
+# 2. 安装 mpi4py
+pip install mpi4py
+
+# 3. 验证
+mpiexec -n 4 python test_mpi.py
+</code></pre>
+<h4>1.6.3 MPI 程序运行方式</h4>
+<p><strong>单机多进程运行</strong>：</p>
+<pre><code class="language-bash">mpiexec -n 4 python program.py
+</code></pre>
+<ul>
+<li><code>-n 4</code>：启动 4 个进程</li>
+<li><code>python program.py</code>：每个进程执行的程序</li>
+</ul>
+<p><strong>多机多进程运行</strong>：</p>
+<p>首先创建主机文件 <code>hosts.txt</code>：</p>
+<pre><code>192.168.1.11 slots=2
+192.168.1.12 slots=2
+</code></pre>
+<p>然后运行：</p>
+<pre><code class="language-bash">mpiexec -n 4 -hostfile hosts.txt python program.py
+</code></pre>
+<ul>
+<li><code>-hostfile hosts.txt</code>：指定主机列表文件</li>
+<li><code>slots=2</code>：表示该主机最多运行 2 个进程</li>
+<li>总进程数由 <code>-n 4</code> 指定，MPI 会根据 slots 自动分配到不同主机</li>
+</ul>
+<h4>1.6.4 集群环境配置要点</h4>
+<ol>
+<li><strong>SSH 免密登录</strong>：多机运行时，mpiexec 需要能通过 SSH 无需密码登录各节点</li>
+<li><strong>统一代码路径</strong>：所有节点的相同路径下必须有相同的程序文件（或使用共享文件系统如 NFS）</li>
+<li><strong>Python 环境一致</strong>：所有节点需要安装相同版本的 Python 和 mpi4py</li>
+<li><strong>防火墙配置</strong>：确保各节点间 MPI 通信端口不被防火墙阻拦</li>
+</ol>
+<hr />
+<h3>1.7 MPI 程序调试与性能优化</h3>
+<h4>1.7.1 常见调试方法</h4>
+<p><strong>1. 打印调试（最常用）</strong>：</p>
+<pre><code class="language-python">print(f&quot;[Rank {rank}] At checkpoint A: data = {data}&quot;)
+</code></pre>
+<p><strong>注意</strong>：多进程输出顺序不确定，建议使用 barrier 控制输出顺序，或在输出中加入 rank 标识。</p>
+<p><strong>2. comm.barrier() 辅助调试</strong>：</p>
+<p>在代码的特定位置插入 barrier，可以帮你确定是哪个进程在哪一步出了问题：</p>
+<pre><code class="language-python"># 阶段1
+do_something()
+comm.barrier()  # 如果程序在此处卡住，说明有进程未完成阶段1
+
+# 阶段2
+do_something_else()
+comm.barrier()
+</code></pre>
+<p><strong>3. 单步检查法</strong>：</p>
+<p>先用 2 个进程运行程序，确认基本逻辑正确后再增加进程数。</p>
+<h4>1.7.2 常见错误类型</h4>
+<table>
+<thead>
+<tr>
+<th>错误类型</th>
+<th>原因</th>
+<th>解决方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>死锁</strong></td>
+<td>send/recv 顺序不当</td>
+<td>调整 send/recv 调用顺序，或使用非阻塞通信</td>
+</tr>
+<tr>
+<td><strong>数据不匹配</strong></td>
+<td>Send/Recv 数据类型不一致</td>
+<td>确保使用相同的 MPI 数据类型常量</td>
+</tr>
+<tr>
+<td><strong>进程数不能整除</strong></td>
+<td>数据划分不均</td>
+<td>使用更灵活的数据划分策略</td>
+</tr>
+<tr>
+<td><strong>MPI_ERR_TRUNCATE</strong></td>
+<td>接收缓冲区小于实际消息</td>
+<td>增加缓冲区大小</td>
+</tr>
+<tr>
+<td><strong>进程卡住无响应</strong></td>
+<td>某进程未调用集体通信函数</td>
+<td>确保所有进程都执行了相同的集体通信调用</td>
+</tr>
+</tbody>
+</table>
+<h4>1.7.3 性能优化策略</h4>
+<p><strong>1. 数据划分优化</strong>：</p>
+<ul>
+<li>尽量使各进程处理的数据量<strong>均衡</strong>（避免某些进程负载过大）</li>
+<li>当数据不能完全均分时，最后一个进程多处理剩余数据</li>
+</ul>
+<pre><code class="language-python">chunk_size = N // size
+remainder = N % size
+if rank &lt; remainder:
+    start = rank * (chunk_size + 1) + 1
+    end = start + chunk_size
+else:
+    start = rank * chunk_size + remainder + 1
+    end = start + chunk_size - 1
+</code></pre>
+<p><strong>2. 通信优化</strong>：</p>
+<ul>
+<li><strong>优先使用集体通信</strong>：<code>reduce</code> &gt; 手动 <code>send/recv</code> 收集</li>
+<li><strong>减少通信次数</strong>：合并小消息为一个大消息</li>
+<li><strong>通信-计算重叠</strong>：使用非阻塞通信（Isend/Irecv）实现计算和通信并发执行</li>
+<li><strong>避免不必要的通信</strong>：只传输真正需要共享的数据</li>
+</ul>
+<p><strong>3. 数组传输优化</strong>：</p>
+<ul>
+<li>使用 <code>Send()/Recv()</code>（大写版本）传输 NumPy 数组，避免 Python 对象的序列化开销</li>
+<li>对于大数组，可以考虑分块传输</li>
+</ul>
+<p><strong>4. 减少 Python 层面开销</strong>：</p>
+<ul>
+<li>用 NumPy 向量化操作代替 Python 循环</li>
+<li>将计算密集部分交给 C/Fortran 库（如 NumPy、SciPy 底层已优化）</li>
+</ul>
+<h4>1.7.4 性能分析工具</h4>
+<ul>
+<li><strong>mpi4py 内置 profiling</strong>：开启 profile 可以输出通信统计</li>
+<li><strong>外部工具</strong>：mpiP、TAU、Score-P、Scalasca 等</li>
+<li><strong>简化评估法</strong>：在代码中手动计时，测量通信和计算分别的时间</li>
+</ul>
+<pre><code class="language-python">import time
+
+start = time.time()
+# ... 计算
+compute_time = time.time() - start
+
+start = time.time()
+# ... 通信（如 reduce）
+comm_time = time.time() - start
+
+print(f&quot;[Rank {rank}] Compute: {compute_time:.3f}s, Comm: {comm_time:.3f}s&quot;)
+</code></pre>
+<hr />
+<h2>二、相关真题与解析</h2>
+<h3>2.1 真题匹配情况</h3>
+<p>经查阅 2019 年、2020 年、2020 年（回忆版）和 2022 年共四套试卷，<strong>历年试卷中未出现直接考查 MPI 具体 API（如 send、recv、reduce 等）编程的题目</strong>。</p>
+<p>但是，MPI 所体现的<strong>消息传递模型</strong>概念以及<strong>分布式并行计算</strong>思想在试卷中被多次考查，以下列出与 MPI 概念间接相关的题目并提供解析。</p>
+<h3>2.2 与 MPI 间接相关的真题</h3>
+<h4>题目 1：消息传递模型的定义（2022 年第一题第 1 小题）</h4>
+<blockquote>
+<p><strong>原题</strong>：设计分布式系统时通常采用消息传递模型，简述消息传递模型的含义。（4分）</p>
+</blockquote>
+<p><strong>解析</strong>：</p>
+<p>消息传递模型是分布式系统中最基本的通信模型，其核心含义包括：</p>
+<ol>
+<li><strong>无共享内存</strong>：各计算节点拥有独立的地址空间，不存在全局共享内存</li>
+<li><strong>显式通信</strong>：节点间通过显式地发送（send）和接收（receive）消息来进行数据交换</li>
+<li><strong>分布式控制</strong>：每个节点独立执行自己的程序，通过消息往来协调工作</li>
+<li><strong>通信原语</strong>：基本操作为 <code>send(msg, dest)</code> 和 <code>recv(buffer, source)</code>，通信操作可能阻塞或非阻塞</li>
+</ol>
+<p>这正是 MPI 所基于的核心模型。MPI 为消息传递模型提供了标准化的 API 实现，简化了分布式程序的编写。</p>
+<h4>题目 2：消息传递模型与多线程模型的区别（2022 年第一题第 2 小题）</h4>
+<blockquote>
+<p><strong>原题</strong>：消息传递模型与设计多线程并行计算系统时采用的模型有何不同？（2分）</p>
+</blockquote>
+<p><strong>解析</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>比较维度</th>
+<th>消息传递模型</th>
+<th>多线程共享内存模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>内存模型</strong></td>
+<td>各进程/线程拥有独立地址空间</td>
+<td>所有线程共享同一地址空间</td>
+</tr>
+<tr>
+<td><strong>通信方式</strong></td>
+<td>显式 send/recv 通信</td>
+<td>直接读写共享变量</td>
+</tr>
+<tr>
+<td><strong>同步机制</strong></td>
+<td>通信操作隐含同步</td>
+<td>需要锁、信号量等显式同步</td>
+</tr>
+<tr>
+<td><strong>数据竞争</strong></td>
+<td>天然避免（无共享数据）</td>
+<td>可能出现 race condition</td>
+</tr>
+<tr>
+<td><strong>可扩展性</strong></td>
+<td>可扩展到多机/集群</td>
+<td>受限于单机 CPU 核数</td>
+</tr>
+</tbody>
+</table>
+<h4>题目 3：分布式节点间通信方式（2022 年第三题第 3 小题）</h4>
+<blockquote>
+<p><strong>原题</strong>：除了 RPC 和消息队列通信方式，分布式系统中不同节点之间还可以采用哪些通信方式？（列举 2 种）（4分）</p>
+</blockquote>
+<p><strong>解析</strong>：</p>
+<p>可供列举的通信方式包括：</p>
+<ol>
+<li><strong>MPI 消息传递通信</strong>：专门面向高性能并行计算的通信方式，提供 send/recv、广播、归约等丰富的通信原语，适用于科学计算和数值模拟等场景</li>
+<li><strong>共享存储通信</strong>：通过共享文件系统（如 NFS、HDFS）或共享数据库进行间接通信，各节点通过读写共享存储来交换数据</li>
+<li><strong>RESTful API / HTTP 通信</strong>：通过 HTTP 协议进行 REST 风格的请求-响应通信</li>
+<li><strong>Socket 套接字编程</strong>：基于 TCP/UDP 的底层网络通信</li>
+</ol>
+<p>MPI 作为其中一种重要的通信方式，特别适合需要<strong>低延迟、高吞吐量</strong>和<strong>频繁数据交换</strong>的并行计算场景。</p>
+<h4>题目 4：分布式并行算法的设计思想（2022 年第一题第 5 小题）</h4>
+<blockquote>
+<p><strong>原题</strong>：要利用分布式计算系统对一个大规模数据集进行排序，你所知道的排序算法中哪一种更适合？为什么？（4分）</p>
+</blockquote>
+<p><strong>解析</strong>：</p>
+<p><strong>归并排序（Merge Sort）</strong> 更适合分布式并行排序，原因如下：</p>
+<ol>
+<li><strong>天然可分治</strong>：归并排序可以先将数据划分为多个子集，各节点独立排序，然后进行归并（Merge）。这与 MPI 编程中"数据划分 → 局部计算 → 结果归并"的思想一致</li>
+<li><strong>外排序友好</strong>：归并排序天然支持外排序（数据量超出内存时），各节点可以先将数据分块排序后写回磁盘，再进行归并</li>
+<li><strong>可并行化程度高</strong>：第一阶段的局部排序各节点完全独立（无通信），第二阶段的归并可以通过树形结构并行化</li>
+<li><strong>MapReduce 的排序</strong>：MapReduce 框架中的 Shuffle 阶段本质上就是归并排序的变体，利用了 Map 和 Reduce 的并行归并</li>
+</ol>
+<p>如果用 MPI 实现并行归并排序，可以这样设计：
+- 用 <code>scatter</code> 将数据分发给各进程
+- 各进程对本地数据排序（完全并行，无通信）
+- 用多轮的 <code>reduce</code> 或自定义通信完成多路归并</p>
+<hr />
+<h2>三、知识总结与复习要点</h2>
+<h3>3.1 核心概念清单</h3>
+<ul>
+<li>[ ] MPI 的定义：是一种<strong>标准/规范</strong>，不是具体实现</li>
+<li>[ ] MPI 的常见实现：Open MPI、MPICH、MS-MPI、Intel MPI</li>
+<li>[ ] SPMD 模型：Single Program Multiple Data，同一代码，不同数据</li>
+<li>[ ] 进程（Process）：独立地址空间，通过消息传递通信</li>
+<li>[ ] 进程组（Process Group）：进程的有序子集</li>
+<li>[ ] Rank：进程在通信器中的唯一编号，范围 $$[0, size-1]$$</li>
+<li>[ ] 通信器（Communicator）：进程组的通信基础设施</li>
+<li>[ ] MPI.COMM_WORLD：包含所有进程的默认全局通信器</li>
+</ul>
+<h3>3.2 核心 API 清单</h3>
+<ul>
+<li>[ ] <code>comm.Get_rank()</code>：获取当前进程 rank</li>
+<li>[ ] <code>comm.Get_size()</code>：获取总进程数</li>
+<li>[ ] <code>comm.send(obj, dest, tag)</code>：阻塞发送 Python 对象</li>
+<li>[ ] <code>comm.recv(source, tag)</code>：阻塞接收 Python 对象</li>
+<li>[ ] <code>comm.Send([buf], dest, tag)</code>：发送原始数组（大写版本）</li>
+<li>[ ] <code>comm.Recv([buf], source, tag)</code>：接收原始数组（大写版本）</li>
+<li>[ ] <code>comm.bcast(obj, root)</code>：广播——从 root 发送给所有进程</li>
+<li>[ ] <code>comm.scatter(list, root)</code>：散播——分发列表到各进程</li>
+<li>[ ] <code>comm.gather(obj, root)</code>：收集——各进程数据汇总到 root</li>
+<li>[ ] <code>comm.reduce(obj, op, root)</code>：归约——合并计算（root 获得结果）</li>
+<li>[ ] <code>comm.allreduce(obj, op)</code>：全局归约——所有进程获得结果</li>
+<li>[ ] <code>comm.allgather(obj)</code>：全局收集——所有进程互相收集</li>
+<li>[ ] <code>comm.barrier()</code>：栅栏同步</li>
+</ul>
+<h3>3.3 重要概念对比</h3>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>阻塞 send/recv</th>
+<th>非阻塞 Isend/Irecv</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>返回值时机</strong></td>
+<td>操作完成后返回</td>
+<td>立即返回 request 对象</td>
+</tr>
+<tr>
+<td><strong>缓冲区安全</strong></td>
+<td>调用返回后可复用</td>
+<td>需 Wait() 确认后复用</td>
+</tr>
+<tr>
+<td><strong>死锁风险</strong></td>
+<td>较高</td>
+<td>较低（但需检查 request）</td>
+</tr>
+<tr>
+<td><strong>通信-计算重叠</strong></td>
+<td>不支持</td>
+<td>支持</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>scatter</th>
+<th>gather</th>
+<th>reduce</th>
+<th>allreduce</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>数据流向</strong></td>
+<td>root → 所有</td>
+<td>所有 → root</td>
+<td>所有 → root</td>
+<td>所有 ↔ 所有</td>
+</tr>
+<tr>
+<td><strong>root 参数</strong></td>
+<td>需要</td>
+<td>需要</td>
+<td>需要</td>
+<td>不需要</td>
+</tr>
+<tr>
+<td><strong>操作符</strong></td>
+<td>无</td>
+<td>无</td>
+<td>需要指定（SUM等）</td>
+<td>需要指定（SUM等）</td>
+</tr>
+<tr>
+<td><strong>所有进程获得</strong></td>
+<td>一部分</td>
+<td>root 全量</td>
+<td>root 有结果</td>
+<td>所有人有结果</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>四、参考资源</h2>
+<ul>
+<li>mpi4py 官方文档：https://mpi4py.readthedocs.io/en/stable/</li>
+<li>Microsoft MPI 下载：https://learn.microsoft.com/en-us/message-passing-interface/microsoft-mpi</li>
+<li>MPI 标准文档：https://www.mpi-forum.org/</li>
+<li>Open MPI 官网：https://www.open-mpi.org/</li>
+</ul>
+    </div>
+</body>
+</html>
