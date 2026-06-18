@@ -8,7 +8,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
         onload="renderMathInElement(document.body, {delimiters: [
-            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: true},
             {left: '$', right: '$', display: false}
         ], ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']});"></script>
     <style>
@@ -346,7 +346,7 @@
 <ul>
 <li>进程组是 MPI 程序中全部进程集合的一个<strong>有序子集</strong></li>
 <li>进程组中每个进程被赋予一个在该组中<strong>唯一的序号</strong>，称为 <strong>rank</strong></li>
-<li>rank 的取值范围是 $$[0, \text{进程数}-1]$$</li>
+<li>rank 的取值范围是 $[0, \text{进程数}-1]$</li>
 <li>rank 用于在进程组内标识和区分各个进程</li>
 </ul>
 <p><strong>通信器（Communicator）</strong>：</p>
@@ -439,7 +439,7 @@ print(f&quot;Process {rank} is running&quot;)
 </code></pre>
 <ul>
 <li><strong>功能</strong>：获取当前进程在通信器中的<strong>编号（rank）</strong></li>
-<li><strong>返回值</strong>：int 类型，取值范围 $$[0, \text{size}-1]$$</li>
+<li><strong>返回值</strong>：int 类型，取值范围 $[0, \text{size}-1]$</li>
 <li><strong>用途</strong>：程序中最重要的函数之一，用于确定当前进程的身份，从而执行不同的任务</li>
 </ul>
 <h5>comm.Get_size()</h5>
@@ -549,22 +549,22 @@ total = comm.reduce(my_value, op=MPI.SUM, root=0)
 <tr>
 <td><code>MPI.SUM</code></td>
 <td>求和</td>
-<td>$$ \sum_{i=0}^{n-1} x_i $$</td>
+<td>$ \sum_{i=0}^{n-1} x_i $</td>
 </tr>
 <tr>
 <td><code>MPI.PROD</code></td>
 <td>乘积</td>
-<td>$$ \prod_{i=0}^{n-1} x_i $$</td>
+<td>$ \prod_{i=0}^{n-1} x_i $</td>
 </tr>
 <tr>
 <td><code>MPI.MAX</code></td>
 <td>取最大值</td>
-<td>$$ \max(x_0, x_1, ..., x_{n-1}) $$</td>
+<td>$ \max(x_0, x_1, ..., x_{n-1}) $</td>
 </tr>
 <tr>
 <td><code>MPI.MIN</code></td>
 <td>取最小值</td>
-<td>$$ \min(x_0, x_1, ..., x_{n-1}) $$</td>
+<td>$ \min(x_0, x_1, ..., x_{n-1}) $</td>
 </tr>
 <tr>
 <td><code>MPI.LAND</code></td>
@@ -1154,13 +1154,13 @@ print(f&quot;Rank {rank}: Received data = {data}&quot;)
 <li>进程 1 再将数据发送给进程 3 和进程 4</li>
 <li>以此类推，形成一棵通信树</li>
 </ul>
-<p>这种方法将通信复杂度从 $$O(N)$$（串行逐个发送）降低到 $$O(\log N)$$（树形转发）。</p>
-<p>假设有 $$N$$ 个进程，每个消息大小为 $$M$$ 字节，则：</p>
+<p>这种方法将通信复杂度从 $O(N)$（串行逐个发送）降低到 $O(\log N)$（树形转发）。</p>
+<p>假设有 $N$ 个进程，每个消息大小为 $M$ 字节，则：</p>
 <ul>
-<li><strong>直接广播</strong>（进程 0 依次发送给所有进程）：时间 $$T = (N-1) \times \frac{M}{B}$$</li>
-<li><strong>树形广播</strong>（二叉树转发）：时间 $$T \approx \log_2 N \times \frac{M}{B}$$</li>
+<li><strong>直接广播</strong>（进程 0 依次发送给所有进程）：时间 $T = (N-1) \times \frac{M}{B}$</li>
+<li><strong>树形广播</strong>（二叉树转发）：时间 $T \approx \log_2 N \times \frac{M}{B}$</li>
 </ul>
-<p>其中 $$B$$ 为网络带宽。</p>
+<p>其中 $B$ 为网络带宽。</p>
 <h5>散播通信（Scatter）</h5>
 <p>数据划分的核心操作。将一个大数组按块分发给所有进程。</p>
 <p><strong>Scatter 示意图</strong>：</p>
@@ -1190,12 +1190,12 @@ print(f&quot;Rank {rank}: Received data = {data}&quot;)
 <ul>
 <li>第一阶段：每个进程将自己的数据发送给相邻进程</li>
 <li>第二阶段：每个进程将收到的合并结果继续发送</li>
-<li>经过 $$\log_2 N$$ 轮后，所有进程获得最终结果</li>
+<li>经过 $\log_2 N$ 轮后，所有进程获得最终结果</li>
 </ul>
 <hr />
 <h3>1.5 MPI 编程示例</h3>
 <h4>1.5.1 并行累加求和（reduce.py）</h4>
-<p>利用 MPI Reduce 规约通信实现对 $$N$$ 个自然数 $$1, 2, 3, ..., N$$ 的累加求和。</p>
+<p>利用 MPI Reduce 规约通信实现对 $N$ 个自然数 $1, 2, 3, ..., N$ 的累加求和。</p>
 <p><strong>并行算法设计思想</strong>：Map + Reduce 模式</p>
 <pre><code>各个节点完成局部计算（Map 阶段）→ 局部结果归并（Reduce 阶段）
 </code></pre>
@@ -1229,9 +1229,9 @@ if rank == 0:
 </code></pre>
 <p><strong>算法分析</strong>：</p>
 <ul>
-<li>时间复杂度：$$T(N, p) = O(\frac{N}{p}) + O(\log p) \cdot T_{comm}$$，其中 $$p$$ 为进程数</li>
-<li>加速比：$$S(p) = \frac{T_{seq}}{T_{par}} \approx \frac{N}{N/p + \log p \cdot T_{comm}}$$</li>
-<li>当 $$N$$ 很大且 $$p$$ 适中时，加速比接近线性</li>
+<li>时间复杂度：$T(N, p) = O(\frac{N}{p}) + O(\log p) \cdot T_{comm}$，其中 $p$ 为进程数</li>
+<li>加速比：$S(p) = \frac{T_{seq}}{T_{par}} \approx \frac{N}{N/p + \log p \cdot T_{comm}}$</li>
+<li>当 $N$ 很大且 $p$ 适中时，加速比接近线性</li>
 </ul>
 <h4>1.5.2 基于点对点通信的并行求和（sum1.py）</h4>
 <p>利用基本的 send/recv 方法手动实现并行求和：</p>
@@ -1282,8 +1282,8 @@ else:
 </tr>
 <tr>
 <td>性能</td>
-<td>$$O(p)$$ 次通信</td>
-<td>$$O(\log p)$$ 次通信</td>
+<td>$O(p)$ 次通信</td>
+<td>$O(\log p)$ 次通信</td>
 </tr>
 <tr>
 <td>死锁风险</td>
@@ -1293,13 +1293,13 @@ else:
 </tbody>
 </table>
 <h4>1.5.3 并行计算定积分——梯形法（Trapezoidal Rule）</h4>
-<p>2025 年编程作业题目：利用 MPI 实现对连续函数 $$f(x)$$ 在区间 $$[a, b]$$ 上的定积分计算。</p>
+<p>2025 年编程作业题目：利用 MPI 实现对连续函数 $f(x)$ 在区间 $[a, b]$ 上的定积分计算。</p>
 <p><strong>梯形法公式</strong>：</p>
-<p>将 $$[a, b]$$ 划分为 $$n$$ 个小区间，每个小区间宽度为 $$h = \frac{b - a}{n}$$，则：</p>
+<p>将 $[a, b]$ 划分为 $n$ 个小区间，每个小区间宽度为 $h = \frac{b - a}{n}$，则：</p>
 <p>$$ \int_a^b f(x) dx \approx \frac{h}{2} \left[ f(x_0) + 2f(x_1) + 2f(x_2) + ... + 2f(x_{n-1}) + f(x_n) \right] $$</p>
-<p>其中 $$x_i = a + i \cdot h$$。</p>
+<p>其中 $x_i = a + i \cdot h$。</p>
 <p><strong>并行化思路</strong>：
-1. 将积分区间 $$[a, b]$$ 均匀划分为 $$p$$ 个子区间（$$p$$ 为进程数）
+1. 将积分区间 $[a, b]$ 均匀划分为 $p$ 个子区间（$p$ 为进程数）
 2. 每个进程对自己的子区间使用梯形法进行局部积分计算
 3. 主进程（root=0）使用 <code>comm.reduce(op=MPI.SUM)</code> 汇总各进程的局部积分结果</p>
 <p><strong>并行算法代码框架</strong>：</p>
@@ -1337,18 +1337,18 @@ if rank == 0:
     print(f&quot;Error: {abs(total_integral - 2.0)}&quot;)
 </code></pre>
 <h4>1.5.4 矩阵乘法的并行计算（2026 年实验）</h4>
-<p><strong>2026 年课程实验题目</strong>：利用 MPI 实现矩阵乘法 $$C = A \times B$$ 的并行计算。</p>
+<p><strong>2026 年课程实验题目</strong>：利用 MPI 实现矩阵乘法 $C = A \times B$ 的并行计算。</p>
 <ul>
-<li>$$A$$ 为 $$m \times k$$ 矩阵</li>
-<li>$$B$$ 为 $$k \times n$$ 矩阵</li>
-<li>$$C = A \times B$$ 为 $$m \times n$$ 矩阵</li>
+<li>$A$ 为 $m \times k$ 矩阵</li>
+<li>$B$ 为 $k \times n$ 矩阵</li>
+<li>$C = A \times B$ 为 $m \times n$ 矩阵</li>
 </ul>
 <p><strong>按行划分（Row-wise Decomposition）并行策略</strong>：</p>
 <ol>
-<li>将矩阵 $$A$$ 按行划分为 $$p$$ 个子块（$$p$$ 为进程数），每个子块包含 $$\frac{m}{p}$$ 行</li>
-<li>将完整的矩阵 $$B$$ 广播（bcast）给所有进程</li>
-<li>每个进程计算自己负责的 $$A$$ 子块与 $$B$$ 的乘积，得到 $$C$$ 的部分行</li>
-<li>主进程通过 gather 收集所有进程计算出的 $$C$$ 的部分行，组装成完整的 $$C$$</li>
+<li>将矩阵 $A$ 按行划分为 $p$ 个子块（$p$ 为进程数），每个子块包含 $\frac{m}{p}$ 行</li>
+<li>将完整的矩阵 $B$ 广播（bcast）给所有进程</li>
+<li>每个进程计算自己负责的 $A$ 子块与 $B$ 的乘积，得到 $C$ 的部分行</li>
+<li>主进程通过 gather 收集所有进程计算出的 $C$ 的部分行，组装成完整的 $C$</li>
 </ol>
 <p><strong>算法示意图</strong>：</p>
 <pre><code>        [A0]              [A0 × B]
@@ -1402,8 +1402,8 @@ if rank == 0:
 </code></pre>
 <p><strong>性能瓶颈分析</strong>：</p>
 <ul>
-<li><strong>通信开销</strong>：Scatter A（$$O(m \times k)$$ 字节）和 Bcast B（$$O(k \times n)$$ 字节）是主要通信成本</li>
-<li><strong>负载均衡</strong>：当 $$m$$ 不能被 $$p$$ 整除时，最后一个进程处理的行数可能不同</li>
+<li><strong>通信开销</strong>：Scatter A（$O(m \times k)$ 字节）和 Bcast B（$O(k \times n)$ 字节）是主要通信成本</li>
+<li><strong>负载均衡</strong>：当 $m$ 不能被 $p$ 整除时，最后一个进程处理的行数可能不同</li>
 <li><strong>可优化点</strong>：可以采用更高效的算法（如 Cannon 算法、SUMMA 算法）减少通信</li>
 </ul>
 <hr />
@@ -1695,7 +1695,7 @@ print(f&quot;[Rank {rank}] Compute: {compute_time:.3f}s, Comm: {comm_time:.3f}s&
 <li>[ ] SPMD 模型：Single Program Multiple Data，同一代码，不同数据</li>
 <li>[ ] 进程（Process）：独立地址空间，通过消息传递通信</li>
 <li>[ ] 进程组（Process Group）：进程的有序子集</li>
-<li>[ ] Rank：进程在通信器中的唯一编号，范围 $$[0, size-1]$$</li>
+<li>[ ] Rank：进程在通信器中的唯一编号，范围 $[0, size-1]$</li>
 <li>[ ] 通信器（Communicator）：进程组的通信基础设施</li>
 <li>[ ] MPI.COMM_WORLD：包含所有进程的默认全局通信器</li>
 </ul>

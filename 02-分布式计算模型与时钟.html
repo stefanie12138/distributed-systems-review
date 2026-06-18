@@ -8,7 +8,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
         onload="renderMathInElement(document.body, {delimiters: [
-            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: true},
             {left: '$', right: '$', display: false}
         ], ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']});"></script>
     <style>
@@ -493,16 +493,16 @@
 <p>网络往返传输延迟（Round-Trip Time, RTT）：</p>
 <p>$$\delta = \delta_{req} + \delta_{resp} = (T_4 - T_1) - (T_3 - T_2)$$</p>
 <p>其中：
-- $$\delta_{req} = T_2 - T_1$$（请求传输延迟，未知）
-- $$\delta_{resp} = T_4 - T_3$$（响应传输延迟，未知）
-- 客户端知道总延迟 $$\delta$$，但不知道 $$\delta_{req}$$ 和 $$\delta_{resp}$$ 各占多少</p>
-<p><strong>关键假设：</strong> $$\delta_{req} \approx \delta_{resp}$$（请求和响应的网络延迟大致相等）</p>
-<p>在此假设下，$$\delta_{resp} \approx \frac{\delta}{2}$$</p>
+- $\delta_{req} = T_2 - T_1$（请求传输延迟，未知）
+- $\delta_{resp} = T_4 - T_3$（响应传输延迟，未知）
+- 客户端知道总延迟 $\delta$，但不知道 $\delta_{req}$ 和 $\delta_{resp}$ 各占多少</p>
+<p><strong>关键假设：</strong> $\delta_{req} \approx \delta_{resp}$（请求和响应的网络延迟大致相等）</p>
+<p>在此假设下，$\delta_{resp} \approx \frac{\delta}{2}$</p>
 <p>因此，客户端在收到服务器响应时，服务器时间约为：</p>
-<p>$$T_{server\_now} \approx T_3 + \frac{\delta}{2}$$</p>
+<p>$T_{server\_now} \approx T_3 + \frac{\delta}{2}$</p>
 <p><strong>客户端将本地时钟设置为：</strong></p>
-<p>$$T_{client} \leftarrow T_3 + \frac{\delta}{2}$$</p>
-<p><strong>时钟偏移（Clock Skew）：</strong> 由于 $$\delta_{req}$$ 和 $$\delta_{resp}$$ 不一定相等，实际同步误差最大为 $$\pm \frac{\delta}{2}$$。即：</p>
+<p>$T_{client} \leftarrow T_3 + \frac{\delta}{2}$</p>
+<p><strong>时钟偏移（Clock Skew）：</strong> 由于 $\delta_{req}$ 和 $\delta_{resp}$ 不一定相等，实际同步误差最大为 $\pm \frac{\delta}{2}$。即：</p>
 <p>$$|T_{client\_corrected} - T_{server\_actual}| \leq \frac{\delta}{2}$$</p>
 <h4>1.7.2 NTP本地时钟调整策略</h4>
 <p>NTP采用三种策略调整本地时钟：</p>
@@ -608,51 +608,51 @@
 <li>Leslie Lamport 在 1978 年的论文《Time, Clocks, and the Ordering of Events in a Distributed System》首次提出了逻辑时钟的思想，并因此获得2013年图灵奖</li>
 </ul>
 <h4>1.8.2 先于关系（Happen-Before Relation）</h4>
-<p>定义"先于"关系，记作 $$\rightarrow$$，是一个<strong>偏序关系</strong>：</p>
+<p>定义"先于"关系，记作 $\rightarrow$，是一个<strong>偏序关系</strong>：</p>
 <ol>
-<li><strong>同一进程内：</strong> 如果事件 $$a$$ 和 $$b$$ 是同一个节点（单进程/线程）中的两个事件，且 $$a$$ 在 $$b$$ 之前发生，那么 $$a \rightarrow b$$</li>
-<li><strong>消息传递：</strong> 如果 $$a$$ 是"节点 $$P_1$$ 发送消息 $$m$$ 到 $$P_2$$"，$$b$$ 是"$$P_2$$ 收到 $$P_1$$ 发送的消息 $$m$$"，那么 $$a \rightarrow b$$</li>
-<li><strong>传递性：</strong> 如果 $$a \rightarrow b$$ 且 $$b \rightarrow c$$，那么 $$a \rightarrow c$$</li>
-<li><strong>并发事件：</strong> 如果 $$a \nrightarrow b$$ 且 $$b \nrightarrow a$$，则 $$a$$ 和 $$b$$ 是并发事件（记作 $$a \parallel b$$）</li>
+<li><strong>同一进程内：</strong> 如果事件 $a$ 和 $b$ 是同一个节点（单进程/线程）中的两个事件，且 $a$ 在 $b$ 之前发生，那么 $a \rightarrow b$</li>
+<li><strong>消息传递：</strong> 如果 $a$ 是"节点 $P_1$ 发送消息 $m$ 到 $P_2$"，$b$ 是"$P_2$ 收到 $P_1$ 发送的消息 $m$"，那么 $a \rightarrow b$</li>
+<li><strong>传递性：</strong> 如果 $a \rightarrow b$ 且 $b \rightarrow c$，那么 $a \rightarrow c$</li>
+<li><strong>并发事件：</strong> 如果 $a \nrightarrow b$ 且 $b \nrightarrow a$，则 $a$ 和 $b$ 是并发事件（记作 $a \parallel b$）</li>
 </ol>
 <p><strong>关键性质：</strong>
-- $$\rightarrow$$ 关系符合离散数学中的<strong>偏序</strong>定义
-- $$\rightarrow$$ 关系<strong>隐含了因果关系</strong>（如果 $$a \rightarrow b$$，则 $$a$$ 可能因果影响了 $$b$$）</p>
+- $\rightarrow$ 关系符合离散数学中的<strong>偏序</strong>定义
+- $\rightarrow$ 关系<strong>隐含了因果关系</strong>（如果 $a \rightarrow b$，则 $a$ 可能因果影响了 $b$）</p>
 <h4>1.8.3 Lamport逻辑时钟算法</h4>
 <p><strong>基本思想：</strong>
 - 每个节点维护一个不断增加的整数作为本地逻辑时钟
 - 节点内事件的发生会触发逻辑时钟的增长</p>
-<p><strong>算法规则（设 $$C_i$$ 为节点 $$i$$ 的本地逻辑时钟）：</strong></p>
+<p><strong>算法规则（设 $C_i$ 为节点 $i$ 的本地逻辑时钟）：</strong></p>
 <ol>
 <li>
-<p><strong>内部事件/发送事件：</strong> 在节点 $$i$$ 中，每发生一个新事件（包括消息产生、消息发送），本地逻辑时钟自增：
-   $$C_i \leftarrow C_i + 1$$</p>
+<p><strong>内部事件/发送事件：</strong> 在节点 $i$ 中，每发生一个新事件（包括消息产生、消息发送），本地逻辑时钟自增：
+   $C_i \leftarrow C_i + 1$</p>
 </li>
 <li>
-<p><strong>发送消息：</strong> 节点 $$i$$ 发出的每个消息都绑定当前的 $$C_i$$ 作为时间戳</p>
+<p><strong>发送消息：</strong> 节点 $i$ 发出的每个消息都绑定当前的 $C_i$ 作为时间戳</p>
 </li>
 <li>
-<p><strong>接收消息：</strong> 当节点 $$j$$ 接收到节点 $$i$$ 发送的消息 $$m$$（时间戳为 $$C_i$$），节点 $$j$$ 将自己的逻辑时钟调整为：
-   $$C_j \leftarrow 1 + \max\{C_j, C_i\}$$</p>
+<p><strong>接收消息：</strong> 当节点 $j$ 接收到节点 $i$ 发送的消息 $m$（时间戳为 $C_i$），节点 $j$ 将自己的逻辑时钟调整为：
+   $C_j \leftarrow 1 + \max\{C_j, C_i\}$</p>
 </li>
 </ol>
 <p><strong>解释：</strong> 接收方将自己的时钟设为"自身时钟和消息时间戳的较大值加1"。这保证了接收事件的时间戳一定大于发送事件的时间戳。</p>
 <h4>1.8.4 Lamport逻辑时钟的性质</h4>
-<p>设 $$C(a)$$ 表示事件 $$a$$ 对应的逻辑时间戳：</p>
+<p>设 $C(a)$ 表示事件 $a$ 对应的逻辑时间戳：</p>
 <ol>
-<li><strong>保持因果关系：</strong> 如果 $$a \rightarrow b$$，则一定有 $$C(a) < C(b)$$</li>
+<li><strong>保持因果关系：</strong> 如果 $a \rightarrow b$，则一定有 $C(a) < C(b)$</li>
 <li>
 <p>即：逻辑时钟从<strong>不违反</strong>因果关系</p>
 </li>
 <li>
-<p><strong>反过来不成立：</strong> $$C(a) < C(b)$$ 时，<strong>不一定</strong>满足 $$a \rightarrow b$$</p>
+<p><strong>反过来不成立：</strong> $C(a) < C(b)$ 时，<strong>不一定</strong>满足 $a \rightarrow b$</p>
 </li>
-<li>$$a$$ 和 $$b$$ 可能是并发事件（没有因果关系），但巧合使得 $$C(a) < C(b)$$</li>
+<li>$a$ 和 $b$ 可能是并发事件（没有因果关系），但巧合使得 $C(a) < C(b)$</li>
 <li>
 <p>这是标量时钟的根本局限</p>
 </li>
 <li>
-<p><strong>可能相等：</strong> 有可能 $$a \neq b$$ 但 $$C(a) = C(b)$$（两个并发事件可能获得相同的时间戳）</p>
+<p><strong>可能相等：</strong> 有可能 $a \neq b$ 但 $C(a) = C(b)$（两个并发事件可能获得相同的时间戳）</p>
 </li>
 </ol>
 <h4>1.8.5 逻辑时钟中间件的位置</h4>
@@ -735,70 +735,70 @@
 <hr />
 <h3>1.9 全序逻辑时钟</h3>
 <h4>1.9.1 动机</h4>
-<p>原始Lamport逻辑时钟存在一个问题：当 $$C(a) = C(b)$$ 时，无法区分两个事件的先后顺序。全序逻辑时钟将时间戳从标量扩展为二元组，实现所有事件的<strong>全序排列</strong>。</p>
+<p>原始Lamport逻辑时钟存在一个问题：当 $C(a) = C(b)$ 时，无法区分两个事件的先后顺序。全序逻辑时钟将时间戳从标量扩展为二元组，实现所有事件的<strong>全序排列</strong>。</p>
 <h4>1.9.2 全序逻辑时钟算法</h4>
-<p><strong>时间戳格式：</strong> 每个消息/事件携带二元组 $$\langle C_i, i \rangle$$，其中 $$C_i$$ 是标量逻辑时钟值，$$i$$ 是节点ID号。</p>
-<p><strong>排序规则：</strong> 对于两个事件 $$a$$ 和 $$b$$，其时间戳分别为 $$L(a) = \langle C(a), ID(a) \rangle$$ 和 $$L(b) = \langle C(b), ID(b) \rangle$$：</p>
-<p>$$L(a) < L(b) \iff C(a) < C(b) \;\text{OR}\; \big(C(a) = C(b) \;\text{AND}\; ID(a) < ID(b)\big)$$</p>
+<p><strong>时间戳格式：</strong> 每个消息/事件携带二元组 $\langle C_i, i \rangle$，其中 $C_i$ 是标量逻辑时钟值，$i$ 是节点ID号。</p>
+<p><strong>排序规则：</strong> 对于两个事件 $a$ 和 $b$，其时间戳分别为 $L(a) = \langle C(a), ID(a) \rangle$ 和 $L(b) = \langle C(b), ID(b) \rangle$：</p>
+<p>$L(a) < L(b) \iff C(a) < C(b) \;\text{OR}\; \big(C(a) = C(b) \;\text{AND}\; ID(a) < ID(b)\big)$</p>
 <p><strong>算法描述：</strong>
-- 每个节点维护标量时钟 $$C$$
-- 节点内每发生新事件，$$C \leftarrow C + 1$$
-- 发送消息时携带 $$\langle C, ID \rangle$$ 时间戳
-- 接收到节点 $$i$$ 的消息（时间戳 $$\langle C_i, i \rangle$$）后：$$C_j \leftarrow 1 + \max\{C_j, C_i\}$$</p>
+- 每个节点维护标量时钟 $C$
+- 节点内每发生新事件，$C \leftarrow C + 1$
+- 发送消息时携带 $\langle C, ID \rangle$ 时间戳
+- 接收到节点 $i$ 的消息（时间戳 $\langle C_i, i \rangle$）后：$C_j \leftarrow 1 + \max\{C_j, C_i\}$</p>
 <p><strong>排序的性质：</strong>
-- 保持了潜在因果关系：$$a \rightarrow b$$ 则一定有 $$L(a) < L(b)$$
+- 保持了潜在因果关系：$a \rightarrow b$ 则一定有 $L(a) < L(b)$
 - 但<strong>反过来不成立</strong>（与标量时钟相同）</p>
-<p><strong>缺点：</strong> 如果 $$L(a) < L(b)$$，无法区分以下两种情况：
-- $$a \rightarrow b$$（有因果关系）
-- $$a \parallel b$$（逻辑并发，无因果关系）</p>
+<p><strong>缺点：</strong> 如果 $L(a) < L(b)$，无法区分以下两种情况：
+- $a \rightarrow b$（有因果关系）
+- $a \parallel b$（逻辑并发，无因果关系）</p>
 <p>这个缺点引出了<strong>向量时钟</strong>。</p>
 <hr />
 <h3>1.10 向量逻辑时钟</h3>
 <h4>1.10.1 基本思想</h4>
-<p>设分布式系统包含 $$n$$ 个节点 $$N_1, N_2, \ldots, N_n$$。</p>
-<p>节点 $$N_i$$ 的向量时钟 $$\mathbf{T}_i$$ 形式为：
-$$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
+<p>设分布式系统包含 $n$ 个节点 $N_1, N_2, \ldots, N_n$。</p>
+<p>节点 $N_i$ 的向量时钟 $\mathbf{T}_i$ 形式为：
+$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$</p>
 <p>其中：
-- $$\mathbf{T}_i[i] = t_i$$：节点 $$N_i$$ 自己的标量逻辑时钟
-- $$\mathbf{T}_i[j]\;(j \neq i)$$：节点 $$N_i$$ 所知道的关于节点 $$N_j$$ 的最新（最大）标量时钟值</p>
+- $\mathbf{T}_i[i] = t_i$：节点 $N_i$ 自己的标量逻辑时钟
+- $\mathbf{T}_i[j]\;(j \neq i)$：节点 $N_i$ 所知道的关于节点 $N_j$ 的最新（最大）标量时钟值</p>
 <p><strong>直观理解：</strong> 向量时钟相当于让每个节点维护了一个关于"我认为每个节点现在进展到哪一步了"的全局视图。</p>
 <h4>1.10.2 向量时钟算法</h4>
 <ol>
 <li>
-<p><strong>初始化：</strong> 所有节点的向量时钟初始化为 $$\langle 0, 0, \ldots, 0 \rangle$$</p>
+<p><strong>初始化：</strong> 所有节点的向量时钟初始化为 $\langle 0, 0, \ldots, 0 \rangle$</p>
 </li>
 <li>
-<p><strong>内部事件：</strong> 节点 $$N_i$$ 内每发生一个新事件：
-   $$\mathbf{T}_i[i] \leftarrow \mathbf{T}_i[i] + 1$$</p>
+<p><strong>内部事件：</strong> 节点 $N_i$ 内每发生一个新事件：
+   $\mathbf{T}_i[i] \leftarrow \mathbf{T}_i[i] + 1$</p>
 </li>
 <li>
-<p><strong>发送消息：</strong> 节点 $$N_i$$ 发送消息时，将当前的向量时钟 $$\mathbf{T}_i$$ 作为时间戳附加到消息上</p>
+<p><strong>发送消息：</strong> 节点 $N_i$ 发送消息时，将当前的向量时钟 $\mathbf{T}_i$ 作为时间戳附加到消息上</p>
 </li>
 <li>
-<p><strong>接收消息：</strong> 节点 $$N_i$$ 收到来自节点 $$j$$ 的消息 $$\langle m, \mathbf{T}_m \rangle$$ 后：</p>
+<p><strong>接收消息：</strong> 节点 $N_i$ 收到来自节点 $j$ 的消息 $\langle m, \mathbf{T}_m \rangle$ 后：</p>
 </li>
-<li><strong>融合：</strong> 对于所有 $$k = 1, 2, \ldots, n$$：
-     $$\mathbf{T}_i[k] \leftarrow \max(\mathbf{T}_i[k], \mathbf{T}_m[k])$$</li>
-<li><strong>自增：</strong> $$\mathbf{T}_i[i] \leftarrow \mathbf{T}_i[i] + 1$$（接收也是一个事件）</li>
+<li><strong>融合：</strong> 对于所有 $k = 1, 2, \ldots, n$：
+     $\mathbf{T}_i[k] \leftarrow \max(\mathbf{T}_i[k], \mathbf{T}_m[k])$</li>
+<li><strong>自增：</strong> $\mathbf{T}_i[i] \leftarrow \mathbf{T}_i[i] + 1$（接收也是一个事件）</li>
 </ol>
 <h4>1.10.3 向量时钟的比较与排序</h4>
-<p>对于任意的两个向量时钟 $$\mathbf{T}$$ 和 $$\mathbf{T}'$$，定义如下偏序关系：</p>
+<p>对于任意的两个向量时钟 $\mathbf{T}$ 和 $\mathbf{T}'$，定义如下偏序关系：</p>
 <ul>
-<li><strong>相等：</strong> $$\mathbf{T} = \mathbf{T}' \iff \forall j: \mathbf{T}[j] = \mathbf{T}'[j]$$</li>
-<li><strong>小于等于：</strong> $$\mathbf{T} \leq \mathbf{T}' \iff \forall j: \mathbf{T}[j] \leq \mathbf{T}'[j]$$</li>
-<li><strong>严格小于：</strong> $$\mathbf{T} < \mathbf{T}' \iff \mathbf{T} \leq \mathbf{T}' \text{ 且 } \mathbf{T} \neq \mathbf{T}'$$</li>
-<li><strong>并发（不可比较）：</strong> $$\mathbf{T} \parallel \mathbf{T}' \iff \mathbf{T} \nleq \mathbf{T}' \text{ 且 } \mathbf{T}' \nleq \mathbf{T}$$</li>
+<li><strong>相等：</strong> $\mathbf{T} = \mathbf{T}' \iff \forall j: \mathbf{T}[j] = \mathbf{T}'[j]$</li>
+<li><strong>小于等于：</strong> $\mathbf{T} \leq \mathbf{T}' \iff \forall j: \mathbf{T}[j] \leq \mathbf{T}'[j]$</li>
+<li><strong>严格小于：</strong> $\mathbf{T} < \mathbf{T}' \iff \mathbf{T} \leq \mathbf{T}' \text{ 且 } \mathbf{T} \neq \mathbf{T}'$</li>
+<li><strong>并发（不可比较）：</strong> $\mathbf{T} \parallel \mathbf{T}' \iff \mathbf{T} \nleq \mathbf{T}' \text{ 且 } \mathbf{T}' \nleq \mathbf{T}$</li>
 </ul>
 <h4>1.10.4 向量时钟的关键性质</h4>
-<p>设 $$V(a)$$ 表示事件 $$a$$ 的向量时间戳：</p>
+<p>设 $V(a)$ 表示事件 $a$ 的向量时间戳：</p>
 <ol>
-<li><strong>$$a \rightarrow b \iff V(a) < V(b)$$</strong></li>
+<li><strong>$a \rightarrow b \iff V(a) < V(b)$</strong></li>
 <li>这是向量时钟相对于标量时钟的核心优势：<strong>因果关系和向量时钟大小的关系是充要的</strong></li>
 <li>
 <p>不再是单向蕴含，而是双向等价！</p>
 </li>
 <li>
-<p><strong>$$a \parallel b \iff V(a) \parallel V(b)$$</strong>（即 $$V(a)$$ 和 $$V(b)$$ 不可比较）</p>
+<p><strong>$a \parallel b \iff V(a) \parallel V(b)$</strong>（即 $V(a)$ 和 $V(b)$ 不可比较）</p>
 </li>
 <li>可以通过向量时钟精确判断两个事件是否并发</li>
 </ol>
@@ -863,25 +863,25 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 <h4>1.11.1 可靠广播协议（Reliable Broadcast）</h4>
 <p><strong>性质：</strong></p>
 <ol>
-<li><strong>有效性（Validity）：</strong> 如果一个正确节点广播了消息 $$m$$，则其它所有正确节点最终都能正确接收到 $$m$$</li>
-<li><strong>一致性/统一性（Uniformity/Agreement）：</strong> 如果消息 $$m$$ 被正确投递（Delivered）给某个正确节点 $$A$$，则 $$m$$ 一定会被正确投递给<strong>所有</strong>其它非失效节点</li>
-<li><strong>完整性（Integrity）：</strong> 如果一个正确节点接收到了广播消息 $$m$$，则 $$m$$ 一定是某个节点发送的（不能"无中生有"）</li>
+<li><strong>有效性（Validity）：</strong> 如果一个正确节点广播了消息 $m$，则其它所有正确节点最终都能正确接收到 $m$</li>
+<li><strong>一致性/统一性（Uniformity/Agreement）：</strong> 如果消息 $m$ 被正确投递（Delivered）给某个正确节点 $A$，则 $m$ 一定会被正确投递给<strong>所有</strong>其它非失效节点</li>
+<li><strong>完整性（Integrity）：</strong> 如果一个正确节点接收到了广播消息 $m$，则 $m$ 一定是某个节点发送的（不能"无中生有"）</li>
 </ol>
 <h4>1.11.2 全序广播协议（Total Order Reliable Broadcast）</h4>
 <p>在可靠广播的基础上，再满足：
 - <strong>全序性：</strong> 多个广播消息以<strong>完全相同的顺序</strong>投递给所有节点（所有节点以完全相同的顺序接收到多个广播消息）</p>
 <h4>1.11.3 先进先出广播协议（FIFO Reliable Broadcast）</h4>
 <p>在可靠广播的基础上，再满足：
-- <strong>FIFO序：</strong> 如果<strong>同一个节点</strong>先广播了消息 $$m_1$$，后广播了 $$m_2$$，则在其它所有非失效节点上，$$m_1$$ 先投递，$$m_2$$ 后投递</p>
+- <strong>FIFO序：</strong> 如果<strong>同一个节点</strong>先广播了消息 $m_1$，后广播了 $m_2$，则在其它所有非失效节点上，$m_1$ 先投递，$m_2$ 后投递</p>
 <h4>1.11.4 因果序广播协议（Causal Reliable Broadcast）</h4>
 <p>在可靠广播的基础上，再满足：
-- <strong>因果序：</strong> 如果两个消息 $$m_1$$ 和 $$m_2$$ 有因果关系（$$m_1 \rightarrow m_2$$），则在任意节点上 $$m_1$$ 一定会先于 $$m_2$$ 投递给应用层</p>
+- <strong>因果序：</strong> 如果两个消息 $m_1$ 和 $m_2$ 有因果关系（$m_1 \rightarrow m_2$），则在任意节点上 $m_1$ 一定会先于 $m_2$ 投递给应用层</p>
 <h4>1.11.5 Gossip广播（传染病广播协议）</h4>
-<p><strong>主要思想：</strong> 当一个节点首次接收到一个消息 $$m$$ 之后，它随机选取 $$k$$ 个节点（$$k$$ 一般为常数，如3~4），然后将 $$m$$ 转发给这 $$k$$ 个节点。</p>
+<p><strong>主要思想：</strong> 当一个节点首次接收到一个消息 $m$ 之后，它随机选取 $k$ 个节点（$k$ 一般为常数，如3~4），然后将 $m$ 转发给这 $k$ 个节点。</p>
 <p><strong>特点：</strong>
 - 基于六度分隔理论（Six Degrees of Separation）
 - 理论上<strong>无法实现100%的可靠广播</strong>（消息可能因为随机选择而遗漏某些节点）
-- 通过调整参数 $$k$$，可以在<strong>可靠性</strong>和<strong>通信开销</strong>之间进行权衡
+- 通过调整参数 $k$，可以在<strong>可靠性</strong>和<strong>通信开销</strong>之间进行权衡
 - <strong>去中心化、简单、容错性好、可扩展性好</strong></p>
 <p><strong>典型应用场景：</strong>
 - 分布式系统中节点之间的相互发现（Membership）
@@ -910,11 +910,11 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 <li>（a）将消息按逻辑时间戳先后顺序放入<strong>缓存队列</strong></li>
 <li>（b）向所有节点发送关于该消息的 <strong>ACK 消息</strong>（包括自己）</li>
 <li><strong>收到ACK消息：</strong></li>
-<li>（a）将队列中对应消息 $$m$$ 的 ACK 计数加 1</li>
+<li>（a）将队列中对应消息 $m$ 的 ACK 计数加 1</li>
 <li>（b）观察队列头部的消息，如果关于该消息已经收到了<strong>所有节点的ACK</strong>，则将其从队列中取出，完成投递（给应用层）</li>
 </ol>
 <p><strong>定理：</strong> 如果缓存队列中处于头部的消息收到了所有节点的ACK，则该消息也位于所有节点内部队列的头部。（可用反证法证明）</p>
-<p><strong>优化方法：</strong> 节点 $$N_2$$ 收到 $$N_1$$ 的广播消息 $$m_1$$ 后，如果 $$N_2$$ 也有自己的消息 $$m_2$$ 要广播，则可以直接广播 $$m_2$$，不用广播关于 $$m_1$$ 的 ACK 消息。</p>
+<p><strong>优化方法：</strong> 节点 $N_2$ 收到 $N_1$ 的广播消息 $m_1$ 后，如果 $N_2$ 也有自己的消息 $m_2$ 要广播，则可以直接广播 $m_2$，不用广播关于 $m_1$ 的 ACK 消息。</p>
 <h4>1.12.2 全序广播协议实现（可靠链路 + 无节点失效）</h4>
 <p>假设模型退化为"可靠链路"（不保证FIFO）时，协议需做如下调整：</p>
 <ul>
@@ -967,15 +967,15 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 - 更易于理解和实现</p>
 <h4>1.13.4 Paxos/Raft的容错能力</h4>
 <p>Paxos和Raft都基于<strong>多数派投票</strong>机制。</p>
-<p><strong>容错公式：</strong> 设总节点数为 $$n$$，最多可容忍失效节点数为 $$f$$，则：</p>
-<p>$$n = 2f + 1$$</p>
-<p>即：<strong>在包含 $$n$$ 个节点的分布式系统中，最多可以容忍 $$\lfloor \frac{n-1}{2} \rfloor$$ 个节点的失效。</strong></p>
-<p>推导：要选出多数派（过半），需要的票数至少为 $$\lfloor n/2 \rfloor + 1$$。在最坏情况下，必须有至少 $$n - f$$ 个非失效节点，且 $$n - f \geq \lfloor n/2 \rfloor + 1$$，即 $$f \leq \lfloor (n-1)/2 \rfloor$$。</p>
+<p><strong>容错公式：</strong> 设总节点数为 $n$，最多可容忍失效节点数为 $f$，则：</p>
+<p>$n = 2f + 1$</p>
+<p>即：<strong>在包含 $n$ 个节点的分布式系统中，最多可以容忍 $\lfloor \frac{n-1}{2} \rfloor$ 个节点的失效。</strong></p>
+<p>推导：要选出多数派（过半），需要的票数至少为 $\lfloor n/2 \rfloor + 1$。在最坏情况下，必须有至少 $n - f$ 个非失效节点，且 $n - f \geq \lfloor n/2 \rfloor + 1$，即 $f \leq \lfloor (n-1)/2 \rfloor$。</p>
 <p><strong>示例：</strong>
 - 3个节点：最多容忍 1 个失效
 - 5个节点：最多容忍 2 个失效
 - 7个节点：最多容忍 3 个失效</p>
-<p><strong>注意：</strong> 以上基于失效停止模型（Fail-Stop）。如果采用<strong>拜占庭故障模型</strong>，容错公式为 $$n = 3f + 1$$（即最多容忍 $$\lfloor (n-1)/3 \rfloor$$ 个拜占庭节点）。</p>
+<p><strong>注意：</strong> 以上基于失效停止模型（Fail-Stop）。如果采用<strong>拜占庭故障模型</strong>，容错公式为 $n = 3f + 1$（即最多容忍 $\lfloor (n-1)/3 \rfloor$ 个拜占庭节点）。</p>
 
 <div class="diagram">
     <img src="images/分布式计算-时钟问题v1.81_p31_img2.png" alt="Paxos/Raft共识协议示意图" style="max-width:100%; height:auto; display:block; margin:16px auto; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);" />
@@ -1185,17 +1185,17 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 <tr>
 <td>时间戳</td>
 <td>41 bits</td>
-<td>毫秒级时间戳，$$2^{41}/(1000 \times 60 \times 60 \times 24 \times 365) \approx 69$$ 年</td>
+<td>毫秒级时间戳，$2^{41}/(1000 \times 60 \times 60 \times 24 \times 365) \approx 69$ 年</td>
 </tr>
 <tr>
 <td>机器码</td>
 <td>10 bits</td>
-<td>最多支持 $$2^{10} = 1024$$ 台机器</td>
+<td>最多支持 $2^{10} = 1024$ 台机器</td>
 </tr>
 <tr>
 <td>序列号</td>
 <td>12 bits</td>
-<td>同一毫秒内的自增序列号，每毫秒每台机器最多生成 $$2^{12} = 4096$$ 个ID</td>
+<td>同一毫秒内的自增序列号，每毫秒每台机器最多生成 $2^{12} = 4096$ 个ID</td>
 </tr>
 </tbody>
 </table>
@@ -1211,11 +1211,11 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 <p>因果排序广播（Causal Broadcast）利用向量时钟确保具有因果关系的广播消息在投递时保持因果顺序。</p>
 <h4>1.16.1 因果排序广播的性质</h4>
 <p>建立在可靠广播基础上，满足：
-1. 如果消息 $$m$$ 被正确投递给节点 $$A$$，则 $$m$$ 一定会被正确投递给所有其他非失效节点
-2. 对于具有因果关系的两个消息 $$m_1$$ 和 $$m_2$$（$$m_1 \rightarrow m_2$$），在任意节点上 $$m_1$$ 一定会先于 $$m_2$$ 投递给应用层</p>
+1. 如果消息 $m$ 被正确投递给节点 $A$，则 $m$ 一定会被正确投递给所有其他非失效节点
+2. 对于具有因果关系的两个消息 $m_1$ 和 $m_2$（$m_1 \rightarrow m_2$），在任意节点上 $m_1$ 一定会先于 $m_2$ 投递给应用层</p>
 <h4>1.16.2 实现思想</h4>
 <p>中间件利用向量时钟实现因果排序广播：
-- 收到（Receive）消息 $$\langle m, V(m) \rangle$$ 后先放入缓存队列
+- 收到（Receive）消息 $\langle m, V(m) \rangle$ 后先放入缓存队列
 - 根据向量时钟判定队列中不同消息之间的因果顺序
 - 然后按因果顺序投递（Deliver）给应用层</p>
 <p><strong>关键区分：</strong> "Receive"（从网络收到消息入缓存）和"Deliver"（按因果顺序投递给应用层）是两个不同的动作。只有Broadcast和Deliver这才会引起向量时钟的变化，Receive不会。</p>
@@ -1327,8 +1327,8 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 </tr>
 <tr>
 <td><strong>容错公式</strong></td>
-<td>需 $$n > 2f$$（多数派协议如Paxos/Raft）</td>
-<td>需 $$n > 3f$$（拜占庭容错协议）</td>
+<td>需 $n > 2f$（多数派协议如Paxos/Raft）</td>
+<td>需 $n > 3f$（拜占庭容错协议）</td>
 </tr>
 <tr>
 <td><strong>典型应用</strong></td>
@@ -1340,16 +1340,16 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 <p>核心区别：失效停止的节点"不说话"；拜占庭节点的"说假话"、"说矛盾的话"，是最恶劣的故障模式。</p>
 <hr />
 <h3>题目5（来源：2022年）</h3>
-<p><strong>原题（3分）：</strong> 在一个包含 $$n$$ 个节点的分布式系统中应用 Paxos 或 Raft 分布式共识协议实现不同节点间的数据同步，最多可以容忍多少个节点的失效？</p>
+<p><strong>原题（3分）：</strong> 在一个包含 $n$ 个节点的分布式系统中应用 Paxos 或 Raft 分布式共识协议实现不同节点间的数据同步，最多可以容忍多少个节点的失效？</p>
 <p><strong>解析/答案：</strong></p>
 <p>Paxos 和 Raft 协议都基于<strong>多数派投票</strong>（Quorum）机制。为确保系统能在节点失效时继续正常工作，需要保证剩余正常工作的节点仍能构成多数派。</p>
-<p>设总节点数为 $$n$$，最多可容忍失效节点数为 $$f$$：</p>
-<p>$$n - f > \frac{n}{2}$$</p>
-<p>即 $$f < \frac{n}{2}$$，所以：</p>
-<p>$$f_{max} = \left\lfloor \frac{n-1}{2} \right\rfloor$$</p>
-<p><strong>最多容忍 $$\lfloor (n-1)/2 \rfloor$$ 个节点的失效。</strong></p>
+<p>设总节点数为 $n$，最多可容忍失效节点数为 $f$：</p>
+<p>$n - f > \frac{n}{2}$</p>
+<p>即 $f < \frac{n}{2}$，所以：</p>
+<p>$f_{max} = \left\lfloor \frac{n-1}{2} \right\rfloor$</p>
+<p><strong>最多容忍 $\lfloor (n-1)/2 \rfloor$ 个节点的失效。</strong></p>
 <p><strong>具体例子：</strong>
-- 3个节点 → 最多容忍 1 个失效（$$n = 2f + 1 = 2 \times 1 + 1$$）
+- 3个节点 → 最多容忍 1 个失效（$n = 2f + 1 = 2 \times 1 + 1$）
 - 5个节点 → 最多容忍 2 个失效
 - 7个节点 → 最多容忍 3 个失效</p>
 <hr />
@@ -1378,27 +1378,27 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 <p><strong>（1）Cristian时间同步算法的推导：</strong></p>
 <p>设客户端C向时间服务器S发起同步请求：</p>
 <ul>
-<li>$$T_1$$：客户端发送请求的本地时间</li>
-<li>$$T_2$$：服务器收到请求的本地时间</li>
-<li>$$T_3$$：服务器发送响应的本地时间（响应包携带 $$T_2$$ 和 $$T_3$$）</li>
-<li>$$T_4$$：客户端收到响应的本地时间</li>
+<li>$T_1$：客户端发送请求的本地时间</li>
+<li>$T_2$：服务器收到请求的本地时间</li>
+<li>$T_3$：服务器发送响应的本地时间（响应包携带 $T_2$ 和 $T_3$）</li>
+<li>$T_4$：客户端收到响应的本地时间</li>
 </ul>
 <p>网络往返延迟：</p>
-<p>$$\delta_{total} = (T_4 - T_1) - (T_3 - T_2)$$</p>
-<p>其中 $$\delta_{total} = \delta_{req} + \delta_{resp}$$（$$\delta_{req}$$ 为请求延迟，$$\delta_{resp}$$ 为响应延迟）。</p>
-<p>客户端知道 $$\delta_{total}$$，但不知道 $$\delta_{req}$$ 和 $$\delta_{resp}$$ 各自的大小。</p>
-<p><strong>关键假设：</strong> 网络传输延迟在请求和响应方向大致相等，即 $$\delta_{req} \approx \delta_{resp}$$。</p>
+<p>$\delta_{total} = (T_4 - T_1) - (T_3 - T_2)$</p>
+<p>其中 $\delta_{total} = \delta_{req} + \delta_{resp}$（$\delta_{req}$ 为请求延迟，$\delta_{resp}$ 为响应延迟）。</p>
+<p>客户端知道 $\delta_{total}$，但不知道 $\delta_{req}$ 和 $\delta_{resp}$ 各自的大小。</p>
+<p><strong>关键假设：</strong> 网络传输延迟在请求和响应方向大致相等，即 $\delta_{req} \approx \delta_{resp}$。</p>
 <p>则有：</p>
 <p>$$\delta_{resp} \approx \frac{\delta_{total}}{2} = \frac{(T_4 - T_1) - (T_3 - T_2)}{2}$$</p>
-<p>服务器在 $$T_3$$ 时刻的真实时间加上响应传输延迟等于消息到达时刻的服务器时间：</p>
+<p>服务器在 $T_3$ 时刻的真实时间加上响应传输延迟等于消息到达时刻的服务器时间：</p>
 <p>$$T_{server\_at\_T_4} = T_3 + \delta_{resp} \approx T_3 + \frac{\delta_{total}}{2}$$</p>
 <p><strong>客户端将本地时钟调整为：</strong></p>
 <p>$$T_{client\_corrected} = T_3 + \frac{(T_4 - T_1) - (T_3 - T_2)}{2}$$</p>
 <p><strong>（2）同步误差分析（时钟偏移 Clock Skew）：</strong></p>
-<p>实际同步误差最大为 $$\pm \frac{\delta_{total}}{2}$$。因为：</p>
+<p>实际同步误差最大为 $\pm \frac{\delta_{total}}{2}$。因为：</p>
 <ul>
-<li>极限情况1：$$\delta_{resp} = 0$$（响应瞬间到达），则 $$\delta_{resp} = 0 < \frac{\delta}{2}$$，误差 $$\frac{\delta}{2}$$</li>
-<li>极限情况2：$$\delta_{resp} = \delta$$（请求瞬间到达，响应占全部延迟），误差也为 $$\frac{\delta}{2}$$</li>
+<li>极限情况1：$\delta_{resp} = 0$（响应瞬间到达），则 $\delta_{resp} = 0 < \frac{\delta}{2}$，误差 $\frac{\delta}{2}$</li>
+<li>极限情况2：$\delta_{resp} = \delta$（请求瞬间到达，响应占全部延迟），误差也为 $\frac{\delta}{2}$</li>
 </ul>
 <p>$$|T_{client\_corrected} - T_{server\_actual}| \leq \frac{\delta_{total}}{2}$$</p>
 <p><strong>（3）客户端调整时钟的策略（NTP采用的方法）：</strong></p>
@@ -1412,50 +1412,50 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 <p><strong>原题：</strong> 给出三个节点，一系列消息发送/接收之后，最终各节点的逻辑时钟值。并回答：该排序的性质：保持了潜在因果关系：a导致b，则一定有C(a)&lt;C(b)，但反过来不成立——为什么？</p>
 <p><strong>解析/答案：</strong></p>
 <p><strong>（1）Lamport逻辑时钟计算示例：</strong></p>
-<p>设有三个节点 $$P_1, P_2, P_3$$，初始逻辑时钟均为 0。</p>
+<p>设有三个节点 $P_1, P_2, P_3$，初始逻辑时钟均为 0。</p>
 <p>事件序列如下（假设按时间顺序发生）：</p>
 <ol>
-<li>$$P_1$$ 发生内部事件 a：$$C_1(a) = 1$$</li>
-<li>$$P_1$$ 向 $$P_2$$ 发送消息 m1（时间戳 = 1）：$$C_1 = 2$$（发送也是事件，自增）</li>
-<li>$$P_2$$ 接收 m1（时间戳为 2）：$$C_2 = 1 + \max(0, 2) = 3$$</li>
-<li>$$P_2$$ 发生内部事件 b：$$C_2(b) = 4$$</li>
-<li>$$P_3$$ 发生内部事件 c：$$C_3(c) = 1$$</li>
-<li>$$P_2$$ 向 $$P_3$$ 发送消息 m2（时间戳 = 4）：$$C_2 = 5$$</li>
-<li>$$P_3$$ 接收 m2（时间戳为 5）：$$C_3 = 1 + \max(1, 5) = 6$$</li>
-<li>$$P_1$$ 发生内部事件 d：$$C_1(d) = 3$$</li>
+<li>$P_1$ 发生内部事件 a：$C_1(a) = 1$</li>
+<li>$P_1$ 向 $P_2$ 发送消息 m1（时间戳 = 1）：$C_1 = 2$（发送也是事件，自增）</li>
+<li>$P_2$ 接收 m1（时间戳为 2）：$C_2 = 1 + \max(0, 2) = 3$</li>
+<li>$P_2$ 发生内部事件 b：$C_2(b) = 4$</li>
+<li>$P_3$ 发生内部事件 c：$C_3(c) = 1$</li>
+<li>$P_2$ 向 $P_3$ 发送消息 m2（时间戳 = 4）：$C_2 = 5$</li>
+<li>$P_3$ 接收 m2（时间戳为 5）：$C_3 = 1 + \max(1, 5) = 6$</li>
+<li>$P_1$ 发生内部事件 d：$C_1(d) = 3$</li>
 </ol>
 <p>最终各节点逻辑时钟：
-- $$P_1: 3$$
-- $$P_2: 5$$
-- $$P_3: 6$$</p>
+- $P_1: 3$
+- $P_2: 5$
+- $P_3: 6$</p>
 <p><strong>（2）为什么"反过来不成立"？</strong></p>
 <p>Lamport逻辑时钟定理：
-- <strong>正向：</strong> 如果 $$a \rightarrow b$$（a先于b，有因果关系），则一定有 $$C(a) < C(b)$$
-- <strong>反向：</strong> 如果 $$C(a) < C(b)$$，则不一定有 $$a \rightarrow b$$</p>
-<p>反例：在上面的例子中，$$C_3(c) = 1$$，$$C_1(a) = 1$$，$$C_1(d) = 3$$。</p>
+- <strong>正向：</strong> 如果 $a \rightarrow b$（a先于b，有因果关系），则一定有 $C(a) < C(b)$
+- <strong>反向：</strong> 如果 $C(a) < C(b)$，则不一定有 $a \rightarrow b$</p>
+<p>反例：在上面的例子中，$C_3(c) = 1$，$C_1(a) = 1$，$C_1(d) = 3$。</p>
 <ul>
-<li>$$C_1(a) < C_3(c)$$ 吗？$$1 < 1$$ 为假；$$C_1(a) = C_3(c) = 1$$，不满足严格小于。</li>
-<li>$$C_1(d) = 3 > C_3(c) = 1$$，所以 $$C_3(c) < C_1(d)$$，但事件 c（在 $$P_3$$ 上）和事件 d（在 $$P_1$$ 上）之间<strong>没有任何因果关系</strong>——它们是<strong>并发事件</strong>（$$c \parallel d$$）。</li>
+<li>$C_1(a) < C_3(c)$ 吗？$1 < 1$ 为假；$C_1(a) = C_3(c) = 1$，不满足严格小于。</li>
+<li>$C_1(d) = 3 > C_3(c) = 1$，所以 $C_3(c) < C_1(d)$，但事件 c（在 $P_3$ 上）和事件 d（在 $P_1$ 上）之间<strong>没有任何因果关系</strong>——它们是<strong>并发事件</strong>（$c \parallel d$）。</li>
 </ul>
-<p><strong>更清晰的例子：</strong> 假设 $$P_1$$ 发生了内部事件 e（$$C_1(e)=5$$），同时 $$P_2$$ 发生了内部事件 f（$$C_2(f)=3$$）。显然 $$C_2(f) < C_1(e)$$，但是 f 和 e 是完全独立的事件，没有任何因果关系（没有消息在它们之间传递）。它们只是碰巧在不同的时钟速率下获得了不同大小的时钟值。</p>
+<p><strong>更清晰的例子：</strong> 假设 $P_1$ 发生了内部事件 e（$C_1(e)=5$），同时 $P_2$ 发生了内部事件 f（$C_2(f)=3$）。显然 $C_2(f) < C_1(e)$，但是 f 和 e 是完全独立的事件，没有任何因果关系（没有消息在它们之间传递）。它们只是碰巧在不同的时钟速率下获得了不同大小的时钟值。</p>
 <p><strong>根本原因：</strong> Lamport标量逻辑时钟只有一个整数维度，将因果关系的丰富信息"压缩"到了一个标量中，丢失了因果关系图的结构信息。因此只能保证"因果关系→时钟小"的单向蕴含，无法反向推断。</p>
 <hr />
 <h3>题目9（逻辑时钟变式练习：全序时钟排序）</h3>
 <p>参考2019年考试中提到"保持了潜在因果关系：a导致b，则一定有C(a)&lt;C(b)，但反过来不成立"。该性质对全序逻辑时钟同样成立。下面给出全序逻辑时钟的排序示例。</p>
 <p><strong>题：</strong> 系统中有3个节点（ID分别为 1, 2, 3），已知以下事件的全序时间戳：
-- 事件 a：$$\langle 2, 1 \rangle$$（发生在节点1）
-- 事件 b：$$\langle 2, 2 \rangle$$（发生在节点2）
-- 事件 c：$$\langle 3, 1 \rangle$$（发生在节点1）</p>
+- 事件 a：$\langle 2, 1 \rangle$（发生在节点1）
+- 事件 b：$\langle 2, 2 \rangle$（发生在节点2）
+- 事件 c：$\langle 3, 1 \rangle$（发生在节点1）</p>
 <p>请按全序逻辑时钟规则对这三个事件排序。</p>
 <p><strong>解析：</strong></p>
-<p>全序排序规则：$$\langle C(a), ID(a) \rangle < \langle C(b), ID(b) \rangle \iff C(a) < C(b) \text{ 或 } (C(a) = C(b) \text{ 且 } ID(a) < ID(b))$$</p>
+<p>全序排序规则：$\langle C(a), ID(a) \rangle < \langle C(b), ID(b) \rangle \iff C(a) < C(b) \text{ 或 } (C(a) = C(b) \text{ 且 } ID(a) < ID(b))$</p>
 <ul>
-<li>比较 a 和 b：$$C(a) = 2 = C(b)$$，触犯相等判断，比较 ID：$$ID(a)=1 < ID(b)=2$$，所以 $$a < b$$</li>
-<li>比较 b 和 c：$$C(b) = 2 < C(c) = 3$$，所以 $$b < c$$</li>
-<li>比较 a 和 c：$$C(a) = 2 < C(c) = 3$$，所以 $$a < c$$</li>
+<li>比较 a 和 b：$C(a) = 2 = C(b)$，触犯相等判断，比较 ID：$ID(a)=1 < ID(b)=2$，所以 $a < b$</li>
+<li>比较 b 和 c：$C(b) = 2 < C(c) = 3$，所以 $b < c$</li>
+<li>比较 a 和 c：$C(a) = 2 < C(c) = 3$，所以 $a < c$</li>
 </ul>
-<p><strong>全序结果：</strong> $$a < b < c$$</p>
-<p><strong>注意：</strong> 即使 $$a < b$$ 按全序排在前面，a 和 b 之间也可能没有因果关系（因为它们发生在不同节点且时钟值相同，说明它们很可能是并发事件）。这正是"反过来不成立"的含义。</p>
+<p><strong>全序结果：</strong> $a < b < c$</p>
+<p><strong>注意：</strong> 即使 $a < b$ 按全序排在前面，a 和 b 之间也可能没有因果关系（因为它们发生在不同节点且时钟值相同，说明它们很可能是并发事件）。这正是"反过来不成立"的含义。</p>
 <hr />
 <h3>题目10（来源：2022年）</h3>
 <p><strong>原题（4分）：</strong> 要利用分布式计算系统对一个大规模数据集进行排序，你所知道的排序算法中哪一种更适合？为什么？</p>
@@ -1469,7 +1469,7 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 5. <strong>实际系统验证：</strong> Google的MapReduce、Apache Hadoop、Apache Spark中实现大规模排序时，都采用基于归并排序思想的算法（如TeraSort）。</p>
 <p><strong>不适合的算法示例：</strong>
 - 快速排序（Quick Sort）：在分布式环境中，递归的partition操作需要全局数据视图，通信开销大
-- 冒泡/插入等 $$O(n^2)$$ 算法：数据规模大时效率极低</p>
+- 冒泡/插入等 $O(n^2)$ 算法：数据规模大时效率极低</p>
 <hr />
 <h2>三、知识点总结表</h2>
 <h3>3.1 链路模型递进关系</h3>
@@ -1572,13 +1572,13 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 <tr>
 <td>Fail-Stop</td>
 <td>停止工作，不发消息</td>
-<td>$$n > 2f$$</td>
+<td>$n > 2f$</td>
 <td>Paxos, Raft</td>
 </tr>
 <tr>
 <td>Byzantine</td>
 <td>可能发送任意恶意消息</td>
-<td>$$n > 3f$$</td>
+<td>$n > 3f$</td>
 <td>PBFT, 区块链共识</td>
 </tr>
 </tbody>
@@ -1621,11 +1621,11 @@ $$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
 <li><strong>消息传递模型</strong>是基础概念，需要理解其与共享内存模型的本质区别</li>
 <li><strong>Happen-Before关系</strong>的定义和三条规则必须熟记</li>
 <li><strong>Lamport逻辑时钟算法</strong>是重点，包括：事件处理规则、发送/接收时的时钟更新公式、性质（因果保持但反向不成立）</li>
-<li><strong>Cristian时间同步算法</strong>的推导过程要能完整默写（$$T_1$$到$$T_4$$四个时间点，$$\delta$$的计算，$$\delta/2$$的假设）</li>
-<li><strong>向量时钟</strong>是标量时钟的升级版：理解它能检测因果关系和并发关系的原因，掌握比较规则（$$\leq$$、$$<$$、$$\parallel$$）</li>
-<li><strong>全序逻辑时钟</strong>：理解二元组$$\langle C, ID \rangle$$的排序规则</li>
+<li><strong>Cristian时间同步算法</strong>的推导过程要能完整默写（$T_1$到$T_4$四个时间点，$\delta$的计算，$\delta/2$的假设）</li>
+<li><strong>向量时钟</strong>是标量时钟的升级版：理解它能检测因果关系和并发关系的原因，掌握比较规则（$\leq$、$<$、$\parallel$）</li>
+<li><strong>全序逻辑时钟</strong>：理解二元组$\langle C, ID \rangle$的排序规则</li>
 <li><strong>广播协议</strong>分类要清楚：可靠广播→FIFO广播→因果广播→全序广播，从弱到强的关系</li>
-<li><strong>Paxos/Raft容错</strong>：$$n$$个节点最多容忍$$\lfloor (n-1)/2 \rfloor$$个失效（基于多数派）</li>
+<li><strong>Paxos/Raft容错</strong>：$n$个节点最多容忍$\lfloor (n-1)/2 \rfloor$个失效（基于多数派）</li>
 <li><strong>一致性模型</strong>：能区分强一致性、最终一致性、顺序一致性，并分析给定场景是否满足</li>
 <li><strong>节点故障模式</strong>：Fail-Stop与Byzantine的本质区别和各自的容错公式</li>
 </ol>
