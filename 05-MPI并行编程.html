@@ -150,6 +150,10 @@
             table { font-size: 0.82em; }
             th, td { padding: 6px 8px; }
         }
+        .diagram { margin: 24px 0; text-align: center; }
+        .diagram img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); border: 1px solid #e0e0e0; }
+        .caption { font-size: 0.9em; color: #64748b; margin-top: 8px; text-align: center; }
+        svg.diagram-svg { max-width: 100%; height: auto; display: block; margin: 16px auto; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); border: 1px solid #e0e0e0; }
     </style>
 </head>
 <body>
@@ -245,6 +249,64 @@
 <p>在 SPMD 模型中，程序员编写一份代码，通过 <code>mpiexec -n N</code> 命令启动 N 个进程同时运行这份代码。<strong>每个进程通过查询自己的 rank（编号）来确定自己的身份</strong>，然后根据分支条件（if-else）执行不同的代码路径，处理不同的数据片段。</p>
 <p>SPMD 模型的核心思想可以概括为：</p>
 <p>$$ \text{相同的代码} + \text{不同的 rank} \rightarrow \text{处理不同的数据} $$</p>
+<div class="diagram">
+<svg class="diagram-svg" viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="codeGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="procGrad1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#eff6ff"/>
+    </linearGradient>
+  </defs>
+  <!-- Title -->
+  <text x="400" y="32" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="18" font-weight="bold" fill="#1e293b">SPMD 编程模型（Single Program Multiple Data）</text>
+  <!-- Same Program box -->
+  <rect x="250" y="55" width="300" height="60" rx="8" fill="url(#codeGrad)"/>
+  <text x="400" y="82" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#fff">同一份程序代码</text>
+  <text x="400" y="100" text-anchor="middle" font-family="monospace" font-size="11" fill="#bfdbfe">mpiexec -n 4 python program.py</text>
+  <!-- Arrow down from code -->
+  <line x1="400" y1="115" x2="400" y2="140" stroke="#2563eb" stroke-width="2"/>
+  <polygon points="394,138 400,148 406,138" fill="#2563eb"/>
+  <!-- 4 Process boxes -->
+  <rect x="40" y="155" width="160" height="90" rx="8" fill="url(#procGrad1)" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="120" y="180" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#1e40af">进程 P0</text>
+  <text x="120" y="200" text-anchor="middle" font-family="monospace" font-size="12" fill="#64748b">rank = 0</text>
+  <text x="120" y="220" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#475569">处理数据分片 A</text>
+  <text x="120" y="236" text-anchor="middle" font-family="monospace" font-size="10" fill="#94a3b8">data[0] → data[N/4-1]</text>
+
+  <rect x="220" y="155" width="160" height="90" rx="8" fill="url(#procGrad1)" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="300" y="180" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#1e40af">进程 P1</text>
+  <text x="300" y="200" text-anchor="middle" font-family="monospace" font-size="12" fill="#64748b">rank = 1</text>
+  <text x="300" y="220" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#475569">处理数据分片 B</text>
+  <text x="300" y="236" text-anchor="middle" font-family="monospace" font-size="10" fill="#94a3b8">data[N/4] → data[N/2-1]</text>
+
+  <rect x="400" y="155" width="160" height="90" rx="8" fill="url(#procGrad1)" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="480" y="180" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#1e40af">进程 P2</text>
+  <text x="480" y="200" text-anchor="middle" font-family="monospace" font-size="12" fill="#64748b">rank = 2</text>
+  <text x="480" y="220" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#475569">处理数据分片 C</text>
+  <text x="480" y="236" text-anchor="middle" font-family="monospace" font-size="10" fill="#94a3b8">data[N/2] → data[3N/4-1]</text>
+
+  <rect x="580" y="155" width="160" height="90" rx="8" fill="url(#procGrad1)" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="660" y="180" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#1e40af">进程 P3</text>
+  <text x="660" y="200" text-anchor="middle" font-family="monospace" font-size="12" fill="#64748b">rank = 3</text>
+  <text x="660" y="220" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#475569">处理数据分片 D</text>
+  <text x="660" y="236" text-anchor="middle" font-family="monospace" font-size="10" fill="#94a3b8">data[3N/4] → data[N-1]</text>
+
+  <!-- Key formula at bottom -->
+  <text x="400" y="280" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#64748b">通过 <tspan font-weight="bold" fill="#2563eb">rank</tspan> 编号识别身份，<tspan font-weight="bold" fill="#2563eb">if-else</tspan> 分支执行不同代码路径</text>
+  <!-- Communication arrows between processes -->
+  <rect x="40" y="300" width="700" height="42" rx="6" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1"/>
+  <text x="400" y="322" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#0369a1">进程间通过 MPI 消息传递（send/recv）进行数据交换与协作</text>
+  <!-- Bidirectional arrows between processes -->
+  <line x1="200" y1="320" x2="218" y2="320" stroke="#7dd3fc" stroke-width="1.5"/>
+  <line x1="382" y1="320" x2="398" y2="320" stroke="#7dd3fc" stroke-width="1.5"/>
+  <line x1="562" y1="320" x2="578" y2="320" stroke="#7dd3fc" stroke-width="1.5"/>
+</svg>
+<p class="caption">SPMD 模型：同一份代码在多个进程上运行，通过 rank 区分身份并处理不同数据分片</p>
+</div>
 <h4>1.2.2 进程与进程组</h4>
 <p><strong>进程</strong>是 MPI 程序的基本执行单元：</p>
 <ul>
@@ -287,6 +349,10 @@
 <li>rank 用于在进程组内标识和区分各个进程</li>
 </ul>
 <p><strong>通信器（Communicator）</strong>：</p>
+<div class="diagram">
+<img src="images/分布式计算-MPI编程入门v1.1_p04_img1.jpeg" alt="MPI进程与通信器模型" width="957" height="430" loading="lazy">
+<p class="caption">MPI 进程、进程组与通信器模型</p>
+</div>
 <ul>
 <li>通信器是进程组所依赖的通信基础设施，可以理解为一个"通信域"</li>
 <li><strong>组内通信器</strong>（intra-communicator）：进程组内的各个进程利用它相互通信</li>
@@ -426,6 +492,10 @@ comm.Recv([recv_buf, MPI.DOUBLE], source=0, tag=MPI.ANY_TAG)
 - 适用于大规模数值数组的传输</p>
 <h4>1.3.3 集体通信函数</h4>
 <p>集体通信涉及通信器中的所有进程（或一个大的子集），所有进程必须同时调用同一个集体通信函数。</p>
+<div class="diagram">
+<img src="images/分布式计算-MPI编程入门v1.1_p11_img3.png" alt="MPI集合通信操作示意图" width="1276" height="432" loading="lazy">
+<p class="caption">MPI 集合通信：广播、散播、收集、归约等操作的数据流向</p>
+</div>
 <h5>comm.bcast(obj, root=0)</h5>
 <p><strong>广播</strong>：将 root 进程的数据发送给通信器中的所有进程（包括 root 自身）。</p>
 <pre><code class="language-python"># 进程 0 准备数据并通过广播发给所有进程
@@ -553,6 +623,10 @@ print(f&quot;Rank {rank}: After barrier&quot;)
 - 调试时确保输出顺序可控</p>
 <hr />
 <h3>1.4 MPI 通信模式</h3>
+<div class="diagram">
+<img src="images/分布式计算-MPI编程入门v1.1_p09_img3.jpeg" alt="MPI通信模式概览" width="651" height="368" loading="lazy">
+<p class="caption">MPI 通信模式概览：阻塞、非阻塞、点对点与集合通信</p>
+</div>
 <h4>1.4.1 阻塞通信 vs 非阻塞通信</h4>
 <p><strong>阻塞通信</strong>（本课程重点讲解的内容）：</p>
 <ul>
@@ -572,6 +646,143 @@ req = comm.Isend([data, MPI.INT], dest=1, tag=0)
 # 在此期间可以做计算...
 req.Wait()  # 确保发送完成
 </code></pre>
+<div class="diagram">
+<svg class="diagram-svg" viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#16a34a"/>
+    </marker>
+  </defs>
+  <!-- Title -->
+  <text x="400" y="26" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="16" font-weight="bold" fill="#1e293b">阻塞通信 vs 非阻塞通信 时序对比</text>
+
+  <!-- Left: Blocking Communication -->
+  <text x="200" y="56" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#dc2626">阻塞通信（Blocking）</text>
+
+  <!-- Timeline for Process 0 (Blocking) -->
+  <text x="32" y="82" font-family="monospace" font-size="12" fill="#64748b">P0 (发送方)</text>
+  <line x1="110" y1="78" x2="330" y2="78" stroke="#cbd5e1" stroke-width="1"/>
+  <!-- Send call -->
+  <polygon points="140,78 140,68 142,68 142,78" fill="#dc2626"/>
+  <rect x="108" y="62" width="64" height="16" rx="3" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="140" y="73" text-anchor="middle" font-family="monospace" font-size="10" fill="#dc2626">send()</text>
+  <!-- Blocked period -->
+  <rect x="172" y="68" width="70" height="14" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="0.5" stroke-dasharray="2"/>
+  <text x="207" y="78" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">阻塞等待</text>
+  <!-- Return -->
+  <rect x="242" y="62" width="52" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="268" y="73" text-anchor="middle" font-family="monospace" font-size="10" fill="#16a34a">返回</text>
+  <!-- Continue line -->
+  <line x1="294" y1="78" x2="330" y2="78" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="312" y="92" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">继续执行</text>
+
+  <!-- Timeline for Process 1 (Blocking) -->
+  <text x="32" y="125" font-family="monospace" font-size="12" fill="#64748b">P1 (接收方)</text>
+  <line x1="110" y1="121" x2="330" y2="121" stroke="#cbd5e1" stroke-width="1"/>
+  <polygon points="150,121 150,111 152,111 152,121" fill="#dc2626"/>
+  <rect x="120" y="105" width="60" height="16" rx="3" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="150" y="116" text-anchor="middle" font-family="monospace" font-size="10" fill="#dc2626">recv()</text>
+  <rect x="180" y="111" width="80" height="14" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="0.5" stroke-dasharray="2"/>
+  <text x="220" y="121" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">阻塞等待数据</text>
+  <rect x="260" y="105" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="280" y="116" text-anchor="middle" font-family="monospace" font-size="10" fill="#16a34a">收到</text>
+  <line x1="300" y1="121" x2="330" y2="121" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Message arrow for blocking -->
+  <line x1="200" y1="78" x2="220" y2="118" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowRed)" stroke-dasharray="4,2"/>
+  <text x="218" y="102" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626">消息传输</text>
+
+  <!-- Note for blocking -->
+  <rect x="40" y="148" width="310" height="32" rx="6" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+  <text x="195" y="162" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#991b1b">⚠ send/recv 完成前调用者被阻塞，CPU 空闲等待</text>
+  <text x="195" y="175" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#b91c1c">可能死锁（两个进程互相等待对方）</text>
+
+  <!-- Dividing line -->
+  <line x1="385" y1="50" x2="385" y2="195" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+
+  <!-- Right: Non-Blocking Communication -->
+  <text x="590" y="56" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#16a34a">非阻塞通信（Non-Blocking）</text>
+
+  <!-- Timeline for Process 0 (Non-Blocking) -->
+  <text x="408" y="82" font-family="monospace" font-size="12" fill="#64748b">P0 (发送方)</text>
+  <line x1="500" y1="78" x2="750" y2="78" stroke="#cbd5e1" stroke-width="1"/>
+  <polygon points="530,78 530,68 532,68 532,78" fill="#16a34a"/>
+  <rect x="500" y="62" width="60" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="530" y="73" text-anchor="middle" font-family="monospace" font-size="10" fill="#16a34a">Isend()</text>
+  <rect x="560" y="62" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="580" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
+  <!-- Compute period -->
+  <rect x="600" y="65" width="70" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="635" y="79" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#1d4ed8">本地计算</text>
+  <line x1="670" y1="78" x2="700" y2="78" stroke="#cbd5e1" stroke-width="1"/>
+  <polygon points="700,78 700,68 702,68 702,78" fill="#2563eb"/>
+  <text x="725" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb">Wait()</text>
+  <text x="725" y="92" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">确认完成</text>
+
+  <!-- Timeline for Process 1 (Non-Blocking) -->
+  <text x="408" y="125" font-family="monospace" font-size="12" fill="#64748b">P1 (接收方)</text>
+  <line x1="500" y1="121" x2="750" y2="121" stroke="#cbd5e1" stroke-width="1"/>
+  <polygon points="535,121 535,111 537,111 537,121" fill="#16a34a"/>
+  <rect x="505" y="105" width="60" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="535" y="116" text-anchor="middle" font-family="monospace" font-size="10" fill="#16a34a">Irecv()</text>
+  <rect x="565" y="105" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="585" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
+  <rect x="605" y="108" width="60" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="635" y="122" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#1d4ed8">本地计算</text>
+  <polygon points="695,121 695,111 697,111 697,121" fill="#2563eb"/>
+  <text x="725" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb">Wait()</text>
+
+  <!-- Background computing box -->
+  <rect x="568" y="135" width="170" height="16" rx="3" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="0.5" stroke-dasharray="3"/>
+  <text x="653" y="146" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#16a34a">后台执行数据传输（计算·通信重叠）</text>
+
+  <!-- Note for non-blocking -->
+  <rect x="460" y="156" width="300" height="32" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="610" y="170" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#166534">✓ Isend/Irecv 立即返回，不阻塞调用者</text>
+  <text x="610" y="183" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#15803d">计算与通信可重叠执行，效率更高</text>
+
+  <!-- Bottom comparison table -->
+  <rect x="30" y="210" width="740" height="200" rx="8" fill="#fff" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="400" y="232" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1e293b">对比总结</text>
+
+  <line x1="220" y1="210" x2="220" y2="410" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="50" y1="245" x2="750" y2="245" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="50" y1="280" x2="750" y2="280" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="50" y1="315" x2="750" y2="315" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="50" y1="350" x2="750" y2="350" stroke="#f1f5f9" stroke-width="1"/>
+
+  <text x="120" y="238" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#64748b">对比维度</text>
+  <text x="420" y="238" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#dc2626">阻塞通信</text>
+  <text x="640" y="238" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#16a34a">非阻塞通信</text>
+
+  <text x="120" y="268" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">调用返回</text>
+  <text x="420" y="268" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">操作完成后才返回</text>
+  <text x="640" y="268" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">立即返回 request 对象</text>
+
+  <text x="120" y="303" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">缓冲区安全</text>
+  <text x="420" y="303" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">返回后可复用</text>
+  <text x="640" y="303" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">Wait()确认后才安全</text>
+
+  <text x="120" y="338" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">计算·通信重叠</text>
+  <text x="420" y="338" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">不支持</text>
+  <text x="640" y="338" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">✓ 支持</text>
+
+  <text x="120" y="373" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">死锁风险</text>
+  <text x="420" y="373" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">较高</text>
+  <text x="640" y="373" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">较低</text>
+
+  <text x="120" y="403" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">编程复杂度</text>
+  <text x="420" y="403" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">简单直观</text>
+  <text x="640" y="403" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">需管理 request 对象</text>
+</svg>
+<p class="caption">阻塞通信 vs 非阻塞通信时序对比：阻塞通信在操作完成前暂停调用者，非阻塞通信立即返回并支持计算·通信重叠</p>
+</div>
 <h4>1.4.2 点对点通信（Point-to-Point Communication）</h4>
 <p>点对点通信是 MPI 中最基本的通信模式，涉及<strong>恰好两个进程</strong>：</p>
 <ul>
@@ -602,8 +813,321 @@ elif rank == 1:
     data = comm.recv(source=0, tag=10)
     print(f&quot;Rank {rank}: Received data from rank 0: {data}&quot;)
 </code></pre>
+<div class="diagram">
+<svg class="diagram-svg" viewBox="0 0 800 340" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="p2pArrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <!-- Title -->
+  <text x="400" y="26" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="16" font-weight="bold" fill="#1e293b">MPI 点对点通信（Point-to-Point）</text>
+
+  <!-- Process 0 (Sender) -->
+  <rect x="50" y="55" width="240" height="180" rx="10" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="170" y="80" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#1e40af">进程 P0（发送方）</text>
+  <text x="170" y="98" text-anchor="middle" font-family="monospace" font-size="11" fill="#64748b">rank = 0</text>
+
+  <!-- Application data box -->
+  <rect x="70" y="112" width="200" height="36" rx="6" fill="#dbeafe" stroke="#60a5fa" stroke-width="1"/>
+  <text x="170" y="126" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#1e40af">应用层数据对象</text>
+  <text x="170" y="141" text-anchor="middle" font-family="monospace" font-size="10" fill="#3b82f6">data = {"msg": "Hello", "val": 42}</text>
+
+  <!-- Arrow down -->
+  <line x1="170" y1="148" x2="170" y2="165" stroke="#2563eb" stroke-width="1.5" marker-end="url(#p2pArrow)"/>
+
+  <!-- Send buffer -->
+  <rect x="70" y="168" width="200" height="36" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+  <text x="170" y="182" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#92400e">发送缓冲区（序列化）</text>
+  <text x="170" y="197" text-anchor="middle" font-family="monospace" font-size="10" fill="#d97706">send(obj, dest=1, tag=0)</text>
+
+  <!-- Network arrow -->
+  <rect x="290" y="125" width="70" height="30" rx="4" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+  <text x="325" y="144" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#0369a1">网络传输</text>
+  <line x1="270" y1="186" x2="510" y2="186" stroke="#2563eb" stroke-width="2.5" marker-end="url(#p2pArrow)" stroke-dasharray="6,3"/>
+
+  <!-- Process 1 (Receiver) -->
+  <rect x="510" y="55" width="240" height="180" rx="10" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+  <text x="630" y="80" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#166534">进程 P1（接收方）</text>
+  <text x="630" y="98" text-anchor="middle" font-family="monospace" font-size="11" fill="#64748b">rank = 1</text>
+
+  <!-- Recv buffer -->
+  <rect x="530" y="112" width="200" height="36" rx="6" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+  <text x="630" y="126" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#92400e">接收缓冲区（反序列化）</text>
+  <text x="630" y="141" text-anchor="middle" font-family="monospace" font-size="10" fill="#d97706">recv(source=0, tag=10)</text>
+
+  <!-- Arrow up -->
+  <line x1="630" y1="165" x2="630" y2="148" stroke="#16a34a" stroke-width="1.5"/>
+  <polygon points="624,150 630,142 636,150" fill="#16a34a"/>
+
+  <!-- Application data (received) -->
+  <rect x="530" y="168" width="200" height="36" rx="6" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="630" y="182" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#166534">应用层数据对象（还原）</text>
+  <text x="630" y="197" text-anchor="middle" font-family="monospace" font-size="10" fill="#22c55e">data = {"msg": "Hello", "val": 42}</text>
+
+  <!-- Message envelope annotation -->
+  <rect x="285" y="252" width="230" height="72" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="400" y="270" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#475569">消息匹配四元组</text>
+  <text x="400" y="290" text-anchor="middle" font-family="monospace" font-size="11" fill="#64748b">(source=0, dest=1, tag=10, comm=COMM_WORLD)</text>
+  <text x="400" y="312" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#94a3b8">发送方和接收方的参数必须匹配</text>
+</svg>
+<p class="caption">点对点通信：数据从发送方缓冲区序列化后经网络传输，接收方反序列化还原为 Python 对象</p>
+</div>
 <h4>1.4.3 集体通信（Collective Communication）</h4>
 <p>集体通信涉及通信器中的<strong>所有进程</strong>（或一个较大的子集）。</p>
+<div class="diagram">
+<svg class="diagram-svg" viewBox="0 0 820 620" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="overviewArrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <text x="410" y="24" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="16" font-weight="bold" fill="#1e293b">MPI 集合通信操作总览</text>
+
+  <!-- ===== 1. Broadcast ===== -->
+  <rect x="15" y="40" width="255" height="175" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="142" y="62" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#2563eb">1. Broadcast（广播）</text>
+  <text x="142" y="78" text-anchor="middle" font-family="monospace" font-size="10" fill="#64748b">comm.bcast(data, root=0)</text>
+  <!-- P0 with data -->
+  <rect x="25" y="88" width="40" height="40" rx="6" fill="#2563eb" stroke="#1d4ed8" stroke-width="1"/>
+  <text x="45" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#fff" font-weight="bold">P0</text>
+  <text x="45" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#64748b">A</text>
+  <!-- Arrow to P1, P2, P3 -->
+  <rect x="100" y="88" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="120" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P1</text>
+  <text x="120" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#2563eb">A</text>
+
+  <rect x="160" y="88" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="180" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P2</text>
+  <text x="180" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#2563eb">A</text>
+
+  <rect x="220" y="88" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="240" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P3</text>
+  <text x="240" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#2563eb">A</text>
+
+  <line x1="65" y1="108" x2="98" y2="108" stroke="#2563eb" stroke-width="1.5" marker-end="url(#overviewArrow)"/>
+  <line x1="65" y1="98" x2="158" y2="98" stroke="#2563eb" stroke-width="1.5"/>
+  <line x1="65" y1="118" x2="218" y2="118" stroke="#2563eb" stroke-width="1.5"/>
+  <polygon points="216,115 222,118 216,121" fill="#2563eb"/>
+  <text x="142" y="158" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">root → 所有进程</text>
+  <text x="142" y="172" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">所有进程得到相同数据</text>
+
+  <!-- ===== 2. Scatter ===== -->
+  <rect x="285" y="40" width="255" height="175" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="412" y="62" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#2563eb">2. Scatter（散播）</text>
+  <text x="412" y="78" text-anchor="middle" font-family="monospace" font-size="10" fill="#64748b">comm.scatter(list, root=0)</text>
+
+  <rect x="295" y="88" width="40" height="50" rx="6" fill="#2563eb" stroke="#1d4ed8" stroke-width="1"/>
+  <text x="315" y="105" text-anchor="middle" font-family="monospace" font-size="10" fill="#fff" font-weight="bold">P0</text>
+  <text x="315" y="125" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#bfdbfe">A,B,C,D</text>
+
+  <rect x="370" y="88" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="390" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P1</text>
+  <text x="390" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#2563eb">A</text>
+
+  <rect x="430" y="88" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="450" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P2</text>
+  <text x="450" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#2563eb">B</text>
+
+  <rect x="490" y="88" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="510" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P3</text>
+  <text x="510" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#2563eb">C</text>
+
+  <line x1="335" y1="113" x2="368" y2="108" stroke="#2563eb" stroke-width="1.5" marker-end="url(#overviewArrow)"/>
+  <line x1="335" y1="113" x2="428" y2="108" stroke="#2563eb" stroke-width="1.5" marker-end="url(#overviewArrow)"/>
+  <line x1="335" y1="118" x2="488" y2="113" stroke="#2563eb" stroke-width="1.5" marker-end="url(#overviewArrow)"/>
+  <text x="412" y="158" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">root → 各进程</text>
+  <text x="412" y="172" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">列表[i]发送给 rank=i</text>
+
+  <!-- ===== 3. Gather ===== -->
+  <rect x="555" y="40" width="250" height="175" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="680" y="62" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#2563eb">3. Gather（收集）</text>
+  <text x="680" y="78" text-anchor="middle" font-family="monospace" font-size="10" fill="#64748b">comm.gather(data, root=0)</text>
+
+  <rect x="565" y="88" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="585" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P0</text>
+  <text x="585" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#2563eb">a</text>
+
+  <rect x="625" y="88" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="645" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P1</text>
+  <text x="645" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#2563eb">b</text>
+
+  <rect x="685" y="88" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="705" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P2</text>
+  <text x="705" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#2563eb">c</text>
+
+  <rect x="745" y="88" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="765" y="113" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P3</text>
+  <text x="765" y="138" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#2563eb">d</text>
+
+  <!-- Result at root -->
+  <rect x="565" y="135" width="220" height="28" rx="6" fill="#2563eb" stroke="#1d4ed8" stroke-width="1"/>
+  <text x="675" y="153" text-anchor="middle" font-family="monospace" font-size="10" fill="#fff">P0: [a, b, c, d]</text>
+
+  <line x1="627" y1="138" x2="627" y2="165" stroke="#2563eb" stroke-width="1.5"/>
+  <line x1="687" y1="138" x2="687" y2="165" stroke="#2563eb" stroke-width="1.5"/>
+  <line x1="747" y1="138" x2="747" y2="165" stroke="#2563eb" stroke-width="1.5"/>
+  <polygon points="745,163 747,167 749,163" fill="#2563eb"/>
+  <text x="680" y="172" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">各进程 → root</text>
+
+  <!-- ===== 4. Reduce ===== -->
+  <rect x="15" y="228" width="255" height="175" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="142" y="250" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#dc2626">4. Reduce（归约）</text>
+  <text x="142" y="266" text-anchor="middle" font-family="monospace" font-size="10" fill="#64748b">comm.reduce(val, op=SUM, root=0)</text>
+
+  <rect x="25" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="45" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P0</text>
+  <text x="45" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#64748b">1</text>
+
+  <rect x="95" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="115" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P1</text>
+  <text x="115" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#64748b">2</text>
+
+  <rect x="165" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="185" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P2</text>
+  <text x="185" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#64748b">3</text>
+
+  <rect x="235" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="255" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P3</text>
+  <text x="255" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#64748b">4</text>
+
+  <!-- SUM operation box -->
+  <rect x="65" y="110" width="90" height="22" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1" transform="translate(0,230)"/>
+  <text x="110" y="125" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#dc2626" transform="translate(0,230)">SUM = 1+2+3+4</text>
+
+  <line x1="67" y1="318" x2="98" y2="342" stroke="#dc2626" stroke-width="1.5"/>
+  <line x1="137" y1="318" x2="128" y2="342" stroke="#dc2626" stroke-width="1.5"/>
+  <line x1="207" y1="318" x2="150" y2="342" stroke="#dc2626" stroke-width="1.5"/>
+  <line x1="277" y1="318" x2="178" y2="342" stroke="#dc2626" stroke-width="1.5"/>
+
+  <rect x="90" y="342" width="100" height="24" rx="6" fill="#dc2626" stroke="#b91c1c" stroke-width="1"/>
+  <text x="140" y="358" text-anchor="middle" font-family="monospace" font-size="10" fill="#fff">P0: 10</text>
+  <text x="142" y="394" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">所有 → root（合并计算）</text>
+  <text x="142" y="408" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">仅 root 获得结果</text>
+
+  <!-- ===== 5. Allgather ===== -->
+  <rect x="285" y="228" width="255" height="175" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="412" y="250" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#7c3aed">5. Allgather（全局收集）</text>
+  <text x="412" y="266" text-anchor="middle" font-family="monospace" font-size="10" fill="#64748b">comm.allgather(data)</text>
+
+  <rect x="295" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="315" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P0</text>
+  <text x="315" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#64748b">a</text>
+
+  <rect x="370" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="390" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P1</text>
+  <text x="390" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#64748b">b</text>
+
+  <rect x="445" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="465" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P2</text>
+  <text x="465" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#64748b">c</text>
+
+  <rect x="520" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="540" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P3</text>
+  <text x="540" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="8" fill="#64748b">d</text>
+
+  <!-- All results -->
+  <rect x="295" y="340" width="220" height="24" rx="6" fill="#7c3aed" stroke="#6d28d9" stroke-width="1"/>
+  <text x="405" y="356" text-anchor="middle" font-family="monospace" font-size="10" fill="#fff">所有人: [a, b, c, d]</text>
+
+  <line x1="327" y1="318" x2="350" y2="338" stroke="#7c3aed" stroke-width="1"/>
+  <line x1="400" y1="318" x2="385" y2="338" stroke="#7c3aed" stroke-width="1"/>
+  <line x1="475" y1="318" x2="420" y2="338" stroke="#7c3aed" stroke-width="1"/>
+  <line x1="550" y1="318" x2="458" y2="338" stroke="#7c3aed" stroke-width="1"/>
+  <polygon points="456,336 460,340 462,335" fill="#7c3aed"/>
+
+  <text x="412" y="394" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">所有 ↔ 所有（互相交换）</text>
+  <text x="412" y="408" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">每个进程都得到完整列表</text>
+
+  <!-- ===== 6. Allreduce ===== -->
+  <rect x="555" y="228" width="250" height="175" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="680" y="250" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#059669">6. Allreduce（全局归约）</text>
+  <text x="680" y="266" text-anchor="middle" font-family="monospace" font-size="10" fill="#64748b">comm.allreduce(val, op=SUM)</text>
+
+  <rect x="565" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="585" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P0</text>
+  <text x="585" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#64748b">1</text>
+
+  <rect x="635" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="655" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P1</text>
+  <text x="655" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#64748b">2</text>
+
+  <rect x="705" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="725" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P2</text>
+  <text x="725" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#64748b">3</text>
+
+  <rect x="765" y="278" width="40" height="40" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="785" y="303" text-anchor="middle" font-family="monospace" font-size="10" fill="#1e40af">P3</text>
+  <text x="785" y="323" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#64748b">4</text>
+
+  <text x="680" y="352" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#64748b">SUM = 1+2+3+4</text>
+
+  <rect x="565" y="360" width="220" height="24" rx="6" fill="#059669" stroke="#047857" stroke-width="1"/>
+  <text x="675" y="376" text-anchor="middle" font-family="monospace" font-size="10" fill="#fff">所有人: 10</text>
+
+  <text x="680" y="394" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">所有 → 所有（合并+广播）</text>
+  <text x="680" y="408" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">Reduce + Bcast 的优化版</text>
+
+  <!-- Bottom: comparison table -->
+  <rect x="15" y="420" width="790" height="190" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="410" y="442" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1e293b">集合通信函数对比</text>
+
+  <line x1="35" y1="420" x2="785" y2="455" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="190" y1="455" x2="190" y2="610" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="310" y1="455" x2="310" y2="610" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="430" y1="455" x2="430" y2="610" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="550" y1="455" x2="550" y2="610" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="670" y1="455" x2="670" y2="610" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="35" y1="490" x2="785" y2="490" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="35" y1="525" x2="785" y2="525" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="35" y1="560" x2="785" y2="560" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- Table headers -->
+  <text x="110" y="475" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" font-weight="bold" fill="#64748b">函数名</text>
+  <text x="250" y="475" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" font-weight="bold" fill="#64748b">数据流向</text>
+  <text x="370" y="475" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" font-weight="bold" fill="#64748b">root参数</text>
+  <text x="490" y="475" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" font-weight="bold" fill="#64748b">操作符</text>
+  <text x="610" y="475" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" font-weight="bold" fill="#64748b">结果持有者</text>
+  <text x="730" y="475" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" font-weight="bold" fill="#64748b">复杂度</text>
+
+  <!-- Rows -->
+  <text x="110" y="508" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb" font-weight="bold">bcast</text>
+  <text x="250" y="508" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">root → 所有</text>
+  <text x="370" y="508" text-anchor="middle" font-family="monospace" font-size="9" fill="#475569">需要</text>
+  <text x="490" y="508" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">无</text>
+  <text x="610" y="508" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">所有进程</text>
+  <text x="730" y="508" text-anchor="middle" font-family="monospace" font-size="9" fill="#475569">O(log p)</text>
+
+  <text x="110" y="543" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb" font-weight="bold">scatter</text>
+  <text x="250" y="543" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">root → 各进程</text>
+  <text x="370" y="543" text-anchor="middle" font-family="monospace" font-size="9" fill="#475569">需要</text>
+  <text x="490" y="543" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">无</text>
+  <text x="610" y="543" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">各进程各一部分</text>
+  <text x="730" y="543" text-anchor="middle" font-family="monospace" font-size="9" fill="#475569">O(log p)</text>
+
+  <text x="110" y="578" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb" font-weight="bold">gather</text>
+  <text x="250" y="578" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">各进程 → root</text>
+  <text x="370" y="578" text-anchor="middle" font-family="monospace" font-size="9" fill="#475569">需要</text>
+  <text x="490" y="578" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">无</text>
+  <text x="610" y="578" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">仅 root</text>
+  <text x="730" y="578" text-anchor="middle" font-family="monospace" font-size="9" fill="#475569">O(log p)</text>
+
+  <text x="110" y="600" text-anchor="middle" font-family="monospace" font-size="9" fill="#dc2626" font-weight="bold">reduce</text>
+  <text x="250" y="600" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">所有 → root</text>
+  <text x="370" y="600" text-anchor="middle" font-family="monospace" font-size="9" fill="#475569">需要</text>
+  <text x="490" y="600" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">SUM/PROD/MAX...</text>
+  <text x="610" y="600" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">仅 root</text>
+  <text x="730" y="600" text-anchor="middle" font-family="monospace" font-size="9" fill="#475569">O(log p)</text>
+
+  <text x="110" y="618" text-anchor="middle" font-family="monospace" font-size="9" fill="#7c3aed" font-weight="bold">allreduce</text>
+  <text x="250" y="618" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">所有 ↔ 所有</text>
+  <text x="370" y="618" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#94a3b8">不需要</text>
+  <text x="490" y="618" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">SUM/PROD/MAX...</text>
+  <text x="610" y="618" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="9" fill="#475569">所有进程</text>
+  <text x="730" y="618" text-anchor="middle" font-family="monospace" font-size="9" fill="#475569">O(log p)</text>
+</svg>
+<p class="caption">MPI 六种集合通信操作总览：Broadcast、Scatter、Gather、Reduce、Allgather、Allreduce</p>
+</div>
 <h5>广播通信（Broadcast）</h5>
 <p><strong>bcast.py 示例——一对多通信</strong>：</p>
 <pre><code class="language-python">from mpi4py import MPI

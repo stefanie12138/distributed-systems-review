@@ -143,6 +143,10 @@
         .katex-display > .katex {
             text-align: left !important;
         }
+        .diagram { margin: 24px 0; text-align: center; }
+        .diagram img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); border: 1px solid #e0e0e0; }
+        .caption { font-size: 0.9em; color: #64748b; margin-top: 8px; text-align: center; }
+        svg.diagram-svg { max-width: 100%; height: auto; display: block; margin: 16px auto; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); border: 1px solid #e0e0e0; }
         @media (max-width: 640px) {
             .container { padding: 12px 14px 40px; }
             h1 { font-size: 1.5em; }
@@ -199,6 +203,10 @@
 </tr>
 </tbody>
 </table>
+<div class="diagram">
+  <img src="images/分布式计算-通信技术v12.6_p11_img0.png" alt="TCP/IP 与 OSI 协议栈对比" loading="lazy">
+  <p class="caption">图1：TCP/IP 与 OSI 协议栈对比</p>
+</div>
 <p>各层网络协议的存在位置：
 - <strong>路由器</strong>：只包含物理层、链路层、网络层协议实现模块
 - <strong>主机</strong>：包含五层协议实现模块
@@ -250,6 +258,10 @@ Physical layer    &lt;---&gt;  Physical layer
 </tr>
 </tbody>
 </table>
+<div class="diagram">
+  <img src="images/分布式计算-通信技术v12.6_p13_img4.jpeg" alt="Socket 通信模型" loading="lazy">
+  <p class="caption">图2：Socket 通信模型</p>
+</div>
 <h4>1.2.3 Socket的五元组标识</h4>
 <p>一个Socket由五元组唯一标识：</p>
 <p>$$\langle \text{srcIP}, \text{srcPort}, \text{dstIP}, \text{dstPort}, \text{协议} \rangle$$</p>
@@ -383,6 +395,118 @@ Physical layer    &lt;---&gt;  Physical layer
 </tr>
 </tbody>
 </table>
+<div class="diagram">
+  <svg class="diagram-svg" viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="420" fill="#ffffff" rx="8" />
+    <text x="400" y="28" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">三种并发服务模型对比</text>
+
+    <!-- Model 1: Multi-thread -->
+    <rect x="15" y="45" width="248" height="355" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" rx="8" />
+    <text x="139" y="70" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="13" font-weight="bold" fill="#2563eb">多线程模型</text>
+
+    <rect x="30" y="85" width="45" height="28" fill="#dbeafe" stroke="#2563eb" rx="4" />
+    <text x="52" y="104" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#1e40af">请求1</text>
+    <rect x="85" y="85" width="80" height="28" fill="#bfdbfe" stroke="#2563eb" rx="4" />
+    <text x="125" y="104" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#1e40af">线程1</text>
+
+    <rect x="30" y="120" width="45" height="28" fill="#dbeafe" stroke="#2563eb" rx="4" />
+    <text x="52" y="139" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#1e40af">请求2</text>
+    <rect x="85" y="120" width="80" height="28" fill="#bfdbfe" stroke="#2563eb" rx="4" />
+    <text x="125" y="139" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#1e40af">线程2</text>
+
+    <rect x="30" y="155" width="45" height="28" fill="#dbeafe" stroke="#2563eb" rx="4" />
+    <text x="52" y="174" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#1e40af">请求N</text>
+    <rect x="85" y="155" width="80" height="28" fill="#bfdbfe" stroke="#2563eb" rx="4" />
+    <text x="125" y="174" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#1e40af">线程N</text>
+
+    <rect x="30" y="200" width="218" height="85" fill="#f8fafc" stroke="#e0e0e0" rx="4" />
+    <text x="45" y="218" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">✓ 编程模型直观，可阻塞I/O</text>
+    <text x="45" y="236" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">✗ 线程创建/销毁开销大</text>
+    <text x="45" y="254" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">✗ 大量线程时资源耗尽</text>
+    <text x="45" y="272" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">适合：CPU密集型任务</text>
+
+    <!-- Model 2: Reactor -->
+    <rect x="276" y="45" width="248" height="355" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" rx="8" />
+    <text x="400" y="70" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="13" font-weight="bold" fill="#16a34a">事件驱动(Reactor)模型</text>
+
+    <!-- Reactor core -->
+    <rect x="360" y="85" width="140" height="32" fill="#bbf7d0" stroke="#16a34a" stroke-width="2" rx="6" />
+    <text x="430" y="106" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" font-weight="bold" fill="#166534">Reactor 事件分发器</text>
+
+    <!-- Channels -->
+    <rect x="291" y="85" width="55" height="24" fill="#dcfce7" stroke="#16a34a" rx="4" />
+    <text x="318" y="101" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#166534">Channel1</text>
+
+    <rect x="291" y="115" width="55" height="24" fill="#dcfce7" stroke="#16a34a" rx="4" />
+    <text x="318" y="131" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#166534">Channel2</text>
+
+    <rect x="291" y="145" width="55" height="24" fill="#dcfce7" stroke="#16a34a" rx="4" />
+    <text x="318" y="161" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#166534">ChannelN</text>
+
+    <!-- Handlers -->
+    <rect x="510" y="85" width="55" height="24" fill="#dcfce7" stroke="#16a34a" rx="4" />
+    <text x="537" y="101" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#166534">Handler1</text>
+
+    <rect x="510" y="115" width="55" height="24" fill="#dcfce7" stroke="#16a34a" rx="4" />
+    <text x="537" y="131" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#166534">Handler2</text>
+
+    <rect x="510" y="145" width="55" height="24" fill="#dcfce7" stroke="#16a34a" rx="4" />
+    <text x="537" y="161" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#166534">HandlerN</text>
+
+    <!-- Single thread label -->
+    <rect x="360" y="165" width="140" height="22" fill="#fef3c7" stroke="#f59e0b" rx="4" />
+    <text x="430" y="181" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#92400e">所有Handler运行在一个线程</text>
+
+    <rect x="291" y="200" width="218" height="85" fill="#f8fafc" stroke="#e0e0e0" rx="4" />
+    <text x="306" y="218" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">✓ 海量连接，少量线程</text>
+    <text x="306" y="236" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">✓ 无上下文切换开销</text>
+    <text x="306" y="254" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">✗ 不能处理长任务（阻塞）</text>
+    <text x="306" y="272" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">适合：大量短任务</text>
+
+    <!-- Model 3: Coroutine -->
+    <rect x="537" y="45" width="248" height="355" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.5" rx="8" />
+    <text x="661" y="70" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="13" font-weight="bold" fill="#7c3aed">协程（虚拟线程）模型</text>
+
+    <!-- Thread context -->
+    <rect x="602" y="85" width="160" height="45" fill="#ede9fe" stroke="#7c3aed" rx="6" />
+    <text x="682" y="103" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#6d28d9">单个OS线程上下文</text>
+    <text x="682" y="120" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#8b5cf6">(用户态切换，无内核态开销)</text>
+
+    <rect x="552" y="142" width="70" height="28" fill="#ddd6fe" stroke="#7c3aed" rx="4" />
+    <text x="587" y="160" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#5b21b6">协程1</text>
+
+    <rect x="632" y="142" width="70" height="28" fill="#ddd6fe" stroke="#7c3aed" rx="4" />
+    <text x="667" y="160" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#5b21b6">协程2</text>
+
+    <rect x="712" y="142" width="55" height="28" fill="#ddd6fe" stroke="#7c3aed" rx="4" />
+    <text x="739" y="160" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#5b21b6">协程N</text>
+
+    <!-- Switch arrows -->
+    <line x1="587" y1="175" x2="630" y2="175" stroke="#a78bfa" stroke-width="1" marker-end="url(#arrowPurple)" />
+    <line x1="667" y1="175" x2="710" y2="175" stroke="#a78bfa" stroke-width="1" marker-end="url(#arrowPurple)" />
+    <text x="682" y="192" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#a78bfa">快速切换（用户态）</text>
+
+    <rect x="552" y="210" width="218" height="75" fill="#f8fafc" stroke="#e0e0e0" rx="4" />
+    <text x="567" y="228" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">✓ 编程风格类似多线程</text>
+    <text x="567" y="246" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">✓ 切换开销极小（n级别）</text>
+    <text x="567" y="264" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">✓ 适合大量并发IO密集型</text>
+
+    <rect x="552" y="295" width="218" height="50" fill="#ede9fe" stroke="#c4b5fd" rx="4" />
+    <text x="661" y="313" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" font-weight="bold" fill="#7c3aed">代表技术</text>
+    <text x="661" y="332" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#6d28d9">Goroutine · asyncio · Virtual Threads</text>
+
+    <defs>
+      <marker id="arrowPurple" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
+        <polygon points="0 0, 6 2.5, 0 5" fill="#a78bfa" />
+      </marker>
+    </defs>
+  </svg>
+  <p class="caption">图10：三种并发服务模型对比 — 多线程 / Reactor / 协程</p>
+</div>
+<div class="diagram">
+  <img src="images/分布式计算-通信技术v12.6_p16_img0.png" alt="并发服务模型示意" loading="lazy">
+  <p class="caption">图3：并发服务模型示意</p>
+</div>
 <hr />
 <h3>1.4 远程过程调用（RPC）</h3>
 <h4>1.4.1 RPC的定义</h4>
@@ -462,6 +586,10 @@ Physical layer    &lt;---&gt;  Physical layer
 </li>
 <li>Skeleton相当于Client-Server通信模式中的<strong>服务器端</strong>，要先于客户端运行，并在某个Socket端口进行监听</li>
 </ul>
+<div class="diagram">
+  <img src="images/分布式计算-通信技术v12.6_p19_img1.jpeg" alt="RPC 中间件 Stub/Skeleton 架构" loading="lazy">
+  <p class="caption">图4：RPC 中间件 Stub/Skeleton 架构</p>
+</div>
 <h4>1.4.5 RPC调用流程详解</h4>
 <p>以调用 <code>k = add(3, 5)</code> 为例，逐步说明RPC的完整执行过程：</p>
 <table>
@@ -530,6 +658,113 @@ Physical layer    &lt;---&gt;  Physical layer
 </tr>
 </tbody>
 </table>
+<div class="diagram">
+  <svg class="diagram-svg" viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="480" fill="#ffffff" rx="8" />
+    <!-- Client side -->
+    <rect x="30" y="40" width="300" height="200" fill="#eff6ff" stroke="#2563eb" stroke-width="2" rx="8" />
+    <text x="180" y="65" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" font-weight="bold" fill="#2563eb">客户端机器</text>
+
+    <rect x="55" y="80" width="110" height="36" fill="#dbeafe" stroke="#2563eb" rx="6" />
+    <text x="110" y="103" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" fill="#1e40af">Client 进程</text>
+
+    <rect x="190" y="80" width="120" height="36" fill="#dbeafe" stroke="#2563eb" rx="6" />
+    <text x="250" y="103" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" fill="#1e40af">Client Stub</text>
+
+    <rect x="55" y="170" width="110" height="36" fill="#dbeafe" stroke="#2563eb" rx="6" />
+    <text x="110" y="193" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" fill="#1e40af">Client OS</text>
+
+    <!-- Server side -->
+    <rect x="470" y="40" width="300" height="200" fill="#f0fdf4" stroke="#16a34a" stroke-width="2" rx="8" />
+    <text x="620" y="65" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" font-weight="bold" fill="#16a34a">服务器机器</text>
+
+    <rect x="495" y="80" width="120" height="36" fill="#dcfce7" stroke="#16a34a" rx="6" />
+    <text x="555" y="103" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" fill="#166534">Server Skeleton</text>
+
+    <rect x="640" y="80" width="110" height="36" fill="#dcfce7" stroke="#16a34a" rx="6" />
+    <text x="695" y="103" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" fill="#166534">Server 进程</text>
+
+    <rect x="495" y="170" width="110" height="36" fill="#dcfce7" stroke="#16a34a" rx="6" />
+    <text x="550" y="193" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" fill="#166534">Server OS</text>
+
+    <!-- Arrows between sides -->
+    <!-- Step labels -->
+    <text x="400" y="120" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">① k=add(3,5)</text>
+    <text x="400" y="160" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">② 序列化</text>
+    <text x="400" y="210" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">③ 网络发送</text>
+
+    <!-- Bottom flow -->
+    <rect x="55" y="270" width="690" height="180" fill="#fefce8" stroke="#ea580c" stroke-width="1.5" rx="6" stroke-dasharray="5,3" />
+    <text x="400" y="295" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="13" font-weight="bold" fill="#ea580c">RPC 调用完整流程 (11步)</text>
+
+    <!-- Step boxes -->
+    <rect x="60" y="310" width="60" height="28" fill="#fff7ed" stroke="#ea580c" rx="4" />
+    <text x="90" y="329" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#9a3412">①调用</text>
+
+    <rect x="130" y="310" width="60" height="28" fill="#fff7ed" stroke="#ea580c" rx="4" />
+    <text x="160" y="329" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#9a3412">②序列化</text>
+
+    <rect x="200" y="310" width="60" height="28" fill="#fff7ed" stroke="#ea580c" rx="4" />
+    <text x="230" y="329" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#9a3412">③发送</text>
+
+    <rect x="270" y="310" width="60" height="28" fill="#fffbeb" stroke="#f59e0b" rx="4" />
+    <text x="300" y="329" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#92400e">④接收</text>
+
+    <rect x="340" y="310" width="60" height="28" fill="#fffbeb" stroke="#f59e0b" rx="4" />
+    <text x="370" y="329" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#92400e">⑤反序列化</text>
+
+    <rect x="410" y="310" width="60" height="28" fill="#fffbeb" stroke="#f59e0b" rx="4" />
+    <text x="440" y="329" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#92400e">⑥调用本地</text>
+
+    <rect x="480" y="310" width="60" height="28" fill="#fffbeb" stroke="#f59e0b" rx="4" />
+    <text x="510" y="329" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#92400e">⑦执行add</text>
+
+    <rect x="550" y="310" width="60" height="28" fill="#fffbeb" stroke="#f59e0b" rx="4" />
+    <text x="580" y="329" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#92400e">⑧序列化结果</text>
+
+    <rect x="620" y="310" width="60" height="28" fill="#fffbeb" stroke="#f59e0b" rx="4" />
+    <text x="650" y="329" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#92400e">⑨回送结果</text>
+
+    <rect x="690" y="310" width="50" height="28" fill="#fff7ed" stroke="#ea580c" rx="4" />
+    <text x="715" y="329" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#9a3412">⑩反序列化</text>
+
+    <rect x="60" y="355" width="60" height="28" fill="#fff7ed" stroke="#ea580c" rx="4" />
+    <text x="90" y="374" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#9a3412">⑪返回k=8</text>
+
+    <!-- Arrow flow line -->
+    <line x1="90" y1="395" x2="120" y2="395" stroke="#ea580c" stroke-width="1.5" marker-end="url(#arrowOrange)" />
+    <line x1="160" y1="395" x2="190" y2="395" stroke="#ea580c" stroke-width="1.5" marker-end="url(#arrowOrange)" />
+    <line x1="230" y1="395" x2="400" y2="395" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="4,2" />
+    <text x="315" y="390" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="8" fill="#94a3b8">网络传输</text>
+    <line x1="440" y1="395" x2="470" y2="395" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowYellow)" />
+    <line x1="510" y1="395" x2="540" y2="395" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowYellow)" />
+    <line x1="580" y1="395" x2="610" y2="395" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowYellow)" />
+    <line x1="650" y1="395" x2="400" y2="410" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,2" />
+    <line x1="330" y1="410" x2="120" y2="410" stroke="#ea580c" stroke-width="1.5" />
+    <line x1="120" y1="410" x2="60" y2="410" stroke="#ea580c" stroke-width="1.5" marker-end="url(#arrowOrange)" />
+
+    <!-- Arrow markers -->
+    <defs>
+      <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#ea580c" />
+      </marker>
+      <marker id="arrowYellow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#f59e0b" />
+      </marker>
+    </defs>
+
+    <!-- Legend -->
+    <rect x="240" y="435" width="12" height="12" fill="#2563eb" rx="2" />
+    <text x="258" y="445" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#475569">Client</text>
+    <rect x="320" y="435" width="12" height="12" fill="#16a34a" rx="2" />
+    <text x="338" y="445" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#475569">Server</text>
+    <rect x="400" y="435" width="12" height="12" fill="#ea580c" rx="2" />
+    <text x="418" y="445" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#475569">Client操作</text>
+    <rect x="500" y="435" width="12" height="12" fill="#f59e0b" rx="2" />
+    <text x="518" y="445" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#475569">Server操作</text>
+  </svg>
+  <p class="caption">图7：RPC 远程过程调用流程（Stub/Skeleton 机制）</p>
+</div>
 <p>整个过程中，客户端程序员只需写 <code>k = add(3, 5)</code>，所有网络通信细节被完全隐藏。</p>
 <h4>1.4.6 接口定义语言（IDL）</h4>
 <p>对于支持<strong>跨编程语言调用</strong>的RPC/RMI中间件而言，还需要定义一套独立于各类编程语言的<strong>接口定义语言</strong>（Interface Definition Language，IDL）。</p>
@@ -954,6 +1189,90 @@ body
 </tr>
 </tbody>
 </table>
+<div class="diagram">
+  <svg class="diagram-svg" viewBox="0 0 800 340" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="340" fill="#ffffff" rx="8" />
+    <text x="400" y="28" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">MOM 两种通信模式对比</text>
+
+    <!-- Queue mode left -->
+    <rect x="20" y="45" width="370" height="275" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" rx="8" />
+    <text x="205" y="70" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" font-weight="bold" fill="#2563eb">消息队列模式（Queue）</text>
+
+    <rect x="45" y="93" width="90" height="30" fill="#dbeafe" stroke="#2563eb" rx="14" />
+    <text x="90" y="113" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#1e40af">生产者</text>
+
+    <rect x="160" y="83" width="100" height="50" fill="#bfdbfe" stroke="#2563eb" stroke-width="2" rx="6" />
+    <text x="210" y="110" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" font-weight="bold" fill="#1e40af">Queue</text>
+    <text x="210" y="125" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#3b82f6">(FIFO)</text>
+
+    <rect x="290" y="88" width="85" height="28" fill="#dbeafe" stroke="#2563eb" rx="14" />
+    <text x="332" y="107" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#1e40af">消费者A</text>
+
+    <rect x="290" y="125" width="85" height="28" fill="#dbeafe" stroke="#2563eb" rx="14" />
+    <text x="332" y="144" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#1e40af">消费者B</text>
+
+    <!-- Arrows for Queue -->
+    <line x1="135" y1="108" x2="158" y2="108" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrowBlue)" />
+    <line x1="260" y1="102" x2="288" y2="102" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrowBlue)" />
+    <line x1="260" y1="114" x2="288" y2="139" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrowBlue)" />
+
+    <text x="210" y="165" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#ef4444">竞争消费</text>
+
+    <rect x="45" y="185" width="320" height="120" fill="#f8fafc" stroke="#e2e8f0" rx="4" />
+    <text x="205" y="205" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" font-weight="bold" fill="#475569">特点</text>
+    <text x="55" y="225" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">• 点到点通信（Point-to-Point）</text>
+    <text x="55" y="243" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">• 一条消息只能被一个消费者取走</text>
+    <text x="55" y="261" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">• 消费后立即从队列中删除</text>
+    <text x="55" y="279" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">• 支持负载均衡（消息在多消费者间分配）</text>
+    <text x="55" y="297" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">• 适用场景：任务调度、订单处理、削峰填谷</text>
+
+    <!-- Topic mode right -->
+    <rect x="410" y="45" width="370" height="275" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" rx="8" />
+    <text x="595" y="70" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" font-weight="bold" fill="#16a34a">发布/订阅模式（Topic）</text>
+
+    <rect x="435" y="93" width="90" height="30" fill="#dcfce7" stroke="#16a34a" rx="14" />
+    <text x="480" y="113" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#166534">发布者</text>
+
+    <rect x="550" y="83" width="100" height="50" fill="#bbf7d0" stroke="#16a34a" stroke-width="2" rx="6" />
+    <text x="600" y="106" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" font-weight="bold" fill="#166534">Topic</text>
+    <text x="600" y="123" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#22c55e">(广播)</text>
+
+    <rect x="680" y="78" width="85" height="28" fill="#dcfce7" stroke="#16a34a" rx="14" />
+    <text x="722" y="97" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#166534">订阅者1</text>
+
+    <rect x="680" y="115" width="85" height="28" fill="#dcfce7" stroke="#16a34a" rx="14" />
+    <text x="722" y="134" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#166534">订阅者2</text>
+
+    <rect x="680" y="152" width="85" height="28" fill="#dcfce7" stroke="#16a34a" rx="14" />
+    <text x="722" y="171" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#166534">订阅者3</text>
+
+    <!-- Arrows for Topic -->
+    <line x1="525" y1="108" x2="548" y2="108" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrowGreen)" />
+    <line x1="650" y1="92" x2="678" y2="92" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrowGreen)" />
+    <line x1="650" y1="108" x2="678" y2="129" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrowGreen)" />
+    <line x1="650" y1="124" x2="678" y2="166" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrowGreen)" />
+
+    <text x="600" y="165" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#22c55e">共享消费</text>
+
+    <rect x="435" y="185" width="320" height="120" fill="#f8fafc" stroke="#e2e8f0" rx="4" />
+    <text x="595" y="205" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" font-weight="bold" fill="#475569">特点</text>
+    <text x="445" y="225" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">• 一对多通信（广播/组播）</text>
+    <text x="445" y="243" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">• 同一主题的所有订阅者都收到消息</text>
+    <text x="445" y="261" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">• 消息不因被某一订阅者接收而删除</text>
+    <text x="445" y="279" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">• 无负载均衡概念</text>
+    <text x="445" y="297" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">• 适用场景：事件通知、广播、实时推送</text>
+
+    <defs>
+      <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#2563eb" />
+      </marker>
+      <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#16a34a" />
+      </marker>
+    </defs>
+  </svg>
+  <p class="caption">图8：消息队列模式 vs 发布/订阅模式对比</p>
+</div>
 <p><strong>高级队列模式特点</strong>：
 - 支持<strong>优先级队列</strong>：消息可设置优先级，优先级高的先被消费
 - 支持<strong>持久性队列</strong>：消息可持久化到磁盘，确保不丢失</p>
@@ -1057,6 +1376,10 @@ body
 </tr>
 </tbody>
 </table>
+<div class="diagram">
+  <img src="images/分布式计算-通信技术v12.6_p42_img6.png" alt="消息中间件（MOM）架构" loading="lazy">
+  <p class="caption">图5：消息中间件（MOM）架构</p>
+</div>
 <hr />
 <h3>1.8 其他通信方式</h3>
 <p>除了RPC和消息队列之外，分布式系统中不同节点之间还可以采用以下通信方式：</p>
@@ -1140,6 +1463,78 @@ body
 </tr>
 </tbody>
 </table>
+<div class="diagram">
+  <svg class="diagram-svg" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="300" fill="#ffffff" rx="8" />
+    <text x="400" y="28" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">负载均衡架构</text>
+
+    <!-- Clients -->
+    <rect x="30" y="55" width="80" height="36" fill="#f8fafc" stroke="#94a3b8" rx="6" />
+    <text x="70" y="78" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#475569">客户端1</text>
+
+    <rect x="30" y="105" width="80" height="36" fill="#f8fafc" stroke="#94a3b8" rx="6" />
+    <text x="70" y="128" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#475569">客户端2</text>
+
+    <rect x="30" y="155" width="80" height="36" fill="#f8fafc" stroke="#94a3b8" rx="6" />
+    <text x="70" y="178" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" fill="#475569">客户端N</text>
+
+    <!-- Arrows from clients to LB -->
+    <line x1="110" y1="73" x2="225" y2="73" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)" />
+    <line x1="110" y1="123" x2="225" y2="123" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)" />
+    <line x1="110" y1="173" x2="225" y2="173" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)" />
+
+    <!-- Load Balancer -->
+    <rect x="230" y="80" width="140" height="100" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5" rx="10" />
+    <text x="300" y="110" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" font-weight="bold" fill="#2563eb">负载均衡器</text>
+    <text x="300" y="130" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">(Nginx / HAProxy)</text>
+    <text x="300" y="150" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">策略：轮询/IP哈希/最少连接</text>
+    <text x="300" y="170" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">健康检查+故障切换</text>
+
+    <!-- Arrows from LB to servers -->
+    <line x1="370" y1="95" x2="490" y2="60" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrowBlue2)" />
+    <line x1="370" y1="125" x2="490" y2="125" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrowBlue2)" />
+    <line x1="370" y1="155" x2="490" y2="195" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrowBlue2)" />
+
+    <!-- Servers -->
+    <rect x="495" y="45" width="130" height="50" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" rx="6" />
+    <text x="560" y="65" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" font-weight="bold" fill="#166534">服务器 1</text>
+    <text x="560" y="83" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">健康 ✓</text>
+
+    <rect x="495" y="110" width="130" height="50" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" rx="6" />
+    <text x="560" y="130" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" font-weight="bold" fill="#166534">服务器 2</text>
+    <text x="560" y="148" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">健康 ✓</text>
+
+    <rect x="495" y="175" width="130" height="50" fill="#fff7ed" stroke="#f97316" stroke-width="1.5" rx="6" />
+    <text x="560" y="195" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" font-weight="bold" fill="#9a3412">服务器 3</text>
+    <text x="560" y="213" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#ef4444">故障 ✗</text>
+
+    <rect x="495" y="240" width="130" height="45" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" rx="6" />
+    <text x="560" y="258" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="11" font-weight="bold" fill="#166534">服务器 N</text>
+    <text x="560" y="276" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="9" fill="#64748b">健康 ✓</text>
+
+    <!-- X on failed server -->
+    <line x1="610" y1="182" x2="625" y2="218" stroke="#ef4444" stroke-width="2" />
+    <line x1="625" y1="182" x2="610" y2="218" stroke="#ef4444" stroke-width="2" />
+
+    <!-- Labels -->
+    <text x="195" y="250" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">← 请求分发</text>
+    <text x="430" y="250" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="10" fill="#64748b">转发 →</text>
+
+    <defs>
+      <marker id="arrowGray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#64748b" />
+      </marker>
+      <marker id="arrowBlue2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#2563eb" />
+      </marker>
+    </defs>
+  </svg>
+  <p class="caption">图9：负载均衡架构 — 水平扩展与故障切换</p>
+</div>
+<div class="diagram">
+  <img src="images/分布式计算-通信技术v12.6_p58_img2.png" alt="负载均衡架构示意" loading="lazy">
+  <p class="caption">图6：负载均衡架构示意</p>
+</div>
 <h4>1.9.3 后端服务器有缓存时选择哪种负载均衡策略？</h4>
 <p><strong>结论</strong>：当后端服务器都实现了缓存机制时，<strong>IP哈希策略</strong>更适合。</p>
 <p><strong>原因</strong>：
