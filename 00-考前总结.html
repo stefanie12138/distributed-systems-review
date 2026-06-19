@@ -8,7 +8,7 @@
     <script defer src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
     <script defer src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
         onload="renderMathInElement(document.body, {delimiters: [
-            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: true},
             {left: '$', right: '$', display: false}
         ], ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']});"></script>
     <style>
@@ -323,8 +323,8 @@
 </tr>
 <tr>
 <td>容错要求</td>
-<td>$$n > f$$ 或 $$n > 2f$$</td>
-<td>$$n > 3f$$</td>
+<td>$n > f$ 或 $n > 2f$</td>
+<td>$n > 3f$</td>
 </tr>
 <tr>
 <td>应用</td>
@@ -335,35 +335,35 @@
 </table>
 <h3>4.3 物理时钟同步 — Cristian算法（NTP基础）</h3>
 <ol>
-<li>客户端 $$T_1$$ 发请求</li>
-<li>服务器 $$T_2$$ 收到，$$T_3$$ 回复（带 $$T_2, T_3$$）</li>
-<li>客户端 $$T_4$$ 收到</li>
+<li>客户端 $T_1$ 发请求</li>
+<li>服务器 $T_2$ 收到，$T_3$ 回复（带 $T_2, T_3$）</li>
+<li>客户端 $T_4$ 收到</li>
 </ol>
 <p>$$\delta = (T_4 - T_1) - (T_3 - T_2)$$</p>
-<p><strong>关键假设</strong>：$$\delta_{req} \approx \delta_{resp}$$</p>
+<p><strong>关键假设</strong>：$\delta_{req} \approx \delta_{resp}$</p>
 <p>$$T_{client} \leftarrow T_3 + \frac{\delta}{2} \quad \text{误差：} \pm \frac{\delta}{2}$$</p>
 <h3>4.4 Lamport 逻辑时钟（标量时钟）</h3>
-<p><strong>Happen-Before ($$\rightarrow$$)</strong>：同进程先后 → 消息发送先于接收 → 传递性</p>
+<p><strong>Happen-Before ($\rightarrow$)</strong>：同进程先后 → 消息发送先于接收 → 传递性</p>
 <p><strong>规则</strong>：</p>
 <ul>
-<li>内部/发送事件：$$C_i \leftarrow C_i + 1$$</li>
-<li>接收消息（带 $$C_{msg}$$）：$$C_j \leftarrow 1 + \max(C_j, C_{msg})$$</li>
+<li>内部/发送事件：$C_i \leftarrow C_i + 1$</li>
+<li>接收消息（带 $C_{msg}$）：$C_j \leftarrow 1 + \max(C_j, C_{msg})$</li>
 </ul>
-<p><strong>核心性质</strong>：
-$$a \rightarrow b \Rightarrow C(a) < C(b) \quad \text{✓ 因果保持}$$
-$$C(a) < C(b) \nRightarrow a \rightarrow b \quad \text{✗ 反向不成立！}$$</p>
+<p><strong>核心性质</strong>：</p>
+<p>$$a \rightarrow b \Rightarrow C(a) < C(b) \quad \text{✓ 因果保持}$$</p>
+<p>$$C(a) < C(b) \nRightarrow a \rightarrow b \quad \text{✗ 反向不成立！}$$</p>
 <h3>4.5 全序逻辑时钟</h3>
-<p>二元组排序：$$\langle C, ID \rangle$$</p>
+<p>二元组排序：$\langle C, ID \rangle$</p>
 <p>$$L(a) < L(b) \iff C(a) < C(b) \;\text{OR}\; (C(a)=C(b) \;\text{AND}\; ID(a)<ID(b))$$</p>
 <h3>4.6 向量逻辑时钟</h3>
-<p>每个节点维护 n 维向量：$$\mathbf{T}_i = \langle t_1, \ldots, t_n \rangle$$</p>
+<p>每个节点维护 n 维向量：$\mathbf{T}_i = \langle t_1, \ldots, t_n \rangle$</p>
 <ul>
-<li>内部事件：$$\mathbf{T}_i[i] \leftarrow \mathbf{T}_i[i] + 1$$</li>
+<li>内部事件：$\mathbf{T}_i[i] \leftarrow \mathbf{T}_i[i] + 1$</li>
 <li>接收消息：逐维取 max，再自增</li>
 </ul>
-<p><strong>充要条件</strong>：$$a \rightarrow b \iff V(a) < V(b)$$（能双向判断因果与并发）</p>
+<p><strong>充要条件</strong>：$a \rightarrow b \iff V(a) < V(b)$（能双向判断因果与并发）</p>
 <h3>4.7 Paxos / Raft 共识</h3>
-<p><strong>最大容错</strong>：$$f_{max} = \lfloor (n-1)/2 \rfloor$$（需多数派存活）</p>
+<p><strong>最大容错</strong>：$f_{max} = \lfloor (n-1)/2 \rfloor$（需多数派存活）</p>
 <p>Raft角色：Leader / Follower / Candidate</p>
 <h3>4.8 一致性模型（从强到弱）</h3>
 <table class="consistency-table">
@@ -446,8 +446,8 @@ $$C(a) < C(b) \nRightarrow a \rightarrow b \quad \text{✗ 反向不成立！}$$
 </tbody>
 </table>
 <h3>5.4 一致性哈希</h3>
-<p><strong>空间</strong>：$$[0, 2^{32}-1]$$ 环形</p>
-<p><strong>定位</strong>：$$H(\text{key})$$ 沿环顺时针第一个服务器节点</p>
+<p><strong>空间</strong>：$[0, 2^{32}-1]$ 环形</p>
+<p><strong>定位</strong>：$H(\text{key})$ 沿环顺时针第一个服务器节点</p>
 <p><strong>增加节点</strong>：仅移动新节点与前驱之间的数据</p>
 <p><strong>计算题步骤</strong>：①服务器哈希排序 ②数据哈希定位 ③确定归属 ④计算迁移量</p>
 <h3>5.5 MR 编程模板</h3>
@@ -537,23 +537,23 @@ $$C(a) < C(b) \nRightarrow a \rightarrow b \quad \text{✗ 反向不成立！}$$
 <td>Cristian RTT</td>
 </tr>
 <tr>
-<td>$$T_{client} \leftarrow T_3 + \frac{\delta}{2}$$</td>
+<td>$T_{client} \leftarrow T_3 + \frac{\delta}{2}$</td>
 <td>时间校正</td>
 </tr>
 <tr>
-<td>$$C_i \leftarrow C_i + 1$$</td>
+<td>$C_i \leftarrow C_i + 1$</td>
 <td>Lamport 内部事件</td>
 </tr>
 <tr>
-<td>$$C_j \leftarrow 1 + \max(C_j, C_{msg})$$</td>
+<td>$C_j \leftarrow 1 + \max(C_j, C_{msg})$</td>
 <td>Lamport 接收</td>
 </tr>
 <tr>
-<td>$$f_{max} = \lfloor (n-1)/2 \rfloor$$</td>
+<td>$f_{max} = \lfloor (n-1)/2 \rfloor$</td>
 <td>Paxos/Raft 最大容错</td>
 </tr>
 <tr>
-<td>$$a \rightarrow b \iff V(a) < V(b)$$</td>
+<td>$a \rightarrow b \iff V(a) < V(b)$</td>
 <td>向量时钟充要条件</td>
 </tr>
 </tbody>
@@ -600,12 +600,12 @@ $$C(a) < C(b) \nRightarrow a \rightarrow b \quad \text{✗ 反向不成立！}$$
 <tr>
 <td>物理时钟推导</td>
 <td style="text-align: center;">6~8</td>
-<td>Cristian $$T_1$$-$$T_4$$ + $$\delta/2$$</td>
+<td>Cristian $T_1$-$T_4$ + $\delta/2$</td>
 </tr>
 <tr>
 <td>Paxos/Raft容错</td>
 <td style="text-align: center;">3~6</td>
-<td>$$f = \lfloor (n-1)/2 \rfloor$$</td>
+<td>$f = \lfloor (n-1)/2 \rfloor$</td>
 </tr>
 <tr>
 <td>一致性模型判断</td>
@@ -637,9 +637,9 @@ $$C(a) < C(b) \nRightarrow a \rightarrow b \quad \text{✗ 反向不成立！}$$
 <hr />
 <h2>九、易错点</h2>
 <ol>
-<li><strong>Lamport逻辑时钟</strong>：$$C(a) < C(b) \nRightarrow a \rightarrow b$$（反向不成立！）</li>
-<li><strong>向量时钟</strong>：$$V(a) < V(b) \iff a \rightarrow b$$（充要条件）</li>
-<li><strong>Fail-Stop vs Byzantine</strong>：容错公式不同（$$n>f$$ vs $$n>3f$$）</li>
+<li><strong>Lamport逻辑时钟</strong>：$C(a) < C(b) \nRightarrow a \rightarrow b$（反向不成立！）</li>
+<li><strong>向量时钟</strong>：$V(a) < V(b) \iff a \rightarrow b$（充要条件）</li>
+<li><strong>Fail-Stop vs Byzantine</strong>：容错公式不同（$n>f$ vs $n>3f$）</li>
 <li><strong>一致性哈希</strong>：增节点只移动相邻区间数据，非全部重新分布</li>
 <li><strong>HDFS小文件</strong>：瓶颈在NameNode内存，非DataNode磁盘</li>
 <li><strong>MapReduce Shuffle</strong>：按Key二次分区，非随机打乱</li>
