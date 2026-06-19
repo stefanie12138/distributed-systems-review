@@ -719,8 +719,8 @@ req.Wait()  # 确保发送完成
   <rect x="580" y="62" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
   <text x="600" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
   <!-- Compute period -->
-  <rect x="625" y="65" width="70" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
-  <text x="660" y="79" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#1d4ed8">本地计算</text>
+  <rect x="625" y="62" width="70" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="660" y="76" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#1d4ed8">本地计算</text>
   <line x1="695" y1="78" x2="720" y2="78" stroke="#cbd5e1" stroke-width="1"/>
   <polygon points="720,78 720,68 722,68 722,78" fill="#2563eb"/>
   <text x="738" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb">等待 Wait()</text>
@@ -734,8 +734,8 @@ req.Wait()  # 确保发送完成
   <text x="541" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">异步接收 Irecv()</text>
   <rect x="585" y="105" width="40" height="16" rx="3" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
   <text x="605" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#16a34a">返回</text>
-  <rect x="630" y="108" width="60" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
-  <text x="660" y="122" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#1d4ed8">本地计算</text>
+  <rect x="630" y="105" width="60" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="660" y="119" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#1d4ed8">本地计算</text>
   <polygon points="700,121 700,111 702,111 702,121" fill="#2563eb"/>
   <text x="725" y="116" text-anchor="middle" font-family="monospace" font-size="9" fill="#2563eb">等待 Wait()</text>
 
@@ -750,37 +750,38 @@ req.Wait()  # 确保发送完成
 
   <!-- Bottom comparison table -->
   <rect x="30" y="210" width="740" height="200" rx="8" fill="#fff" stroke="#e2e8f0" stroke-width="1"/>
-  <text x="400" y="232" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1e293b">对比总结</text>
+  <text x="400" y="222" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1e293b">对比总结</text>
 
   <line x1="220" y1="210" x2="220" y2="410" stroke="#e2e8f0" stroke-width="1"/>
-  <line x1="50" y1="245" x2="750" y2="245" stroke="#f1f5f9" stroke-width="1"/>
-  <line x1="50" y1="280" x2="750" y2="280" stroke="#f1f5f9" stroke-width="1"/>
-  <line x1="50" y1="315" x2="750" y2="315" stroke="#f1f5f9" stroke-width="1"/>
-  <line x1="50" y1="350" x2="750" y2="350" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="50" y1="232" x2="750" y2="232" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="50" y1="268" x2="750" y2="268" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="50" y1="303" x2="750" y2="303" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="50" y1="338" x2="750" y2="338" stroke="#f1f5f9" stroke-width="1"/>
+  <line x1="50" y1="373" x2="750" y2="373" stroke="#f1f5f9" stroke-width="1"/>
 
-  <text x="120" y="238" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#64748b">对比维度</text>
-  <text x="360" y="238" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#dc2626">阻塞通信</text>
-  <text x="640" y="238" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#16a34a">非阻塞通信</text>
+  <text x="120" y="250" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#64748b">对比维度</text>
+  <text x="360" y="250" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#dc2626">阻塞通信</text>
+  <text x="640" y="250" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" font-weight="bold" fill="#16a34a">非阻塞通信</text>
 
-  <text x="120" y="268" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">调用返回</text>
-  <text x="420" y="268" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">操作完成后才返回</text>
-  <text x="640" y="268" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">立即返回 request 对象</text>
+  <text x="120" y="282" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">调用返回</text>
+  <text x="420" y="282" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">操作完成后才返回</text>
+  <text x="640" y="282" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">立即返回 request 对象</text>
 
-  <text x="120" y="303" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">缓冲区安全</text>
-  <text x="420" y="303" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">返回后可复用</text>
-  <text x="640" y="303" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">Wait()确认后才安全</text>
+  <text x="120" y="317" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">缓冲区安全</text>
+  <text x="420" y="317" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">返回后可复用</text>
+  <text x="640" y="317" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">Wait()确认后才安全</text>
 
-  <text x="120" y="338" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">计算·通信重叠</text>
-  <text x="420" y="338" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">不支持</text>
-  <text x="640" y="338" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">✓ 支持</text>
+  <text x="120" y="352" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">计算·通信重叠</text>
+  <text x="420" y="352" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">不支持</text>
+  <text x="640" y="352" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">✓ 支持</text>
 
-  <text x="120" y="373" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">死锁风险</text>
-  <text x="420" y="373" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">较高</text>
-  <text x="640" y="373" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">较低</text>
+  <text x="120" y="387" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">死锁风险</text>
+  <text x="420" y="387" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">较高</text>
+  <text x="640" y="387" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">较低</text>
 
-  <text x="120" y="403" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">编程复杂度</text>
-  <text x="420" y="403" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">简单直观</text>
-  <text x="640" y="403" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">需管理 request 对象</text>
+  <text x="120" y="405" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">编程复杂度</text>
+  <text x="420" y="405" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">简单直观</text>
+  <text x="640" y="405" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#475569">需管理 request 对象</text>
 </svg>
 <p class="caption">阻塞通信 vs 非阻塞通信时序对比：阻塞通信在操作完成前暂停调用者，非阻塞通信立即返回并支持计算·通信重叠</p>
 </div>
