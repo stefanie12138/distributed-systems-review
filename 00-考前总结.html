@@ -350,18 +350,18 @@
 <li>接收消息（带 $C_{msg}$）：$C_j \leftarrow 1 + \max(C_j, C_{msg})$</li>
 </ul>
 <p><strong>核心性质</strong>：</p>
-<p>$$a \rightarrow b \Rightarrow C(a) < C(b) \quad \text{✓ 因果保持}$$</p>
-<p>$$C(a) < C(b) \nRightarrow a \rightarrow b \quad \text{✗ 反向不成立！}$$</p>
+<p>$$a \rightarrow b \Rightarrow C(a) &lt; C(b) \quad \text{✓ 因果保持}$$</p>
+<p>$$C(a) &lt; C(b) \nRightarrow a \rightarrow b \quad \text{✗ 反向不成立！}$$</p>
 <h3>4.5 全序逻辑时钟</h3>
 <p>二元组排序：$\langle C, ID \rangle$</p>
-<p>$$L(a) < L(b) \iff C(a) < C(b) \;\text{OR}\; \\ \big(C(a)=C(b) \;\text{AND}\; ID(a)<ID(b)\big)$$</p>
+<p>$$L(a) &lt; L(b) \iff C(a) &lt; C(b) \;\text{OR}\; \\ \big(C(a)=C(b) \;\text{AND}\; ID(a)&lt;ID(b)\big)$$</p>
 <h3>4.6 向量逻辑时钟</h3>
 <p>每个节点维护 n 维向量：$\mathbf{T}_i = \langle t_1, \ldots, t_n \rangle$</p>
 <ul>
 <li>内部事件：$\mathbf{T}_i[i] \leftarrow \mathbf{T}_i[i] + 1$</li>
 <li>接收消息：逐维取 max，再自增</li>
 </ul>
-<p><strong>充要条件</strong>：$a \rightarrow b \iff V(a) < V(b)$（能双向判断因果与并发）</p>
+<p><strong>充要条件</strong>：$a \rightarrow b \iff V(a) &lt; V(b)$（能双向判断因果与并发）</p>
 <h3>4.7 Paxos / Raft 共识</h3>
 <p><strong>最大容错</strong>：$f_{max} = \lfloor (n-1)/2 \rfloor$（需多数派存活）</p>
 <p>Raft角色：Leader / Follower / Candidate</p>
@@ -553,7 +553,7 @@
 <td>Paxos/Raft 最大容错</td>
 </tr>
 <tr>
-<td>$a \rightarrow b \iff V(a) < V(b)$</td>
+<td>$a \rightarrow b \iff V(a) &lt; V(b)$</td>
 <td>向量时钟充要条件</td>
 </tr>
 </tbody>
@@ -637,8 +637,8 @@
 <hr />
 <h2>九、易错点</h2>
 <ol>
-<li><strong>Lamport逻辑时钟</strong>：$C(a) < C(b) \nRightarrow a \rightarrow b$（反向不成立！）</li>
-<li><strong>向量时钟</strong>：$V(a) < V(b) \iff a \rightarrow b$（充要条件）</li>
+<li><strong>Lamport逻辑时钟</strong>：$C(a) &lt; C(b) \nRightarrow a \rightarrow b$（反向不成立！）</li>
+<li><strong>向量时钟</strong>：$V(a) &lt; V(b) \iff a \rightarrow b$（充要条件）</li>
 <li><strong>Fail-Stop vs Byzantine</strong>：容错公式不同（$n>f$ vs $n>3f$）</li>
 <li><strong>一致性哈希</strong>：增节点只移动相邻区间数据，非全部重新分布</li>
 <li><strong>HDFS小文件</strong>：瓶颈在NameNode内存，非DataNode磁盘</li>
