@@ -16,7 +16,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; font-size: 16px; }
         .summary-banner { background: linear-gradient(135deg, #dc2626 0%, #ea580c 50%, #f59e0b 100%); color: white; padding: 18px 24px; border-radius: 12px; margin-bottom: 24px; text-align: center; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15); }
-        .summary-banner h2 { font-size: 1.25em; margin: 0; border: none; color: white; padding: 0; font-weight: 600; letter-spacing: 0.5px; }
+        .summary-banner h2 { font-size: 1.25em; margin: 0; border: none; color: white; padding: 0; font-weight: 600; letter-spacing: 0.5px; background: transparent; }
         .container { max-width: 900px; margin: 0 auto; padding: 24px 20px 60px; }
         nav.breadcrumb { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; padding: 12px 16px; background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
         nav.breadcrumb a { color: var(--accent); text-decoration: none; }
@@ -354,7 +354,7 @@
 <p>$$C(a) < C(b) \nRightarrow a \rightarrow b \quad \text{✗ 反向不成立！}$$</p>
 <h3>4.5 全序逻辑时钟</h3>
 <p>二元组排序：$\langle C, ID \rangle$</p>
-<p>$$L(a) < L(b) \iff C(a) < C(b) \;\text{OR}\; (C(a)=C(b) \;\text{AND}\; ID(a)<ID(b))$$</p>
+<p>$$\begin{aligned} L(a) < L(b) \iff & C(a) < C(b) \;\text{OR}\; \\ & \big(C(a)=C(b) \;\text{AND}\; ID(a)<ID(b)\big) \end{aligned}$$</p>
 <h3>4.6 向量逻辑时钟</h3>
 <p>每个节点维护 n 维向量：$\mathbf{T}_i = \langle t_1, \ldots, t_n \rangle$</p>
 <ul>
