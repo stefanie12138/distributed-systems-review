@@ -12,66 +12,33 @@
             {left: '$', right: '$', display: false}
         ], ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']});"></script>
     <style>
-        :root { --bg: #f5f7fa; --card-bg: #ffffff; --text: #2c3e50; --text-secondary: #555; --border: #e2e8f0; --accent: #2563eb; --heading-color: #1a1a2e; --table-stripe: #f8fafc; --section-bg: #ffffff; }
+        :root { --bg: #fafafa; --card-bg: #ffffff; --text: #2c3e50; --text-secondary: #555; --border: #e0e0e0; --accent: #2563eb; --heading-color: #1a1a2e; --table-stripe: #f8fafc; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.75; font-size: 16px; }
-        .summary-banner { background: linear-gradient(135deg, #dc2626 0%, #ea580c 50%, #f59e0b 100%); color: white; padding: 18px 24px; border-radius: 12px; margin-bottom: 24px; text-align: center; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15); }
-        .summary-banner h2 { font-size: 1.25em; margin: 0; border: none; color: white; padding: 0; font-weight: 600; letter-spacing: 0.5px; background: transparent; }
-        .container { max-width: 900px; margin: 0 auto; padding: 24px 20px 60px; }
-        nav.breadcrumb { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; padding: 12px 16px; background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 16px; }
+        .summary-banner { background: linear-gradient(135deg, #dc2626 0%, #ea580c 50%, #f59e0b 100%); color: white; padding: 16px 24px; border-radius: 12px; margin-bottom: 24px; text-align: center; }
+        .summary-banner h2 { font-size: 1.3em; margin: 0; border: none; color: white; padding: 0; }
+        .container { max-width: 860px; margin: 0 auto; padding: 24px 20px 60px; }
+        nav.breadcrumb { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; padding: 12px 16px; background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
         nav.breadcrumb a { color: var(--accent); text-decoration: none; }
-        nav.breadcrumb a:hover { text-decoration: underline; }
-        h1 { font-size: 2.2em; color: var(--heading-color); border-bottom: 3px solid var(--accent); padding-bottom: 14px; margin-bottom: 32px; text-align: center; font-weight: 700; }
-        h2 { font-size: 1.55em; color: var(--heading-color); margin-top: 36px; margin-bottom: 18px; padding: 12px 16px; background: var(--section-bg); border-radius: 8px; border-left: 5px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        h3 { font-size: 1.2em; color: var(--heading-color); margin-top: 26px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px dashed var(--border); }
-        h2 + h3 { margin-top: 18px; }
+        h1 { font-size: 2em; color: var(--heading-color); border-bottom: 3px solid var(--accent); padding-bottom: 12px; margin-bottom: 28px; }
+        h2 { font-size: 1.5em; color: var(--heading-color); margin-top: 40px; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid var(--accent); }
+        h3 { font-size: 1.2em; color: var(--heading-color); margin-top: 28px; margin-bottom: 12px; }
         p { margin-bottom: 12px; text-align: left; word-break: keep-all; overflow-wrap: break-word; hyphens: none; }
-        strong { color: #1a1a2e; font-weight: 600; }
-        ul, ol { margin-bottom: 14px; padding-left: 28px; }
-        ul li { margin-bottom: 6px; list-style-type: disc; }
-        ol li { margin-bottom: 6px; }
-        li > ul, li > ol { margin-top: 4px; margin-bottom: 4px; }
-        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.95em; box-shadow: 0 1px 3px rgba(0,0,0,0.08); background: var(--card-bg); border-radius: 6px; overflow: hidden; }
-        th, td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; vertical-align: top; }
+        strong { color: #1a1a2e; }
+        ul, ol { margin-bottom: 12px; padding-left: 24px; }
+        li { margin-bottom: 4px; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.95em; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
         th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
         tr:nth-child(even) td { background: var(--table-stripe); }
-        td:first-child, th:first-child { text-align: left; }
-        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: "JetBrains Mono", "Fira Code", Consolas, monospace; font-size: 0.9em; color: #1e40af; border: 1px solid #e2e8f0; }
+        code { background: #f4f4f5; padding: 2px 6px; border-radius: 4px; font-family: "JetBrains Mono", "Fira Code", Consolas, monospace; font-size: 0.9em; }
         pre { background: #1e293b; color: #e2e8f0; padding: 16px 20px; border-radius: 8px; overflow-x: auto; margin: 16px 0; line-height: 1.6; }
-        pre code { background: transparent; padding: 0; color: inherit; font-size: 0.88em; border: none; }
-        blockquote { border-left: 4px solid #2563eb; padding: 14px 18px; margin: 18px 0; background: #eff6ff; color: #1e3a8a; border-radius: 0 8px 8px 0; font-size: 1.02em; }
-        blockquote p { margin-bottom: 0; }
+        pre code { background: transparent; padding: 0; color: inherit; font-size: 0.88em; }
+        blockquote { border-left: 4px solid #94a3b8; padding: 10px 16px; margin: 16px 0; background: #f8fafc; color: #475569; border-radius: 0 6px 6px 0; }
         .katex { word-break: keep-all; hyphens: none; }
         .katex-display > .katex { text-align: left !important; }
-        hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
-        .formula-table td:first-child { font-family: "JetBrains Mono", "Fira Code", Consolas, monospace; background: #f8fafc; white-space: nowrap; }
-        .question-table td:nth-child(2) { text-align: center; }
-        .consistency-table td:nth-child(2), .consistency-table th:nth-child(2) { text-align: center; }
-        @media (max-width: 640px) { 
-            .container { padding: 12px 14px 40px; } 
-            h1 { font-size: 1.6em; } 
-            h2 { font-size: 1.25em; padding: 10px 12px; } 
-            h3 { font-size: 1.1em; }
-            table { font-size: 0.82em; }
-            th, td { padding: 8px 10px; }
-        }
-        @media print {
-            body { background: #fff; font-size: 12pt; line-height: 1.6; }
-            .summary-banner, nav.breadcrumb { display: none; }
-            .container { max-width: 100%; padding: 0; }
-            h1 { font-size: 1.8em; border-bottom: 2px solid #2563eb; margin-bottom: 20px; }
-            h2 { font-size: 1.3em; background: #f8fafc; box-shadow: none; border-left: 4px solid #2563eb; margin-top: 24px; page-break-after: avoid; }
-            h3 { font-size: 1.1em; margin-top: 16px; page-break-after: avoid; }
-            table { box-shadow: none; font-size: 0.9em; page-break-inside: avoid; }
-            th { background: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            tr:nth-child(even) td { background: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            blockquote { background: #f8fafc !important; border-left: 3px solid #2563eb; }
-            pre { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; }
-            pre code { color: #1e293b; }
-            code { background: #f1f5f9; border: 1px solid #e2e8f0; }
-            hr { margin: 20px 0; }
-            p, li { orphans: 3; widows: 3; }
-        }
+        hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+        @media (max-width: 640px) { .container { padding: 12px 14px 40px; } h1 { font-size: 1.5em; } h2 { font-size: 1.25em; } table { font-size: 0.82em; } }
     </style>
 </head>
 <body>
@@ -114,11 +81,9 @@
 </tr>
 </tbody>
 </table>
-<p><strong>必记辨析</strong>：</p>
-<ul>
-<li>多CPU单主板计算机 <strong>不是</strong> 分布式系统（共享内存SMP，非消息传递）</li>
-<li>同一物理机 <strong>可以</strong> 包含多个分布式节点（进程/虚拟机 + loopback 通信）</li>
-</ul>
+<p><strong>必记辨析</strong>：
+- 多CPU单主板计算机 <strong>不是</strong> 分布式系统（共享内存SMP，非消息传递）
+- 同一物理机 <strong>可以</strong> 包含多个分布式节点（进程/虚拟机 + loopback 通信）</p>
 <h3>1.2 共享内存 vs 消息传递</h3>
 <table>
 <thead>
@@ -354,7 +319,7 @@
 <p>$$C(a) &lt; C(b) \nRightarrow a \rightarrow b \quad \text{✗ 反向不成立！}$$</p>
 <h3>4.5 全序逻辑时钟</h3>
 <p>二元组排序：$\langle C, ID \rangle$</p>
-<p>$$L(a) &lt; L(b) \iff C(a) &lt; C(b) \;\text{OR}\; \\ \big(C(a)=C(b) \;\text{AND}\; ID(a)&lt;ID(b)\big)$$</p>
+<p>$$L(a) &lt; L(b) \iff C(a) &lt; C(b) \;\mathrm{OR}\; \Big(C(a)=C(b) \;\mathrm{AND}\; ID(a)&lt;ID(b)\Big)$$</p>
 <h3>4.6 向量逻辑时钟</h3>
 <p>每个节点维护 n 维向量：$\mathbf{T}_i = \langle t_1, \ldots, t_n \rangle$</p>
 <ul>
@@ -366,27 +331,34 @@
 <p><strong>最大容错</strong>：$f_{max} = \lfloor (n-1)/2 \rfloor$（需多数派存活）</p>
 <p>Raft角色：Leader / Follower / Candidate</p>
 <h3>4.8 一致性模型（从强到弱）</h3>
-<table class="consistency-table">
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th style="text-align: center;">强度</th>
+<th>核心</th>
+</tr>
+</thead>
 <tbody>
 <tr>
-  <td>强一致性</td>
-  <td>最强</td>
-  <td>写后立即可读最新，全局顺序</td>
+<td>强一致性</td>
+<td style="text-align: center;">最强</td>
+<td>写后立即可读最新，全局顺序</td>
 </tr>
 <tr>
-  <td>顺序一致性</td>
-  <td>强</td>
-  <td>按程序顺序，不要求实时</td>
+<td>顺序一致性</td>
+<td style="text-align: center;">强</td>
+<td>按程序顺序，不要求实时</td>
 </tr>
 <tr>
-  <td>因果一致性</td>
-  <td>中</td>
-  <td>因果保序，并发任意序</td>
+<td>因果一致性</td>
+<td style="text-align: center;">中</td>
+<td>因果保序，并发任意序</td>
 </tr>
 <tr>
-  <td>最终一致性</td>
-  <td>弱</td>
-  <td>停止写入后最终一致</td>
+<td>最终一致性</td>
+<td style="text-align: center;">弱</td>
+<td>停止写入后最终一致</td>
 </tr>
 </tbody>
 </table>
@@ -533,7 +505,16 @@
 </table>
 <hr />
 <h2>七、必背公式</h2>
-<table class="formula-table">
+<table>
+<thead>
+<tr>
+<th>公式</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\delta = (T_4 - T_1) - (T_3 - T_2)$</td>
 <td>Cristian RTT</td>
 </tr>
 <tr>
@@ -560,7 +541,14 @@
 </table>
 <hr />
 <h2>八、高频题型速查</h2>
-<table class="question-table">
+<table>
+<thead>
+<tr>
+<th>题型</th>
+<th style="text-align: center;">分值</th>
+<th>要点</th>
+</tr>
+</thead>
 <tbody>
 <tr>
 <td>分布式系统定义与辨析</td>
