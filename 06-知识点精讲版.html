@@ -642,7 +642,144 @@
 </div>
 
 <hr />
-<h2>十一、易错点速记</h2>
+<h2>十一、伪代码模板（考试速用）</h2>
+
+<h3>11.1 MapReduce 万能骨架</h3>
+<p><strong>适用题目</strong>：WordCount、粉丝统计、工资统计、TopN、倒排索引、grandchild-grandparent 等 12 分大题。</p>
+<pre><code>class XxxMapper:
+    method map(LongWritable key, Text value):
+        // 1. 拆行
+        tokens = value.toString().split(",")
+        // 2. 按题目组装 key 和 value
+        outKey = 组装成你想聚合的键       // 单字段或 "A\tB" 复合键
+        outVal = 组装成你要累加/统计的值   // 通常是 1 或 某个数值
+        context.write(new Text(outKey), new IntWritable(outVal))
+
+class XxxReducer:
+    method reduce(Text key, Iterable&lt;IntWritable&gt; values):
+        // 3. 聚合
+        sum = 0; count = 0
+        for each v in values:
+            sum += v.get();  count++
+        // 4. 输出
+        result = 按题目要求计算(sum, count)   // 求和/平均/列表拼接
+        context.write(key, new Text(result))
+
+// 可选 Combiner：若只是求和，可直接复用 Reducer
+job.setCombinerClass(XxxReducer.class)
+</code></pre>
+<p><strong>套用要点</strong>：</p>
+<ul>
+<li>Map 只做一件事：把每行解析成 <code>(聚合键, 1 或 数值)</code></li>
+<li>Reduce 只做一件事：对相同 key 的 values 累加/拼接</li>
+<li>需要两轮 MapReduce 时（如 grandchild-grandparent），第一轮的输出作为第二轮的输入</li>
+<li>求平均：Reduce 里同时记 <code>sum</code> 和 <code>count</code>，最后除</li>
+</ul>
+<p class="ref-link">真题完整解法见：<a href="04-MapReduce与大数据生态.html#ex-mr-salary">04 题目10 工资统计（12分）</a></p>
+
+<h3>11.2 Spark 通用骨架</h3>
+<p><strong>适用题目</strong>：所有 Spark 12 分大题（图度数、成绩分段、数据过滤统计等）。</p>
+<pre><code>// 1. 创建 SparkContext
+SparkConf conf = new SparkConf().setAppName("AppName")
+JavaSparkContext sc = new JavaSparkContext(conf)
+
+// 2. 读取数据创建 RDD
+JavaRDD&lt;String&gt; lines = sc.textFile("hdfs://input/path")
+
+// 3. Transformation 链（惰性，不立即执行）
+result = lines
+    .filter(line -&gt; 过滤条件)              // 过滤掉不需要的行
+    .map(line -&gt; 解析出某个字段)            // 映射
+    .mapToPair(x -&gt; new Tuple2(key, 1))    // 转成 (key, 1) 键值对
+    .reduceByKey((a, b) -&gt; a + b)          // 按 key 聚合求和
+    .filter(tuple -&gt; tuple._2 &gt; 阈值)    // 二次过滤
+
+// 4. Action 触发计算
+result.saveAsTextFile("hdfs://output/path")
+// 或 result.collect() / result.count()
+</code></pre>
+<p><strong>常用算子速查</strong>：</p>
+<table>
+<thead><tr><th>类型</th><th>算子</th><th>作用</th></tr></thead>
+<tbody>
+<tr><td>Transformation</td><td><code>map</code></td><td>一对一映射</td></tr>
+<tr><td></td><td><code>filter</code></td><td>过滤</td></tr>
+<tr><td></td><td><code>flatMap</code></td><td>一对多展开</td></tr>
+<tr><td></td><td><code>mapToPair</code></td><td>转成 PairRDD (key,value)</td></tr>
+<tr><td></td><td><code>reduceByKey</code></td><td>按 key 聚合（推荐，有预聚合）</td></tr>
+<tr><td></td><td><code>groupByKey</code></td><td>按 key 分组（效率低，慎用）</td></tr>
+<tr><td></td><td><code>sortByKey</code></td><td>按 key 排序</td></tr>
+<tr><td></td><td><code>union</code></td><td>合并两个 RDD</td></tr>
+<tr><td></td><td><code>join / fullOuterJoin</code></td><td>按 key 连接两个 PairRDD</td></tr>
+<tr><td>Action</td><td><code>collect</code></td><td>收集到 Driver</td></tr>
+<tr><td></td><td><code>count</code></td><td>计数</td></tr>
+<tr><td></td><td><code>saveAsTextFile</code></td><td>输出到 HDFS</td></tr>
+</tbody>
+</table>
+<p class="ref-link">真题完整解法见：<a href="04-MapReduce与大数据生态.html#ex-spark-score">04 题目11 学生成绩分段（12分）</a></p>
+
+<h3>11.3 Spark 双统计合并模板（出度+入度类）</h3>
+<p><strong>适用题目</strong>：图节点度数、双向关系统计、需要同时统计两个视角再合并的场景。</p>
+<p><strong>方案一：flatMap 展开法（推荐，最简洁）</strong>——每条记录展开成两条，再 reduceByKey。</p>
+<pre><code>// 每条边同时贡献 出度(给src) 和 入度(给dst)
+JavaPairRDD&lt;String, Integer&gt; allDegrees = edges
+    .flatMapToPair(edge -&gt; {
+        return Arrays.asList(
+            new Tuple2&lt;String, Integer&gt;(edge.src, 1),  // 出度
+            new Tuple2&lt;String, Integer&gt;(edge.dst, 1)   // 入度
+        )
+    })
+    .reduceByKey((a, b) -&gt; a + b)
+    .filter(tuple -&gt; tuple._2 &gt; 1000)   // 过滤度数 &gt; 1000
+allDegrees.saveAsTextFile("hdfs://output/path")
+</code></pre>
+<p><strong>方案二：分两次计算 + union 合并</strong></p>
+<pre><code>outDeg = edges.mapToPair(e -&gt; (e.src, 1)).reduceByKey((a,b) -&gt; a+b)
+inDeg  = edges.mapToPair(e -&gt; (e.dst, 1)).reduceByKey((a,b) -&gt; a+b)
+total  = outDeg.union(inDeg).reduceByKey((a,b) -&gt; a+b)
+                  .filter(t -&gt; t._2 &gt; 1000)
+</code></pre>
+<p><strong>套用要点</strong>：</p>
+<ul>
+<li>有向边 <code>&lt;ID1, ID2, Weight&gt;</code>：ID1 得出度，ID2 得入度</li>
+<li>Total = outDeg + inDeg，每条边同时贡献一个出度和一个入度</li>
+<li>优先用 flatMap 展开法，一轮搞定</li>
+</ul>
+<p class="ref-link">真题完整解法见：<a href="04-MapReduce与大数据生态.html#ex-spark-degree">04 题目12 图节点度数（12分）</a></p>
+
+<h3>11.4 Spark 分段统计模板（分类计数）</h3>
+<p><strong>适用题目</strong>：成绩分段、年龄段统计、按区间分桶计数等。</p>
+<pre><code>// 1. 先算出每个对象的指标值（如平均分）
+JavaRDD&lt;Double&gt; scores = lines
+    .filter(line -&gt; 只保留需要的行)
+    .mapToPair(line -&gt; (姓名, 成绩))
+    .groupByKey()                      // 或 reduceByKey / aggregateByKey
+    .map(tuple -&gt; sum/count)            // 算平均
+
+// 2. 分桶：把指标映射成 (区间标签, 1)
+JavaPairRDD&lt;String, Integer&gt; distribution = scores
+    .mapToPair(avg -&gt; {
+        if (avg &gt;= 90) return new Tuple2("90~100", 1)
+        else if (avg &gt;= 80) return new Tuple2("80~89", 1)
+        else if (avg &gt;= 70) return new Tuple2("70~79", 1)
+        else if (avg &gt;= 60) return new Tuple2("60~69", 1)
+        else return new Tuple2("60以下", 1)
+    })
+    .reduceByKey((a, b) -&gt; a + b)       // 各区间人数
+
+// 3. 输出
+distribution.saveAsTextFile("hdfs://output/path")
+</code></pre>
+<p><strong>套用要点</strong>：</p>
+<ul>
+<li>分桶套路固定：<code>mapToPair</code> 用 if/else 把数值映射成 <code>(标签, 1)</code>，再 <code>reduceByKey</code> 计数</li>
+<li>若要先按学生聚合各科成绩再算平均，用 <code>groupByKey</code> 或 <code>aggregateByKey</code> 求 (sum, count)</li>
+<li>区间标签<strong>作为 key</strong>，这样 reduceByKey 才能把同区间的人加起来</li>
+</ul>
+<p class="ref-link">真题完整解法见：<a href="04-MapReduce与大数据生态.html#ex-spark-score">04 题目11 学生成绩分段（12分）</a></p>
+
+<hr />
+<h2>十二、易错点速记</h2>
 <ol>
 <li><strong>Lamport 逻辑时钟</strong>：$C(a) &lt; C(b) \nRightarrow a \rightarrow b$（反向不成立！）</li>
 <li><strong>向量时钟</strong>：$V(a) &lt; V(b) \iff a \rightarrow b$（充要条件）</li>

@@ -1644,7 +1644,7 @@ reduce(Text key, Iterable&lt;Text&gt; values):
 3. <strong>特定于该应用场景</strong>：地理分区缺乏通用性，哈希分区可以适用于各种以身份证号为主键的场景。
 4. <strong>热点问题</strong>：热门省份（如广东、北京、上海所在的地理分区）的服务器可能在旅游旺季严重过载。</p>
 <hr />
-<h3>题目10（来源：2022年A卷）</h3>
+<h3 id="ex-mr-salary">题目10（来源：2022年A卷）</h3>
 <p><strong>原题：</strong> MapReduce 编程：输入数据为公司员工的工资信息，格式为 <code>员工姓名, 部门, 年份, 月份, 工资金额</code>。已知 2021 年没有人员流动，要求统计不同部门员工 2021 年的年平均工资。用伪代码描述该 MapReduce 程序的主要设计思想。（12分）</p>
 <p><strong>解析/答案：</strong></p>
 <p><strong>设计思路</strong>：</p>
@@ -1749,7 +1749,7 @@ reduce(Text key, Iterable&lt;Text&gt; values):
 - 以"部门 + 员工姓名"为 key 聚合各月工资。
 - 计算每个员工的年平均工资，再求部门平均。</p>
 <hr />
-<h3>题目11（来源：2020年A卷、2020回忆版）</h3>
+<h3 id="ex-spark-score">题目11（来源：2020年A卷、2020回忆版）</h3>
 <p><strong>原题：</strong> Spark 编程：输入 HDFS 文件中保存了学生成绩信息，格式为 <code>班级, 姓名, 科目, 必修/选修, 成绩</code>。要求编写 Spark 程序，统计学生必修课平均成绩在 90~100, 80~89, 70~79, 60~69 和 60 分以下这 5 个分数段的人数。请给出该程序的伪代码。（12分）</p>
 <p><strong>解析/答案：</strong></p>
 <p><strong>设计思路</strong>：
@@ -1831,7 +1831,7 @@ JavaRDD&lt;Double&gt; avgScores = studentScores
 - <code>map</code> 将平均分映射为分数段区间。
 - <code>reduceByKey</code> 统计各分数段人数。</p>
 <hr />
-<h3>题目12（来源：2022年A卷）</h3>
+<h3 id="ex-spark-degree">题目12（来源：2022年A卷）</h3>
 <p><strong>原题：</strong> Spark 编程：输入 HDFS 数据文件中保存了一个大规模的有向图，该文件每一行都存放了一个形如 <code>&lt;ID1, ID2, Weight&gt;</code> 的三元组，表示一条以节点 ID1 为始点、节点 ID2 为终点的有向边，Weight 是边的权值。现要求设计基于 Spark 并行计算模型的程序对该文件进行分析，获得所有度数（出度 + 入度）大于 1000 的节点的标识。用伪代码描述该 Spark 程序的主要思想。（12分）</p>
 <p><strong>解析/答案：</strong></p>
 <p><strong>设计思路</strong>：
