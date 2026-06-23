@@ -215,7 +215,7 @@
 <li>分布式排序（如 Terrasort 等算法）</li>
 </ul>
 <hr />
-<h3>1.2 MapReduce 工作流程</h3>
+<h3 id="mr-flow">1.2 MapReduce 工作流程</h3>
 <h4>1.2.1 整体流程图</h4>
 <pre><code>HDFS输入文件
     │
@@ -583,7 +583,7 @@ reduce(Text key, Iterable&lt;FloatWritable&gt; values):
     context.write(key, new Text(output))
 </code></pre>
 <hr />
-<h3>1.4 HDFS 分布式文件系统</h3>
+<h3 id="hdfs">1.4 HDFS 分布式文件系统</h3>
 <h4>1.4.1 HDFS 概述</h4>
 <p>HDFS（Hadoop Distributed File System）是面向大数据的开源分布式文件系统，将分布式系统中多个节点的存储资源整合在一起，向用户/应用程序呈现统一的存储空间和文件系统目录树。用户无需关心数据存储在哪个节点上。</p>
 <ul>
@@ -747,7 +747,7 @@ reduce(Text key, Iterable&lt;FloatWritable&gt; values):
 </ol>
 <p><strong>解决方案</strong>：使用 SequenceFile、HAR（Hadoop Archive）或 Parquet/ORC 等列存格式将小文件合并为大文件。</p>
 <hr />
-<h3>1.5 Spark 计算模型</h3>
+<h3 id="spark">1.5 Spark 计算模型</h3>
 <h4>1.5.1 Spark 与 MapReduce 的对比</h4>
 <table>
 <thead>
@@ -925,7 +925,7 @@ result = rdd.map(...)        // 映射转换
 result.saveAsTextFile(&quot;hdfs://output/path&quot;)
 </code></pre>
 <hr />
-<h3>1.6 数据分区与一致性哈希</h3>
+<h3 id="consistent-hash">1.6 数据分区与一致性哈希</h3>
 <h4>1.6.1 基于哈希的数据分区法</h4>
 <p><strong>基本原理</strong>：对数据记录的主键（key）计算哈希值 $h = H(key)$，然后对服务器数量 $N$ 取模，得到存储该记录的服务器编号：</p>
 <p>$\text{ServerID} = H(key) \bmod N$</p>

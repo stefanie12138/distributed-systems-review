@@ -628,7 +628,7 @@ print(f&quot;Rank {rank}: After barrier&quot;)
 <img src="images/分布式计算-MPI编程入门v1.1_p09_img3.jpeg" alt="MPI通信模式概览" width="651" height="368" loading="lazy">
 <p class="caption">MPI 通信模式概览：阻塞、非阻塞、点对点与集合通信</p>
 </div>
-<h4>1.4.1 阻塞通信 vs 非阻塞通信</h4>
+<h4 id="blocking">1.4.1 阻塞通信 vs 非阻塞通信</h4>
 <p><strong>阻塞通信</strong>（本课程重点讲解的内容）：</p>
 <ul>
 <li><strong>阻塞发送（send）</strong>：发送方调用 send 后，函数调用不会立即返回，直到发送缓冲区可以被安全复用</li>
@@ -741,7 +741,7 @@ elif rank == 1:
 </svg>
 <p class="caption">点对点通信：数据从发送方缓冲区序列化后经网络传输，接收方反序列化还原为 Python 对象</p>
 </div>
-<h4>1.4.3 集体通信（Collective Communication）</h4>
+<h4 id="collective">1.4.3 集体通信（Collective Communication）</h4>
 <p>集体通信涉及通信器中的<strong>所有进程</strong>（或一个较大的子集）。</p>
 <div class="diagram">
 <svg class="diagram-svg" viewBox="0 0 820 700" xmlns="http://www.w3.org/2000/svg">

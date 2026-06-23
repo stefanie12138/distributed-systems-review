@@ -100,7 +100,12 @@
 <li><strong>容错性</strong>：部分节点/网络故障时系统仍能提供服务</li>
 <li><strong>一致性</strong>：多副本数据在可接受范围内保持一致</li>
 </ul>
-<p class="ref-link">更完整的分布式系统概述见：<a href="01-分布式系统概述.html">01-分布式系统概述.html</a></p>
+<p class="ref-link">本节简讲，详细内容见：<br />
+· <a href="01-分布式计算概述.html#def">01 第1-2讲 1.1 分布式系统的定义</a><br />
+· <a href="01-分布式计算概述.html#msg-vs-shm">01 第1-2讲 1.2 消息传递与共享内存模型</a><br />
+· <a href="01-分布式计算概述.html#goals">01 第1-2讲 1.5.2 构建分布式系统的目的</a><br />
+· <a href="01-分布式计算概述.html#challenges">01 第1-2讲 1.8 设计分布式系统的挑战</a>
+</p>
 
 <hr />
 <h2>二、架构模式与负载均衡</h2>
@@ -178,7 +183,11 @@
 <tr><td>协程</td><td>高并发、轻量级</td></tr>
 </tbody>
 </table>
-<p class="ref-link">RPC 与 MOM 的更多细节、示例代码见：<a href="03-通信技术与RPC.html">03-通信技术与RPC.html</a></p>
+<p class="ref-link">本节简讲，详细内容与示例代码见：<br />
+· <a href="03-通信技术与RPC.html#rpc">03 第5讲 1.4 远程过程调用（RPC）</a><br />
+· <a href="03-通信技术与RPC.html#mom">03 第5讲 1.7 消息中间件（MOM）</a><br />
+· <a href="03-通信技术与RPC.html#concurrent">03 第5讲 1.3 并发服务技术</a>
+</p>
 
 <hr />
 <h2>四、分布式模型与时钟（重难点）</h2>
@@ -320,7 +329,15 @@
 <tr><td><strong>最终一致性</strong></td><td>如果不再有新写入，经过足够长时间后所有副本最终一致</td><td>DNS、社交网络、商品评论</td></tr>
 </tbody>
 </table>
-<p class="ref-link">时钟与一致性模型的更多推导、例题、图解见：<a href="02-分布式计算模型与时钟.html">02-分布式计算模型与时钟.html</a></p>
+<p class="ref-link">本节简讲，详细推导、例题与图解见：<br />
+· <a href="02-分布式计算模型与时钟.html#lamport">02 第3-4讲 1.8 Lamport逻辑时钟</a><br />
+· <a href="02-分布式计算模型与时钟.html#total-order">02 第3-4讲 1.9 全序逻辑时钟</a><br />
+· <a href="02-分布式计算模型与时钟.html#vector-clock">02 第3-4讲 1.10 向量逻辑时钟</a><br />
+· <a href="02-分布式计算模型与时钟.html#cristian">02 第3-4讲 1.7 Cristian时间同步算法</a><br />
+· <a href="02-分布式计算模型与时钟.html#consistency">02 第3-4讲 1.14 分布式一致性模型</a><br />
+· <a href="02-分布式计算模型与时钟.html#broadcast">02 第3-4讲 1.11 广播协议</a><br />
+· <a href="02-分布式计算模型与时钟.html#paxos-raft">02 第3-4讲 1.13 分布式共识协议（Paxos/Raft）</a>
+</p>
 
 <hr />
 <h2>五、MapReduce 与大数据生态</h2>
@@ -422,7 +439,12 @@
 </ol>
 <p><strong>增减节点</strong>：只影响相邻区间，只移动相邻区间的数据，不会全部重新分布。</p>
 <p><strong>虚拟节点</strong>：为每台服务器分配多个虚拟节点，解决数据倾斜问题。</p>
-<p class="ref-link">HDFS、MapReduce、Spark、一致性哈希的完整例题、伪代码见：<a href="04-MapReduce与大数据生态.html">04-MapReduce与大数据生态.html</a></p>
+<p class="ref-link">本节简讲，完整例题与伪代码见：<br />
+· <a href="04-MapReduce与大数据生态.html#hdfs">04 第6讲 1.4 HDFS 分布式文件系统</a><br />
+· <a href="04-MapReduce与大数据生态.html#mr-flow">04 第6讲 1.2 MapReduce 工作流程</a><br />
+· <a href="04-MapReduce与大数据生态.html#spark">04 第6讲 1.5 Spark 计算模型</a><br />
+· <a href="04-MapReduce与大数据生态.html#consistent-hash">04 第6讲 1.6 数据分区与一致性哈希</a>
+</p>
 
 <hr />
 <h2>六、广播协议与共识</h2>
@@ -509,7 +531,10 @@
 <li><strong>阻塞通信</strong>：Send 完成后缓冲区可安全复用；Recv 完成后数据已到达</li>
 <li><strong>非阻塞通信</strong>：Send/Recv 立即返回，需调用 Wait 确认完成</li>
 </ul>
-<p class="ref-link">MPI 集合通信的图示、阻塞/非阻塞时序图见：<a href="05-MPI并行编程.html">05-MPI并行编程.html</a></p>
+<p class="ref-link">本节简讲，图示与时序图见：<br />
+· <a href="05-MPI并行编程.html#collective">05 第7讲 1.4.3 集体通信（Collective Communication）</a><br />
+· <a href="05-MPI并行编程.html#blocking">05 第7讲 1.4.1 阻塞通信 vs 非阻塞通信</a>
+</p>
 
 <hr />
 <h2>九、必背公式速查</h2>
