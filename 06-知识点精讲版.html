@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>06-知识点精讲版 — 分布式系统复习</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <script defer src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <script defer src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+        ], ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']});"></script>
+    <style>
+        :root { --bg: #fafafa; --card-bg: #ffffff; --text: #2c3e50; --text-secondary: #555; --border: #e0e0e0; --accent: #2563eb; --heading-color: #1a1a2e; --table-stripe: #f8fafc; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 16px; }
+        .summary-banner { background: linear-gradient(135deg, #7c3aed 0%, #2563eb 50%, #0891b2 100%); color: white; padding: 18px 24px; border-radius: 12px; margin-bottom: 24px; text-align: center; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }
+        .summary-banner h2 { font-size: 1.3em; margin: 0; border: none; color: white; padding: 0; background: transparent; }
+        .container { max-width: 860px; margin: 0 auto; padding: 24px 20px 60px; }
+        nav.breadcrumb { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; padding: 12px 16px; background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        nav.breadcrumb a { color: var(--accent); text-decoration: none; }
+        h1 { font-size: 2em; color: var(--heading-color); border-bottom: 3px solid var(--accent); padding-bottom: 12px; margin-bottom: 28px; }
+        h2 { font-size: 1.5em; color: var(--heading-color); margin-top: 40px; margin-bottom: 16px; padding-left: 12px; border-left: 4px solid var(--accent); }
+        h3 { font-size: 1.2em; color: var(--heading-color); margin-top: 28px; margin-bottom: 12px; }
+        h4 { font-size: 1.05em; color: #334155; margin-top: 20px; margin-bottom: 8px; }
+        p { margin-bottom: 12px; text-align: left; word-break: keep-all; overflow-wrap: break-word; hyphens: none; }
+        strong { color: #1a1a2e; }
+        ul, ol { margin-bottom: 12px; padding-left: 24px; }
+        li { margin-bottom: 4px; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.95em; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+        th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+        tr:nth-child(even) td { background: var(--table-stripe); }
+        code { background: #f4f4f5; padding: 2px 6px; border-radius: 4px; font-family: "JetBrains Mono", "Fira Code", Consolas, monospace; font-size: 0.9em; }
+        pre { background: #1e293b; color: #e2e8f0; padding: 16px 20px; border-radius: 8px; overflow-x: auto; margin: 16px 0; line-height: 1.6; }
+        pre code { background: transparent; padding: 0; color: inherit; font-size: 0.88em; }
+        blockquote { border-left: 4px solid #94a3b8; padding: 10px 16px; margin: 16px 0; background: #f8fafc; color: #475569; border-radius: 0 6px 6px 0; }
+        .ref-link { font-size: 0.9em; color: #64748b; background: #f1f5f9; padding: 6px 10px; border-radius: 6px; display: inline-block; margin: 8px 0; }
+        .ref-link a { color: var(--accent); text-decoration: none; }
+        .ref-link a:hover { text-decoration: underline; }
+        .example { border: 1px solid #e0e0e0; border-left: 4px solid var(--accent); padding: 16px; margin: 16px 0; background: #ffffff; border-radius: 0 8px 8px 0; }
+        .example-title { font-weight: 600; color: var(--accent); margin-bottom: 10px; }
+        .katex { word-break: keep-all; hyphens: none; }
+        .katex-display > .katex { text-align: left !important; }
+        hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+        @media (max-width: 640px) { .container { padding: 12px 14px 40px; } h1 { font-size: 1.5em; } h2 { font-size: 1.25em; } table { font-size: 0.82em; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="summary-banner"><h2>📚 知识点精讲版 · 详细手册 · 真题例题 · 考前主看这一份</h2></div>
+        <nav class="breadcrumb"><a href="index.html">← 返回首页</a> · <a href="00-考前总结.html">考前总结（速记版）</a></nav>
+        <h1>分布式系统 · 知识点精讲版</h1>
+
+<h2>一、分布式系统核心概念</h2>
+<h3>1.1 定义与五要素</h3>
+<blockquote>
+<p>多个<strong>网络互联</strong>、<strong>独立自治</strong>的计算节点，基于<strong>消息传递</strong>协作完成<strong>共同目标</strong>。</p>
+</blockquote>
+<table>
+<thead><tr><th>五要素</th><th>关键点</th></tr></thead>
+<tbody>
+<tr><td>多个计算节点</td><td>进程/线程/虚拟机均可</td></tr>
+<tr><td>网络互联</td><td>不限物理拓扑</td></tr>
+<tr><td>独立自治</td><td>独立CPU、独立时钟、独立失效</td></tr>
+<tr><td>消息传递</td><td><strong>非</strong>共享内存（Share Nothing）</td></tr>
+<tr><td>共同目标</td><td>单节点无法独立完成</td></tr>
+</tbody>
+</table>
+<p><strong>必记辨析</strong>：</p>
+<ul>
+<li>多CPU单主板计算机 <strong>不是</strong> 分布式系统（共享内存 SMP，非消息传递）</li>
+<li>同一物理机 <strong>可以</strong> 包含多个分布式节点（进程/虚拟机 + loopback 通信）</li>
+</ul>
+
+<h3>1.2 共享内存 vs 消息传递</h3>
+<table>
+<thead><tr><th></th><th>共享内存</th><th>消息传递</th></tr></thead>
+<tbody>
+<tr><td>通信</td><td>隐式（读写共享变量）</td><td>显式（send/recv）</td></tr>
+<tr><td>耦合</td><td>紧耦合</td><td>松耦合</td></tr>
+<tr><td>容错</td><td>差（单点崩溃全局影响）</td><td>好（独立失效）</td></tr>
+<tr><td>扩展</td><td>受限于总线带宽</td><td>理论无限水平扩展</td></tr>
+</tbody>
+</table>
+
+<h3>1.3 分布式系统必须容忍的四类错误（真题高频）</h3>
+<ol>
+<li><strong>不可靠的计算节点</strong>：任何节点可能随时崩溃失效，失效是常态</li>
+<li><strong>不可靠的通信网络</strong>：丢包、乱序、延迟抖动、数据损坏、网络分区</li>
+<li><strong>不可靠的时钟</strong>：不同节点物理时钟因晶振差异、温度等逐渐漂移</li>
+<li><strong>没有全局观</strong>：不存在全局控制中心实时掌握所有节点状态，只能通过消息交互推断</li>
+</ol>
+
+<h3>1.4 设计目标</h3>
+<ul>
+<li><strong>透明性</strong>：用户感知不到分布（位置透明、访问透明、故障透明等）</li>
+<li><strong>可扩展性</strong>：水平扩展（加节点）提升性能/容量</li>
+<li><strong>容错性</strong>：部分节点/网络故障时系统仍能提供服务</li>
+<li><strong>一致性</strong>：多副本数据在可接受范围内保持一致</li>
+</ul>
+<p class="ref-link">更完整的分布式系统概述见：<a href="01-分布式系统概述.html">01-分布式系统概述.html</a></p>
+
+<hr />
+<h2>二、架构模式与负载均衡</h2>
+<h3>2.1 五种架构模式</h3>
+<table>
+<thead><tr><th>模式</th><th>特点</th><th>典型应用</th></tr></thead>
+<tbody>
+<tr><td>Client-Server</td><td>客户端轻、服务端重</td><td>Web 服务</td></tr>
+<tr><td><strong>Master-Slave</strong></td><td>主节点调度，从节点执行</td><td>GFS、MapReduce</td></tr>
+<tr><td><strong>Peer-to-Peer</strong></td><td>无中心，节点平等</td><td>比特币、BitTorrent</td></tr>
+<tr><td>总线模式</td><td>通过共享总线通信</td><td>消息队列</td></tr>
+<tr><td>混合模式</td><td>组合多种模式</td><td>复杂系统</td></tr>
+</tbody>
+</table>
+<p><strong>必记</strong>：GFS/MapReduce → Master-Slave；比特币 → P2P</p>
+
+<h3>2.2 负载均衡策略</h3>
+<table>
+<thead><tr><th>策略</th><th>原理</th><th>适用场景</th></tr></thead>
+<tbody>
+<tr><td>轮询</td><td>依次分发</td><td>后端能力均等</td></tr>
+<tr><td>加权轮询</td><td>按权重比例</td><td>后端能力不均</td></tr>
+<tr><td>最少连接数</td><td>发给连接最少者</td><td>长连接</td></tr>
+<tr><td><strong>IP哈希</strong></td><td>客户端IP取哈希</td><td><strong>后端有缓存时首选</strong></td></tr>
+<tr><td>最短响应时间</td><td>发给响应最快者</td><td>动态负载</td></tr>
+</tbody>
+</table>
+<p><strong>必记</strong>：后端有缓存 → IP哈希（同客户端始终落同后端，缓存命中率高）</p>
+
+<h3>2.3 服务器三层架构</h3>
+<p>表现层（Web服务器）→ 业务逻辑层（应用服务器）→ 数据层（数据库）</p>
+<p>好处：各层独立扩展、解耦、可替换。例如数据库压力大时单独扩展数据层，应用复杂时单独扩展业务逻辑层。</p>
+
+<hr />
+<h2>三、通信技术</h2>
+<h3>3.1 RPC 远程过程调用</h3>
+<p><strong>核心思想</strong>：让远程函数调用像本地调用一样简单。</p>
+<p><strong>完整流程</strong>：</p>
+<ol>
+<li>Client 调用本地 <strong>Client Stub</strong></li>
+<li>Client Stub 将参数序列化，通过网络发送给 Server</li>
+<li>Server 端的 <strong>Server Skeleton</strong> 接收并反序列化参数</li>
+<li>Skeleton 调用实际 Server 函数</li>
+<li>Server 函数返回结果给 Skeleton</li>
+<li>Skeleton 序列化结果，通过网络返回给 Client Stub</li>
+<li>Client Stub 反序列化结果，返回给 Client</li>
+</ol>
+<ul>
+<li><strong>Stub</strong>：客户端代理，负责序列化参数、发起网络调用</li>
+<li><strong>Skeleton</strong>：服务端代理，负责反序列化参数、调用实际函数</li>
+<li><strong>IDL</strong>：接口定义语言，支持跨语言调用</li>
+</ul>
+<p><strong>RPC 中间件作用</strong>：屏蔽网络细节、序列化/反序列化、跨语言、服务注册发现。</p>
+
+<h3>3.2 消息中间件（MOM）</h3>
+<table>
+<thead><tr><th>模式</th><th>特点</th></tr></thead>
+<tbody>
+<tr><td><strong>消息队列 (Queue)</strong></td><td>点对点，一个消息一个消费者，FIFO</td></tr>
+<tr><td><strong>发布/订阅 (Topic)</strong></td><td>一对多，一个消息多个订阅者</td></tr>
+</tbody>
+</table>
+<p><strong>消费者接收消息三种方式</strong>：同步接收（阻塞等待）、异步接收（回调）、轮询接收。</p>
+<p><strong>MOM 优点</strong>：解耦、削峰填谷、异步、可靠投递。</p>
+<p><strong>秒杀/双十一</strong>：请求入队列 → 后端按能力消费 → 保护后端不被冲垮。</p>
+
+<h3>3.3 并发服务技术</h3>
+<table>
+<thead><tr><th>技术</th><th>适用场景</th></tr></thead>
+<tbody>
+<tr><td>多线程</td><td>通用，连接数有限</td></tr>
+<tr><td>线程池</td><td>复用线程</td></tr>
+<tr><td><strong>事件驱动 (Reactor)</strong></td><td><strong>大量短连接</strong></td></tr>
+<tr><td>Proactor</td><td>异步I/O</td></tr>
+<tr><td>协程</td><td>高并发、轻量级</td></tr>
+</tbody>
+</table>
+<p class="ref-link">RPC 与 MOM 的更多细节、示例代码见：<a href="03-通信技术与RPC.html">03-通信技术与RPC.html</a></p>
+
+<hr />
+<h2>四、分布式模型与时钟（重难点）</h2>
+
+<h3>4.1 四种网络链路模型（从弱到强）</h3>
+<table>
+<thead><tr><th>链路模型</th><th>保证</th><th>实现手段</th></tr></thead>
+<tbody>
+<tr><td>任意链路</td><td>无</td><td>纠错码 + HASH + MAC + 加密</td></tr>
+<tr><td>一般损失链路</td><td>无主动攻击，可能丢包/重复/乱序</td><td>重传 + ACK + 序列号去重</td></tr>
+<tr><td>可靠链路</td><td>最终必达，可能乱序</td><td>重传 + ACK</td></tr>
+<tr><td>可靠 FIFO 链路</td><td>最终必达且保序</td><td>重传 + ACK + 序列号排序</td></tr>
+</tbody>
+</table>
+
+<h3>4.2 两种节点故障模式</h3>
+<table>
+<thead><tr><th></th><th>Fail-Stop</th><th>Byzantine</th></tr></thead>
+<tbody>
+<tr><td>行为</td><td>安静停止</td><td>任意动作（发错误消息）</td></tr>
+<tr><td>攻击者</td><td>无恶意</td><td>有恶意（黑客控制）</td></tr>
+<tr><td>容错要求</td><td>$n > 2f$（多数派如 Paxos/Raft）</td><td>$n > 3f$</td></tr>
+<tr><td>应用</td><td>常规分布式系统</td><td>航天、金融、区块链</td></tr>
+</tbody>
+</table>
+
+<h3>4.3 Happen-Before 关系（先于关系）</h3>
+<p>记作 $a \rightarrow b$，是分布式事件间的<strong>偏序关系</strong>，由 Lamport 提出。</p>
+<p><strong>四条规则</strong>：</p>
+<ol>
+<li><strong>同一进程内</strong>：若事件 $a$ 和 $b$ 在同一节点，且 $a$ 在 $b$ 之前发生，则 $a \rightarrow b$</li>
+<li><strong>消息传递</strong>：若 $a$ 是"$P_1$ 发送消息 $m$ 到 $P_2$"，$b$ 是"$P_2$ 收到该消息"，则 $a \rightarrow b$</li>
+<li><strong>传递性</strong>：若 $a \rightarrow b$ 且 $b \rightarrow c$，则 $a \rightarrow c$</li>
+<li><strong>并发事件</strong>：若 $a \nrightarrow b$ 且 $b \nrightarrow a$，则 $a$ 和 $b$ 并发，记作 $a \parallel b$</li>
+</ol>
+<p><strong>关键性质</strong>：$\rightarrow$ 隐含因果关系。若 $a \rightarrow b$，则 $a$ 可能因果影响了 $b$。</p>
+
+<h3>4.4 Lamport 逻辑时钟（标量时钟）</h3>
+<p><strong>为什么需要逻辑时钟</strong>：物理时钟很难精确同步，分布式系统只需对事件顺序达成一致，且尽量保持因果关系即可。</p>
+<p><strong>算法规则</strong>（设 $C_i$ 为节点 $i$ 的本地逻辑时钟）：</p>
+<ol>
+<li><strong>内部事件/发送事件</strong>：节点 $i$ 中每发生一个新事件，$C_i \leftarrow C_i + 1$</li>
+<li><strong>发送消息</strong>：节点 $i$ 发出的每个消息都绑定当前的 $C_i$ 作为时间戳</li>
+<li><strong>接收消息</strong>：节点 $j$ 收到时间戳为 $C_{msg}$ 的消息后：$C_j \leftarrow 1 + \max(C_j, C_{msg})$</li>
+</ol>
+<p><strong>解释</strong>：接收方将自己的时钟设为"自身时钟和消息时间戳的较大值加1"，保证接收事件时间戳一定大于发送事件时间戳。</p>
+<p><strong>三条性质</strong>：</p>
+<ol>
+<li><strong>保持因果关系</strong>：若 $a \rightarrow b$，则一定有 $C(a) &lt; C(b)$</li>
+<li><strong>反向不成立</strong>：$C(a) &lt; C(b)$ 时，不一定有 $a \rightarrow b$（可能是并发事件碰巧时钟小）</li>
+<li><strong>可能相等</strong>：两个不同并发事件可能获得相同时间戳</li>
+</ol>
+
+<h3>4.5 全序逻辑时钟</h3>
+<p><strong>动机</strong>：Lamport 标量时钟在 $C(a)=C(b)$ 时无法区分先后顺序，全序时钟将时间戳扩展为二元组，实现所有事件全序排列。</p>
+<p><strong>时间戳格式</strong>：每个事件携带二元组 $\langle C, ID \rangle$，其中 $C$ 是标量逻辑时钟值，$ID$ 是节点编号。</p>
+<p><strong>排序规则</strong>：</p>
+<p>$$L(a) &lt; L(b) \iff C(a) &lt; C(b) \;\mathrm{OR}\; \Big(C(a)=C(b) \;\mathrm{AND}\; ID(a)&lt;ID(b)\Big)$$</p>
+<p><strong>算法描述</strong>：</p>
+<ul>
+<li>每个节点维护标量时钟 $C$</li>
+<li>节点内每发生新事件，$C \leftarrow C + 1$</li>
+<li>发送消息时携带 $\langle C, ID \rangle$</li>
+<li>接收到时间戳 $\langle C_i, i \rangle$ 后：$C_j \leftarrow 1 + \max(C_j, C_i)$</li>
+</ul>
+<p><strong>性质</strong>：保持潜在因果关系（$a \rightarrow b$ 则 $L(a) &lt; L(b)$），但反向仍不成立。</p>
+
+<h3>4.6 向量逻辑时钟</h3>
+<p><strong>基本思想</strong>：设系统有 $n$ 个节点，节点 $N_i$ 维护一个 $n$ 维向量：</p>
+<p>$$\mathbf{T}_i = \langle t_1, t_2, \ldots, t_n \rangle$$</p>
+<ul>
+<li>$\mathbf{T}_i[i]$：节点 $N_i$ 自己的标量逻辑时钟</li>
+<li>$\mathbf{T}_i[j]\;(j \neq i)$：节点 $N_i$ 所知道的关于节点 $N_j$ 的最大标量时钟值</li>
+</ul>
+<p><strong>直观理解</strong>：每个节点维护了一个"我认为每个节点现在进展到哪一步了"的全局视图。</p>
+<p><strong>算法四步</strong>：</p>
+<ol>
+<li><strong>初始化</strong>：所有节点向量时钟初始化为 $\langle 0, 0, \ldots, 0 \rangle$</li>
+<li><strong>内部事件</strong>：节点 $N_i$ 内每发生一个新事件，$\mathbf{T}_i[i] \leftarrow \mathbf{T}_i[i] + 1$</li>
+<li><strong>发送消息</strong>：节点 $N_i$ 发送消息时，将当前向量时钟 $\mathbf{T}_i$ 作为时间戳附加</li>
+<li><strong>接收消息</strong>：收到来自节点 $j$ 的消息 $\langle m, \mathbf{T}_m \rangle$ 后：<br />
+    融合：对所有 $k = 1, \ldots, n$，$\mathbf{T}_i[k] \leftarrow \max(\mathbf{T}_i[k], \mathbf{T}_m[k])$<br />
+    自增：$\mathbf{T}_i[i] \leftarrow \mathbf{T}_i[i] + 1$</li>
+</ol>
+<p><strong>向量时钟的比较与排序</strong>：</p>
+<ul>
+<li><strong>相等</strong>：$\mathbf{T} = \mathbf{T}' \iff \forall j: \mathbf{T}[j] = \mathbf{T}'[j]$</li>
+<li><strong>小于等于</strong>：$\mathbf{T} \leq \mathbf{T}' \iff \forall j: \mathbf{T}[j] \leq \mathbf{T}'[j]$</li>
+<li><strong>严格小于</strong>：$\mathbf{T} &lt; \mathbf{T}' \iff \mathbf{T} \leq \mathbf{T}' \text{ 且 } \mathbf{T} \neq \mathbf{T}'$</li>
+<li><strong>并发（不可比较）</strong>：$\mathbf{T} \parallel \mathbf{T}' \iff \mathbf{T} \nleq \mathbf{T}' \text{ 且 } \mathbf{T}' \nleq \mathbf{T}$</li>
+</ul>
+<p><strong>关键性质</strong>：</p>
+<ul>
+<li>$a \rightarrow b \iff V(a) &lt; V(b)$（充要条件！这是向量时钟的核心优势）</li>
+<li>$a \parallel b \iff V(a) \parallel V(b)$</li>
+</ul>
+
+<h3>4.7 三种时钟对比表</h3>
+<table>
+<thead><tr><th>性质</th><th>标量时钟（Lamport）</th><th>全序标量时钟</th><th>向量时钟</th></tr></thead>
+<tbody>
+<tr><td>时间戳类型</td><td>整数</td><td>二元组 $\langle C, ID \rangle$</td><td>$n$ 维向量</td></tr>
+<tr><td>排序类型</td><td>偏序</td><td>全序</td><td>偏序</td></tr>
+<tr><td>保持因果关系</td><td>单向：$a \rightarrow b \Rightarrow C(a) &lt; C(b)$</td><td>单向</td><td>充要：$a \rightarrow b \iff V(a) &lt; V(b)$</td></tr>
+<tr><td>检测并发</td><td>否</td><td>否</td><td>是</td></tr>
+<tr><td>存储/通信开销</td><td>$O(1)$</td><td>$O(1)$</td><td>$O(n)$</td></tr>
+</tbody>
+</table>
+
+<h3>4.8 Cristian 时间同步算法</h3>
+<p><strong>背景</strong>：分布式系统需要同步物理时钟，但网络延迟不可忽略。Cristian 算法通过向时间服务器请求来估计并校正本地时钟。</p>
+<p><strong>四个时间戳</strong>：</p>
+<ul>
+<li>$T_1$：客户端发送请求的本地时间</li>
+<li>$T_2$：服务器收到请求的本地时间</li>
+<li>$T_3$：服务器发送响应的本地时间（响应携带 $T_2, T_3$）</li>
+<li>$T_4$：客户端收到响应的本地时间</li>
+</ul>
+<p><strong>网络往返延迟</strong>：</p>
+<p>$$\delta_{total} = (T_4 - T_1) - (T_3 - T_2)$$</p>
+<p>其中 $\delta_{total} = \delta_{req} + \delta_{resp}$。</p>
+<p><strong>关键假设</strong>：网络传输延迟在请求和响应方向大致相等，$\delta_{req} \approx \delta_{resp} \approx \delta_{total}/2$。</p>
+<p><strong>客户端校时公式</strong>：</p>
+<p>$$T_{client} \leftarrow T_3 + \frac{(T_4 - T_1) - (T_3 - T_2)}{2}$$</p>
+<p><strong>误差分析</strong>：实际误差最大为 $\pm \delta_{total}/2$。</p>
+<p><strong>NTP 采用的三种调整策略</strong>：</p>
+<ol>
+<li><strong>Slewing（微调频率）</strong>：稍微加快或减慢时钟频率，逐渐校准，不引起时间跳跃，最常用</li>
+<li><strong>Stepping（直接设置）</strong>：偏差过大时直接跳变，会导致时间不连续</li>
+<li><strong>报错</strong>：偏差过大无法自动修复时通知管理员</li>
+</ol>
+
+<h3>4.9 一致性模型</h3>
+<table>
+<thead><tr><th>模型</th><th>定义</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr><td><strong>强一致性（线性一致性）</strong></td><td>任何读取都能读到最新写入的值，所有操作看起来有一个全局实时顺序</td><td>银行转账、库存扣减</td></tr>
+<tr><td><strong>顺序一致性</strong></td><td>每个节点上的操作按程序顺序执行，不同节点的操作顺序可以不同但各自一致</td><td>分布式数据库会话</td></tr>
+<tr><td><strong>最终一致性</strong></td><td>如果不再有新写入，经过足够长时间后所有副本最终一致</td><td>DNS、社交网络、商品评论</td></tr>
+</tbody>
+</table>
+<p class="ref-link">时钟与一致性模型的更多推导、例题、图解见：<a href="02-分布式计算模型与时钟.html">02-分布式计算模型与时钟.html</a></p>
+
+<hr />
+<h2>五、MapReduce 与大数据生态</h2>
+
+<h3>5.1 HDFS 分布式文件系统</h3>
+<p>HDFS（Hadoop Distributed File System）是面向大数据的开源分布式文件系统，将多个节点的存储资源整合，向用户呈现统一的目录树。</p>
+<p><strong>核心特性</strong>：</p>
+<ul>
+<li>大文件自动分块（Block），默认每块 128MB</li>
+<li>每个 Block 默认存 3 个副本，分布在不同节点</li>
+<li>适合<strong>一次写入多次读取</strong>，不适合大量小文件</li>
+</ul>
+
+<h4>5.1.1 NameNode 与 DataNode</h4>
+<table>
+<thead><tr><th>角色</th><th>功能</th></tr></thead>
+<tbody>
+<tr><td><strong>NameNode（主节点）</strong></td><td>存储元数据（目录、文件名、Block 列表、Block→DataNode 映射）；管理 DataNode 注册与心跳；负责多副本维护和负载均衡；处理控制流请求</td></tr>
+<tr><td><strong>DataNode（从节点）</strong></td><td>存储实体 Block 数据；处理数据流读写；定期向 NameNode 发送心跳和 Block 报告；执行复制/删除指令</td></tr>
+</tbody>
+</table>
+<p><strong>控制流与数据流分离</strong>：</p>
+<ul>
+<li>控制流：客户端 → NameNode（元数据操作）</li>
+<li>数据流：客户端 → DataNode（实际数据读写）</li>
+</ul>
+
+<h4>5.1.2 客户端读取 HDFS 文件的流程</h4>
+<ol>
+<li>客户端向 NameNode 发送读取请求，传入文件路径</li>
+<li>NameNode 返回该文件的 Block 列表及每个 Block 所在 DataNode 地址（按距客户端由近到远排序）</li>
+<li>客户端选择最近的 DataNode，读取第一个 Block</li>
+<li>依次读取后续 Block，直到文件读完</li>
+<li>若某个 DataNode 失败，从备选列表选另一个 DataNode 重读</li>
+<li>客户端将所有 Block 组装成完整文件</li>
+</ol>
+
+<h4>5.1.3 数据可靠性机制</h4>
+<ul>
+<li><strong>多副本机制</strong>：默认 3 副本，副本不足时 NameNode 自动触发复制</li>
+<li><strong>机架感知</strong>：副本放置策略——第1个副本放本地节点，第2个放同一机架另一节点，第3个放不同机架。兼顾写带宽和容错</li>
+<li><strong>心跳机制</strong>：DataNode 每 3 秒向 NameNode 发心跳，超过 10 分钟未收到则标记失效并补副本</li>
+<li><strong>安全模式</strong>：NameNode 启动后等待 DataNode 上报 Block 信息，确认完整后退出</li>
+<li><strong>校验和</strong>：写入时计算 Block 校验和，读取时验证</li>
+<li><strong>元数据持久化</strong>：FsImage（命名空间快照）+ EditLog（操作日志）</li>
+</ul>
+
+<h4>5.1.4 小文件问题</h4>
+<p><strong>为什么 HDFS 不适合大量小文件？</strong></p>
+<ol>
+<li><strong>NameNode 内存压力</strong>：每个文件、目录、Block 的元数据（约 150 字节/条目）都存 NameNode 内存，大量小文件会耗尽内存</li>
+<li><strong>MapReduce 效率低</strong>：每个文件分片对应一个 Map Task，小文件产生大量 Map Task，调度开销远大于数据处理本身</li>
+<li><strong>寻道时间占比大</strong>：每个 Block 读取都要磁盘寻道</li>
+</ol>
+<p><strong>解决方案</strong>：SequenceFile、HAR（Hadoop Archive）、Parquet/ORC 等合并小文件。</p>
+
+<h3>5.2 MapReduce 工作流程</h3>
+<p><strong>核心思想</strong>：将大数据计算任务划分为 Map、Shuffle、Reduce 三个阶段。</p>
+<p><strong>五阶段详细流程</strong>：</p>
+<ol>
+<li><strong>输入分片（Split）</strong>：将输入文件划分为多个 Split，每个 Split 交给一个 Map Task</li>
+<li><strong>Map 阶段</strong>：从 Split 解析 K-V 对，对每个 K-V 调用一次 Map 方法，输出中间 K-V 对</li>
+<li><strong>二次分区与排序</strong>：对 Map 输出按 Key 二次分区，每个分区内按 Key 排序</li>
+<li><strong>Shuffle/Combine</strong>：Reduce Task 从各 Map 节点拉取属于自己分区的数据，合并排序</li>
+<li><strong>Reduce 阶段</strong>：对每个 Key 调用一次 Reduce 方法，输出最终 K-V 对</li>
+</ol>
+<p><strong>Shuffle 的本质</strong>：<strong>按 Key 二次分区</strong>，把相同 Key 的中间结果聚集到同一个 Reduce 节点。不是随机打乱。</p>
+<p><strong>键值数组转换关系</strong>：</p>
+<ul>
+<li>输入键值数组 X 经 Map 转为中间键值数组 Y</li>
+<li>Y 经 Reduce 转为最终键值数组 Z</li>
+<li>X、Y、Z 的 Key/Value 类型可以不同</li>
+</ul>
+
+<h3>5.3 Spark 计算模型</h3>
+<table>
+<thead><tr><th>对比维度</th><th>MapReduce</th><th>Spark</th></tr></thead>
+<tbody>
+<tr><td>计算模型</td><td>基于磁盘的批处理</td><td>基于内存的 DAG 计算</td></tr>
+<tr><td>中间结果</td><td>写入 HDFS 磁盘</td><td>优先存内存</td></tr>
+<tr><td>速度</td><td>较慢</td><td>快（MR 的 10-100 倍）</td></tr>
+<tr><td>适用场景</td><td>一次性大规模批处理</td><td>迭代计算、交互式查询、流处理</td></tr>
+<tr><td>编程模型</td><td>仅 Map、Reduce</td><td>丰富的 Transformation 和 Action</td></tr>
+</tbody>
+</table>
+<p><strong>RDD（弹性分布式数据集）</strong>：Spark 的基本抽象，是只读的、可分区的分布式数据集合。</p>
+<ul>
+<li><strong>Transformation（转换）</strong>：如 <code>map</code>、<code>filter</code>、<code>reduceByKey</code>，懒加载，不会立即执行</li>
+<li><strong>Action（动作）</strong>：如 <code>collect</code>、<code>count</code>、<code>saveAsTextFile</code>，触发真正的 DAG 执行</li>
+</ul>
+
+<h3>5.4 一致性哈希</h3>
+<p><strong>基本思想</strong>：把服务器和数据都哈希到一个环上，每条数据顺时针遇到的第一个服务器就是存储节点。</p>
+<p><strong>关键计算步骤</strong>：</p>
+<ol>
+<li>计算各服务器哈希值，在环上排序</li>
+<li>确定每台服务器负责的区间：从上一台服务器下一位置到自身</li>
+<li>计算各数据哈希值，按"顺时针第一个服务器"规则分配</li>
+</ol>
+<p><strong>增减节点</strong>：只影响相邻区间，只移动相邻区间的数据，不会全部重新分布。</p>
+<p><strong>虚拟节点</strong>：为每台服务器分配多个虚拟节点，解决数据倾斜问题。</p>
+<p class="ref-link">HDFS、MapReduce、Spark、一致性哈希的完整例题、伪代码见：<a href="04-MapReduce与大数据生态.html">04-MapReduce与大数据生态.html</a></p>
+
+<hr />
+<h2>六、广播协议与共识</h2>
+
+<h3>6.1 广播协议</h3>
+<h4>可靠广播（Reliable Broadcast）</h4>
+<ol>
+<li><strong>有效性</strong>：若正确节点广播消息 $m$，则其他所有正确节点最终都能收到 $m$</li>
+<li><strong>一致性/统一性</strong>：若 $m$ 被投递给某个正确节点，则 $m$ 一定被投递给所有其他非失效节点</li>
+<li><strong>完整性</strong>：正确节点收到的 $m$ 一定是某个节点发送的，不能"无中生有"</li>
+</ol>
+<h4>全序广播（Total Order Reliable Broadcast）</h4>
+<p>在可靠广播基础上，所有节点以<strong>完全相同的顺序</strong>投递多个广播消息。</p>
+<h4>FIFO 广播（FIFO Reliable Broadcast）</h4>
+<p>在可靠广播基础上，若<strong>同一个节点</strong>先广播 $m_1$ 后广播 $m_2$，则其他节点也先收到 $m_1$ 后收到 $m_2$。</p>
+
+<h3>6.2 Paxos 共识协议</h3>
+<p><strong>三角色</strong>：</p>
+<ul>
+<li><strong>Proposer（提议者）</strong>：提出提案</li>
+<li><strong>Acceptor（接受者）</strong>：对提案投票</li>
+<li><strong>Learner（学习者）</strong>：学习已通过的决议</li>
+</ul>
+<p><strong>两阶段</strong>：</p>
+<ol>
+<li><strong>Prepare/Promise 阶段</strong>：Proposer 发送 Prepare(n) 给 Acceptor；Acceptor 承诺不再接受编号小于 $n$ 的提案，返回已接受的编号最大提案</li>
+<li><strong>Accept/Accepted 阶段</strong>：Proposer 根据 Promise 回复构造提案值，发送 Accept(n, v)；Acceptor 接受该提案并广播 Accepted</li>
+</ol>
+<p><strong>容错公式</strong>：</p>
+<p>$$f_{max} = \left\lfloor \frac{n-1}{2} \right\rfloor$$</p>
+<p>即 $n$ 个节点最多容忍 $\lfloor (n-1)/2 \rfloor$ 个失效，需要多数派（$n - f > n/2$）存活。</p>
+
+<h3>6.3 Raft 共识协议</h3>
+<p><strong>三角色</strong>：</p>
+<ul>
+<li><strong>Leader</strong>：处理所有客户端请求，负责日志复制</li>
+<li><strong>Follower</strong>：接收并持久化 Leader 的日志</li>
+<li><strong>Candidate</strong>：Follower 超时未收到 Leader 心跳时发起选举</li>
+</ul>
+<p><strong>选举流程</strong>：</p>
+<ol>
+<li>Follower 超时未收到心跳，变为 Candidate，自增任期号，投票给自己</li>
+<li>Candidate 向其他节点请求投票</li>
+<li>节点收到投票请求后，若该任期未投过票且 Candidate 日志足够新，则投票</li>
+<li>获得多数派投票后成为 Leader</li>
+</ol>
+<p><strong>日志复制</strong>：</p>
+<ol>
+<li>Leader 接收客户端请求，追加到本地日志</li>
+<li>Leader 发送 AppendEntries 给 Follower</li>
+<li>Follower 确认并追加日志</li>
+<li>超过半数 Follower 确认后，Leader 提交该日志并响应客户端</li>
+</ol>
+<p><strong>Raft 与 Paxos 的关系</strong>：Raft 等价于 Paxos，但设计更易理解和实现。</p>
+
+<hr />
+<h2>七、一致性模型（从强到弱）</h2>
+<table>
+<thead><tr><th>模型</th><th>强度</th><th>含义</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr><td>强一致性（线性一致性）</td><td>最强</td><td>写后立即可读最新，全局顺序</td><td>银行转账、库存扣减</td></tr>
+<tr><td>顺序一致性</td><td>强</td><td>按程序顺序，不同节点顺序可不同但各自一致</td><td>分布式数据库会话</td></tr>
+<tr><td>因果一致性</td><td>中等</td><td>有因果关系的事件顺序一致</td><td>社交网络评论</td></tr>
+<tr><td>最终一致性</td><td>弱</td><td>无新写入时最终一致</td><td>DNS、商品评论、缓存</td></tr>
+</tbody>
+</table>
+<p><strong>判断技巧</strong>：若系统写入需等待所有副本同步后才返回，且读取只能读主节点 → 可能强一致；若读取可任意读副本 → 通常是最终一致。</p>
+
+<hr />
+<h2>八、MPI 集合通信</h2>
+<table>
+<thead><tr><th>操作</th><th>MPI 函数</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td>广播</td><td><code>broadcast</code></td><td>一个节点数据发给所有节点</td></tr>
+<tr><td>散播</td><td><code>scatter</code></td><td>一个节点把数据分块发给各节点</td></tr>
+<tr><td>收集</td><td><code>gather</code></td><td>各节点数据汇总到一个节点</td></tr>
+<tr><td>归约</td><td><code>reduce</code></td><td>各节点数据按运算聚合到一个节点</td></tr>
+<tr><td>全收集</td><td><code>allgather</code></td><td>gather + 广播结果</td></tr>
+<tr><td>全归约</td><td><code>allreduce</code></td><td>reduce + 广播结果</td></tr>
+</tbody>
+</table>
+<p><strong>阻塞 vs 非阻塞</strong>：</p>
+<ul>
+<li><strong>阻塞通信</strong>：Send 完成后缓冲区可安全复用；Recv 完成后数据已到达</li>
+<li><strong>非阻塞通信</strong>：Send/Recv 立即返回，需调用 Wait 确认完成</li>
+</ul>
+<p class="ref-link">MPI 集合通信的图示、阻塞/非阻塞时序图见：<a href="05-MPI并行编程.html">05-MPI并行编程.html</a></p>
+
+<hr />
+<h2>九、必背公式速查</h2>
+<table>
+<thead><tr><th>公式</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td>$\delta_{total} = (T_4 - T_1) - (T_3 - T_2)$</td><td>Cristian 网络往返延迟</td></tr>
+<tr><td>$T_{client} \leftarrow T_3 + \frac{\delta_{total}}{2}$</td><td>Cristian 时间校正</td></tr>
+<tr><td>$C_i \leftarrow C_i + 1$</td><td>Lamport 内部/发送事件</td></tr>
+<tr><td>$C_j \leftarrow 1 + \max(C_j, C_{msg})$</td><td>Lamport 接收消息</td></tr>
+<tr><td>$L(a) &lt; L(b) \iff C(a) &lt; C(b) \;\mathrm{OR}\; \Big(C(a)=C(b) \;\mathrm{AND}\; ID(a)&lt;ID(b)\Big)$</td><td>全序逻辑时钟排序</td></tr>
+<tr><td>$a \rightarrow b \iff V(a) &lt; V(b)$</td><td>向量时钟充要条件</td></tr>
+<tr><td>$f_{max} = \lfloor (n-1)/2 \rfloor$</td><td>Paxos/Raft 最大容错</td></tr>
+</tbody>
+</table>
+
+<hr />
+<h2>十、典型例题（带完整解答）</h2>
+
+<div class="example">
+<div class="example-title">例题1：Lamport 逻辑时钟计算</div>
+<p><strong>题目</strong>：有三个节点 $P_1, P_2, P_3$，初始逻辑时钟均为 0。事件序列如下：</p>
+<ol>
+<li>$P_1$ 发生内部事件 a</li>
+<li>$P_1$ 向 $P_2$ 发送消息 m1</li>
+<li>$P_2$ 接收 m1</li>
+<li>$P_2$ 发生内部事件 b</li>
+<li>$P_3$ 发生内部事件 c</li>
+<li>$P_2$ 向 $P_3$ 发送消息 m2</li>
+<li>$P_3$ 接收 m2</li>
+<li>$P_1$ 发生内部事件 d</li>
+</ol>
+<p><strong>求</strong>：每个事件的 Lamport 时间戳，并说明"反向不成立"的含义。</p>
+<p><strong>解答</strong>：</p>
+<ul>
+<li>(1) $P_1$ 内部事件 a：$C_1$ 从 0 自增 → $C_1(a) = 1$</li>
+<li>(2) $P_1$ 发送 m1：发送也是事件 → $C_1$ 再自增，m1 时间戳 = 2</li>
+<li>(3) $P_2$ 接收 m1：$C_2 = 1 + \max(0, 2) = 3$</li>
+<li>(4) $P_2$ 内部事件 b：$C_2(b) = 4$</li>
+<li>(5) $P_3$ 内部事件 c：$C_3(c) = 1$</li>
+<li>(6) $P_2$ 发送 m2：m2 时间戳 = 5</li>
+<li>(7) $P_3$ 接收 m2：$C_3 = 1 + \max(1, 5) = 6$</li>
+<li>(8) $P_1$ 内部事件 d：$C_1(d) = 3$</li>
+</ul>
+<p><strong>最终结果</strong>：$C_1(a)=1, C_1(d)=3$；$C_2$ 最终 = 5；$C_3(c)=1, C_3$ 最终 = 6。</p>
+<p><strong>反向不成立的反例</strong>：$C_3(c) = 1 &lt; C_1(d) = 3$，但事件 c（在 $P_3$ 上）和事件 d（在 $P_1$ 上）之间没有任何消息传递，是<strong>并发事件</strong>。因此 $C(a) &lt; C(b)$ 不能推出 $a \rightarrow b$。</p>
+</div>
+
+<div class="example">
+<div class="example-title">例题2：全序逻辑时钟排序</div>
+<p><strong>题目</strong>：系统中有 3 个节点（ID 分别为 1, 2, 3），已知事件的全序时间戳：</p>
+<ul>
+<li>事件 a：$\langle 2, 1 \rangle$（发生在节点 1）</li>
+<li>事件 b：$\langle 2, 2 \rangle$（发生在节点 2）</li>
+<li>事件 c：$\langle 3, 1 \rangle$（发生在节点 1）</li>
+</ul>
+<p><strong>求</strong>：按全序逻辑时钟规则排序。</p>
+<p><strong>解答</strong>：</p>
+<ul>
+<li>比较 a 和 b：$C(a)=C(b)=2$，比较 ID：$1 &lt; 2$，所以 $a &lt; b$</li>
+<li>比较 b 和 c：$C(b)=2 &lt; C(c)=3$，所以 $b &lt; c$</li>
+<li>比较 a 和 c：$C(a)=2 &lt; C(c)=3$，所以 $a &lt; c$</li>
+</ul>
+<p><strong>全序结果</strong>：$a &lt; b &lt; c$。</p>
+<p><strong>注意</strong>：全序只保证所有事件有唯一顺序，不代表 $a &lt; b$ 就一定有因果关系。若 $C(a)=C(b)$，说明它们很可能是并发的。</p>
+</div>
+
+<div class="example">
+<div class="example-title">例题3：一致性哈希分配（N=3）</div>
+<p><strong>题目</strong>：设 $N=3$，$H(ID_1)=4, H(ID_2)=23, H(ID_3)=13$。10 条记录的哈希值为 $1, 3, 5, 9, 14, 15, 19, 21, 26, 31$，哈希空间为 $[0, 31]$。求每台服务器分别存储几条记录。</p>
+<p><strong>解答</strong>：</p>
+<p><strong>第一步</strong>：服务器按哈希值排序：</p>
+<ul>
+<li>$ID_1$：位置 4</li>
+<li>$ID_3$：位置 13</li>
+<li>$ID_2$：位置 23</li>
+</ul>
+<p><strong>第二步</strong>：确定负责区间（顺时针方向，从上一节点下一位置到自身）：</p>
+<ul>
+<li>$ID_1$（4）：区间 $(23, 31] \cup [0, 4]$</li>
+<li>$ID_3$（13）：区间 $(4, 13]$</li>
+<li>$ID_2$（23）：区间 $(13, 23]$</li>
+</ul>
+<p><strong>第三步</strong>：分配记录：</p>
+<ul>
+<li>$ID_1$：1, 3, 26, 31 → <strong>4 条</strong></li>
+<li>$ID_3$：5, 9 → <strong>2 条</strong></li>
+<li>$ID_2$：14, 15, 19, 21 → <strong>4 条</strong></li>
+</ul>
+</div>
+
+<div class="example">
+<div class="example-title">例题4：一致性哈希增加节点后的迁移量</div>
+<p><strong>题目</strong>：接例题3，增加服务器 $ID_4$，$H(ID_4)=30$。有多少条记录需要迁移？</p>
+<p><strong>解答</strong>：</p>
+<p>新增 $ID_4$（位置 30），顺时针方向下一台服务器是 $ID_1$（位置 4，环状），因此 $ID_4$ 接管 $ID_1$ 的区间 $(23, 30]$。</p>
+<p>检查原属 $ID_1$ 的记录：1, 3, 26, 31。</p>
+<ul>
+<li>1, 3：不在 $(23, 30]$，仍属 $ID_1$</li>
+<li>26：在 $(23, 30]$ 内，迁移到 $ID_4$</li>
+<li>31：大于 30，仍顺时针属 $ID_1$</li>
+</ul>
+<p><strong>迁移量：1 条</strong>（记录 26）。</p>
+<p><strong>关键结论</strong>：一致性哈希增节点只移动相邻区间的数据，不会导致全局重分布。</p>
+</div>
+
+<hr />
+<h2>十一、易错点速记</h2>
+<ol>
+<li><strong>Lamport 逻辑时钟</strong>：$C(a) &lt; C(b) \nRightarrow a \rightarrow b$（反向不成立！）</li>
+<li><strong>向量时钟</strong>：$V(a) &lt; V(b) \iff a \rightarrow b$（充要条件）</li>
+<li><strong>全序时钟</strong>：$ID$ 仅用于打破 $C$ 相等时的平局，不代表因果关系</li>
+<li><strong>Fail-Stop vs Byzantine</strong>：容错公式不同（$n > 2f$ vs $n > 3f$）</li>
+<li><strong>Cristian 算法</strong>：误差最大为 $\pm \delta/2$</li>
+<li><strong>一致性哈希</strong>：增节点只移动相邻区间数据，非全部重新分布</li>
+<li><strong>HDFS 小文件</strong>：瓶颈在 NameNode 内存，非 DataNode 磁盘</li>
+<li><strong>MapReduce Shuffle</strong>：按 Key 二次分区，非随机打乱</li>
+<li><strong>RPC vs MOM</strong>：RPC 同步请求-响应；MOM 异步消息</li>
+<li><strong>MPI 阻塞</strong>：Send 完成后缓冲区可复用；非阻塞需 Wait 确认</li>
+</ol>
+
+    </div>
+</body>
+</html>
